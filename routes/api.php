@@ -20,17 +20,18 @@ use App\Http\Controllers\Api\HotelFolioController;
 use App\Http\Controllers\Api\HotelServiceController;
 use App\Http\Controllers\Api\HotelPartnerController;
 use App\Http\Controllers\Api\PublicRoomPortalController;
+use App\Http\Controllers\Api\StaffController;
 
 // Public Auth Endpoints
-Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
-Route::post('/auth/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
+Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:120,1');
+Route::post('/auth/register', [AuthController::class, 'register'])->middleware('throttle:30,1');
 
 // Public Customer Dining Endpoints (Restaurant)
 Route::get('/public/featured', [PublicMenuController::class, 'featured']);
-Route::get('/public/menu', [PublicMenuController::class, 'index'])->middleware('throttle:60,1');
-Route::get('/public/orders', [PublicOrderController::class, 'index'])->middleware('throttle:60,1');
-Route::post('/public/orders', [PublicOrderController::class, 'store'])->middleware('throttle:10,1');
-Route::post('/service-request', [ServiceRequestController::class, 'store'])->middleware('throttle:10,1');
+Route::get('/public/menu', [PublicMenuController::class, 'index'])->middleware('throttle:120,1');
+Route::get('/public/orders', [PublicOrderController::class, 'index'])->middleware('throttle:120,1');
+Route::post('/public/orders', [PublicOrderController::class, 'store'])->middleware('throttle:60,1');
+Route::post('/service-request', [ServiceRequestController::class, 'store'])->middleware('throttle:60,1');
 
 // Public In-Room Guest Portal Endpoints (Hotel)
 Route::get('/public/room/info', [PublicRoomPortalController::class, 'info'])->middleware('throttle:60,1');
@@ -99,6 +100,12 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::post('/partner', [HotelPartnerController::class, 'togglePartner']);
     });
 
+    // Staff & Employee Management (Front Desk, Housekeeping, Chef, Waiter, Cashier, Manager)
+    Route::get('/staff', [StaffController::class, 'index']);
+    Route::post('/staff', [StaffController::class, 'store']);
+    Route::put('/staff/{id}', [StaffController::class, 'update']);
+    Route::delete('/staff/{id}', [StaffController::class, 'destroy']);
+
     // Reports & Analytics
     Route::get('/reports', [ReportController::class, 'index']);
 
@@ -109,6 +116,17 @@ Route::middleware(['jwt.auth'])->group(function () {
     Route::middleware(['superadmin'])->prefix('superadmin')->group(function () {
         Route::get('/stats', [SuperAdminController::class, 'stats']);
         Route::get('/restaurants', [SuperAdminController::class, 'restaurants']);
+        Route::post('/tenants', [SuperAdminController::class, 'createTenant']);
         Route::put('/restaurants', [SuperAdminController::class, 'updateRestaurant']);
+        Route::delete('/restaurants/{id}', [SuperAdminController::class, 'deleteRestaurant']);
+
+        // Platform Customization Settings
+        Route::get('/settings', [SuperAdminController::class, 'getSettings']);
+        Route::post('/settings', [SuperAdminController::class, 'updateSettings']);
+
+        // SaaS Subscription Plans
+        Route::get('/plans', [SuperAdminController::class, 'getPlans']);
+        Route::post('/plans', [SuperAdminController::class, 'savePlan']);
+        Route::delete('/plans/{id}', [SuperAdminController::class, 'deletePlan']);
     });
 });

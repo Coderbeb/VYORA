@@ -57,7 +57,7 @@
       </span>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 text-xs">
       <div class="p-4 rounded-[var(--radius-lg)] bg-[var(--bg-base)] border border-[var(--border)]">
         <span class="text-[var(--text-muted)] font-semibold">Tier</span>
         <h4 id="sett-plan-tier" class="font-bold text-base text-[var(--text-primary)] mt-1">FREE</h4>
@@ -66,9 +66,9 @@
         <span class="text-[var(--text-muted)] font-semibold">Table Limit</span>
         <h4 id="sett-plan-tables" class="font-bold text-base text-[var(--text-primary)] mt-1">5 Tables</h4>
       </div>
-      <div class="p-4 rounded-[var(--radius-lg)] bg-[var(--bg-base)] border border-[var(--border)]">
+      <div class="p-4 rounded-[var(--radius-lg)] bg-[var(--bg-base)] border border-[var(--border)] col-span-2 sm:col-span-1">
         <span class="text-[var(--text-muted)] font-semibold">Monthly Cost</span>
-        <h4 id="sett-plan-price" class="font-bold text-base text-[var(--accent)] mt-1">$0.00</h4>
+        <h4 id="sett-plan-price" class="font-bold text-base text-[var(--accent)] mt-1">₹0.00</h4>
       </div>
     </div>
   </div>
@@ -105,7 +105,7 @@
           document.getElementById('sett-plan-badge').textContent = u.plan.tier + ' PLAN';
           document.getElementById('sett-plan-tier').textContent = u.plan.tier;
           document.getElementById('sett-plan-tables').textContent = u.plan.max_tables + ' Tables';
-          document.getElementById('sett-plan-price').textContent = '$' + parseFloat(u.plan.price).toFixed(2);
+          document.getElementById('sett-plan-price').textContent = '₹' + parseFloat(u.plan.price).toFixed(2);
         }
       }
     } catch(err) {

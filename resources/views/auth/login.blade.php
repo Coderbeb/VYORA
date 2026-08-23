@@ -41,22 +41,6 @@
           <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
       </form>
-
-      <!-- Demo Fill Quick Buttons -->
-      <div class="mt-6 pt-6 border-t border-[var(--border)]">
-        <p class="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider text-center mb-3">Quick Demo Credentials</p>
-        <div class="grid grid-cols-3 gap-2">
-          <button onclick="fillDemo('spicehub', 'demo123')" class="px-2 py-2 rounded-[var(--radius-sm)] border border-[var(--border)] hover:bg-[var(--bg-hover)] text-[11px] font-medium text-[var(--text-secondary)] transition text-center truncate">
-            🍽️ Restaurant
-          </button>
-          <button onclick="fillDemo('grandhorizon', 'demo123')" class="px-2 py-2 rounded-[var(--radius-sm)] border border-[var(--border)] hover:bg-[var(--bg-hover)] text-[11px] font-medium text-[var(--text-secondary)] transition text-center truncate">
-            🏨 Hotel PMS
-          </button>
-          <button onclick="fillDemo('superadmin', 'admin123')" class="px-2 py-2 rounded-[var(--radius-sm)] border border-[var(--border)] hover:bg-[var(--bg-hover)] text-[11px] font-medium text-[var(--text-secondary)] transition text-center truncate">
-            🛡️ SuperAdmin
-          </button>
-        </div>
-      </div>
     </div>
 
     <!-- Footer Register CTA -->
@@ -81,10 +65,6 @@
     lucide.createIcons();
   }
 
-  function fillDemo(u, p) {
-    document.getElementById('login-username').value = u;
-    document.getElementById('login-password').value = p;
-  }
 
   async function handleLogin(e) {
     e.preventDefault();

@@ -29,12 +29,12 @@ class DatabaseSeeder extends Seeder
 
         SubscriptionPlan::firstOrCreate(
             ['tier' => 'PRO', 'business_type' => 'RESTAURANT'],
-            ['price' => 49.99, 'max_tables' => 25, 'max_rooms' => 0, 'features' => ['Up to 25 tables', 'Priority support', 'Analytics']]
+            ['price' => 499.00, 'max_tables' => 25, 'max_rooms' => 0, 'features' => ['Up to 25 tables', 'Priority support', 'Analytics']]
         );
 
         SubscriptionPlan::firstOrCreate(
             ['tier' => 'PREMIUM', 'business_type' => 'RESTAURANT'],
-            ['price' => 99.99, 'max_tables' => 100, 'max_rooms' => 0, 'features' => ['Unlimited tables', 'White-label branding', 'API access']]
+            ['price' => 999.00, 'max_tables' => 100, 'max_rooms' => 0, 'features' => ['Unlimited tables', 'White-label branding', 'API access']]
         );
 
         $hotelFreePlan = SubscriptionPlan::firstOrCreate(
@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
 
         $comboProPlan = SubscriptionPlan::firstOrCreate(
             ['tier' => 'PRO', 'business_type' => 'COMBO'],
-            ['price' => 79.99, 'max_tables' => 20, 'max_rooms' => 30, 'features' => ['Both Hotel PMS & Restaurant POS', 'Up to 20 tables & 30 rooms', 'Unified Folio & KDS']]
+            ['price' => 799.00, 'max_tables' => 20, 'max_rooms' => 30, 'features' => ['Both Hotel PMS & Restaurant POS', 'Up to 20 tables & 30 rooms', 'Unified Folio & KDS']]
         );
 
         // 2. Super Admin

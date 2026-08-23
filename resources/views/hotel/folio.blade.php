@@ -78,19 +78,19 @@
       <div class="w-full sm:w-72 space-y-2 text-xs">
         <div class="flex justify-between text-[var(--text-secondary)]">
           <span>Room Accommodation Subtotal:</span>
-          <span id="inv-room-subtotal" class="font-mono font-bold text-[var(--text-primary)]">$0.00</span>
+          <span id="inv-room-subtotal" class="font-mono font-bold text-[var(--text-primary)]">₹0.00</span>
         </div>
         <div class="flex justify-between text-[var(--text-secondary)]">
           <span>In-House Food & Dining:</span>
-          <span id="inv-food-subtotal" class="font-mono font-bold text-[var(--text-primary)]">$0.00</span>
+          <span id="inv-food-subtotal" class="font-mono font-bold text-[var(--text-primary)]">₹0.00</span>
         </div>
         <div class="flex justify-between text-emerald-600 font-semibold">
           <span>Less Advance Deposit:</span>
-          <span id="inv-advance" class="font-mono font-bold">-$0.00</span>
+          <span id="inv-advance" class="font-mono font-bold">-₹0.00</span>
         </div>
         <div class="pt-2 border-t border-[var(--border)] flex justify-between text-base font-bold text-[var(--text-primary)]">
           <span>Balance Due:</span>
-          <span id="inv-balance-due" class="font-mono text-lg text-[var(--accent)]">$0.00</span>
+          <span id="inv-balance-due" class="font-mono text-lg text-[var(--accent)]">₹0.00</span>
         </div>
       </div>
     </div>
@@ -129,7 +129,7 @@
     const checkInStr = new Date(f.stay.checkIn).toLocaleString();
     const checkOutStr = f.stay.checkOut ? new Date(f.stay.checkOut).toLocaleString() : 'Currently Active';
     document.getElementById('inv-dates').textContent = `In: ${checkInStr} | Out: ${checkOutStr}`;
-    document.getElementById('inv-stay-length').textContent = `Duration: ${f.stay.nights} Night(s) @ $${f.stay.nightlyRate.toFixed(2)}/nt`;
+    document.getElementById('inv-stay-length').textContent = `Duration: ${f.stay.nights} Night(s) @ ₹${f.stay.nightlyRate.toFixed(2)}/nt`;
 
     const tbody = document.getElementById('inv-items-tbody');
     tbody.innerHTML = '';
@@ -140,8 +140,8 @@
     trRoom.innerHTML = `
       <td class="py-2.5 font-bold text-[var(--text-primary)]">Room Accommodation Charge (${f.room.category})</td>
       <td class="py-2.5 text-center font-mono">${f.stay.nights} night(s)</td>
-      <td class="py-2.5 text-right font-mono">$${f.stay.nightlyRate.toFixed(2)}</td>
-      <td class="py-2.5 text-right font-mono font-bold text-[var(--text-primary)]">$${f.stay.roomTotal.toFixed(2)}</td>
+      <td class="py-2.5 text-right font-mono">₹${f.stay.nightlyRate.toFixed(2)}</td>
+      <td class="py-2.5 text-right font-mono font-bold text-[var(--text-primary)]">₹${f.stay.roomTotal.toFixed(2)}</td>
     `;
     tbody.appendChild(trRoom);
 
@@ -153,18 +153,18 @@
         trFood.innerHTML = `
           <td class="py-2 text-[11px]"><span class="text-[var(--accent)] mr-1">🍽️</span> ${item.name}</td>
           <td class="py-2 text-center font-mono">${item.quantity}</td>
-          <td class="py-2 text-right font-mono">$${item.price.toFixed(2)}</td>
-          <td class="py-2 text-right font-mono font-bold text-[var(--text-primary)]">$${item.lineTotal.toFixed(2)}</td>
+          <td class="py-2 text-right font-mono">₹${item.price.toFixed(2)}</td>
+          <td class="py-2 text-right font-mono font-bold text-[var(--text-primary)]">₹${item.lineTotal.toFixed(2)}</td>
         `;
         tbody.appendChild(trFood);
       });
     });
 
     // Totals
-    document.getElementById('inv-room-subtotal').textContent = `$${f.stay.roomTotal.toFixed(2)}`;
-    document.getElementById('inv-food-subtotal').textContent = `$${f.foodTotal.toFixed(2)}`;
-    document.getElementById('inv-advance').textContent = `-$${f.totals.advanceDeposit.toFixed(2)}`;
-    document.getElementById('inv-balance-due').textContent = `$${f.totals.balanceDue.toFixed(2)}`;
+    document.getElementById('inv-room-subtotal').textContent = `₹${f.stay.roomTotal.toFixed(2)}`;
+    document.getElementById('inv-food-subtotal').textContent = `₹${f.foodTotal.toFixed(2)}`;
+    document.getElementById('inv-advance').textContent = `-₹${f.totals.advanceDeposit.toFixed(2)}`;
+    document.getElementById('inv-balance-due').textContent = `₹${f.totals.balanceDue.toFixed(2)}`;
 
     if (f.status === 'checked_out') {
       const btn = document.getElementById('btn-checkout');

@@ -18,7 +18,7 @@
     </div>
     <div class="flex items-center gap-2 text-xs text-[var(--text-muted)]">
       <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-      <span>Pusher Real-time Sync Active</span>
+      <span class="font-semibold text-emerald-600 dark:text-emerald-400">Live</span>
     </div>
   </div>
 
@@ -179,7 +179,7 @@
     const itemsHtml = order.items.map(i => `
       <div class="flex justify-between items-center text-xs">
         <span class="text-[var(--text-primary)] font-medium"><strong class="text-[var(--accent)] font-bold mr-1">${i.quantity}x</strong> ${i.menuItemName}</span>
-        <span class="text-[var(--text-muted)] font-mono">$${(i.price * i.quantity).toFixed(2)}</span>
+        <span class="text-[var(--text-muted)] font-mono">₹${(i.price * i.quantity).toFixed(2)}</span>
       </div>
     `).join('');
 
@@ -235,7 +235,7 @@
       ${notesHtml}
       <div class="flex items-center justify-between pt-2 border-t border-[var(--border)] text-xs font-bold text-[var(--text-primary)]">
         <span>Total</span>
-        <span>$${parseFloat(order.totalAmount).toFixed(2)}</span>
+        <span>₹${parseFloat(order.totalAmount).toFixed(2)}</span>
       </div>
       <div class="flex items-center gap-2 pt-1">
         ${actionBtn}

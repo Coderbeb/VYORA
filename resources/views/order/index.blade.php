@@ -59,9 +59,9 @@
       </button>
     </div>
 
-    <!-- Dish List Container -->
-    <div id="cust-dishes-container" class="space-y-3 pt-2">
-      <div class="p-12 text-center text-xs text-[var(--text-muted)]">
+    <!-- Dish List Container (Minimum 2 per row) -->
+    <div id="cust-dishes-container" class="grid grid-cols-2 gap-3 sm:gap-4 pt-2">
+      <div class="col-span-full p-12 text-center text-xs text-[var(--text-muted)]">
         <span class="animate-spin inline-block mr-2">⏳</span> Loading digital menu...
       </div>
     </div>
@@ -72,7 +72,7 @@
     <div class="max-w-2xl mx-auto flex items-center justify-between">
       <div>
         <span id="cart-item-count" class="text-xs font-bold text-[var(--text-primary)]">0 items</span>
-        <h4 id="cart-total-price" class="font-serif font-bold text-lg text-[var(--accent)]">$0.00</h4>
+        <h4 id="cart-total-price" class="font-serif font-bold text-lg text-[var(--accent)]">₹0.00</h4>
       </div>
       <button onclick="openCartModal()" class="px-6 py-3 rounded-[var(--radius-md)] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold text-xs shadow-md transition flex items-center gap-2 active:scale-95">
         <i data-lucide="shopping-bag" class="w-4 h-4"></i>
@@ -109,7 +109,7 @@
         <!-- Price Summary -->
         <div class="pt-3 border-t-2 border-[var(--border)] flex justify-between items-center text-sm font-bold text-[var(--text-primary)]">
           <span>Order Total</span>
-          <span id="modal-grand-total" class="font-mono text-base text-[var(--accent)]">$0.00</span>
+          <span id="modal-grand-total" class="font-mono text-base text-[var(--accent)]">₹0.00</span>
         </div>
       </div>
 
@@ -261,41 +261,39 @@
     container.innerHTML = '';
     filtered.forEach(dish => {
       const card = document.createElement('div');
-      card.className = 'p-4 rounded-[var(--radius-lg)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm flex items-center justify-between gap-4 transition hover:border-[var(--accent)]';
+      card.className = 'p-3 sm:p-4 rounded-[var(--radius-lg)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm flex flex-col justify-between space-y-2.5 transition hover:border-[var(--accent)]';
 
       const qty = cart.get(dish.id)?.quantity || 0;
 
       let actionControl = '';
       if (qty === 0) {
         actionControl = `
-          <button onclick="addToCart('${dish.id}')" class="px-4 py-2 rounded-[var(--radius-sm)] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold text-xs shadow-sm transition active:scale-95 shrink-0">
+          <button onclick="addToCart('${dish.id}')" class="w-full py-1.5 rounded-[var(--radius-sm)] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold text-xs shadow-sm transition active:scale-95">
             + Add
           </button>
         `;
       } else {
         actionControl = `
-          <div class="flex items-center gap-2 bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] p-1 shrink-0">
+          <div class="flex items-center justify-between bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] p-1">
             <button onclick="removeFromCart('${dish.id}')" class="w-6 h-6 rounded bg-[var(--bg-surface)] text-[var(--text-primary)] font-bold text-xs flex items-center justify-center hover:bg-red-500 hover:text-white transition">-</button>
-            <span class="font-bold text-xs text-[var(--accent)] w-4 text-center font-mono">${qty}</span>
+            <span class="font-bold text-xs text-[var(--accent)] font-mono">${qty}</span>
             <button onclick="addToCart('${dish.id}')" class="w-6 h-6 rounded bg-[var(--accent)] text-white font-bold text-xs flex items-center justify-center hover:bg-[var(--accent-hover)] transition">+</button>
           </div>
         `;
       }
 
       const imgHtml = dish.imageUrl ? `
-        <img src="${dish.imageUrl}" alt="${dish.name}" class="w-20 h-20 rounded-[var(--radius-md)] object-cover border border-[var(--border)] shrink-0">
+        <img src="${dish.imageUrl}" alt="${dish.name}" class="w-full h-24 sm:h-28 rounded-[var(--radius-md)] object-cover border border-[var(--border)] mb-1">
       ` : '';
 
       card.innerHTML = `
-        <div class="flex items-center gap-3 overflow-hidden">
+        <div class="overflow-hidden">
           ${imgHtml}
-          <div class="overflow-hidden">
-            <h4 class="font-serif font-bold text-sm text-[var(--text-primary)] truncate">${dish.name}</h4>
-            <p class="text-[11px] text-[var(--text-secondary)] line-clamp-2 mt-0.5">${dish.description || ''}</p>
-            <div class="flex items-center gap-2 mt-1.5">
-              <span class="font-mono font-bold text-xs text-[var(--accent)]">$${parseFloat(dish.price).toFixed(2)}</span>
-              <span class="text-[10px] text-[var(--text-muted)]">⏱️ ${dish.preparationTime}m</span>
-            </div>
+          <h4 class="font-serif font-bold text-xs sm:text-sm text-[var(--text-primary)] truncate">${dish.name}</h4>
+          <p class="text-[10px] text-[var(--text-secondary)] line-clamp-1 mt-0.5">${dish.description || ''}</p>
+          <div class="flex items-center justify-between mt-1.5">
+            <span class="font-mono font-bold text-xs sm:text-sm text-[var(--accent)]">₹${parseFloat(dish.price).toFixed(2)}</span>
+            <span class="text-[10px] text-[var(--text-muted)]">⏱️ ${dish.preparationTime}m</span>
           </div>
         </div>
         <div>
@@ -347,7 +345,7 @@
     if (count > 0) {
       bar.classList.remove('hidden');
       document.getElementById('cart-item-count').textContent = `${count} ${count === 1 ? 'dish' : 'dishes'} in cart`;
-      document.getElementById('cart-total-price').textContent = `$${total.toFixed(2)}`;
+      document.getElementById('cart-total-price').textContent = `₹${total.toFixed(2)}`;
     } else {
       bar.classList.add('hidden');
     }
@@ -361,11 +359,11 @@
     cart.forEach(({ item, quantity }) => {
       total += quantity * item.price;
       const row = document.createElement('div');
-      row.className = 'flex justify-between items-center py-2.5';
+      row.className = 'flex justify-between items-center py-2.5 border-b border-[var(--border)]';
       row.innerHTML = `
         <div>
           <p class="font-bold text-[var(--text-primary)] text-xs">${item.name}</p>
-          <span class="text-[10px] text-[var(--text-muted)] font-mono">$${item.price.toFixed(2)} each</span>
+          <span class="text-[10px] text-[var(--text-muted)] font-mono">₹${item.price.toFixed(2)} each</span>
         </div>
         <div class="flex items-center gap-3">
           <div class="flex items-center gap-1.5 bg-[var(--bg-base)] border border-[var(--border)] rounded p-0.5">
@@ -373,13 +371,13 @@
             <span class="w-4 text-center font-mono font-bold text-[var(--accent)] text-xs">${quantity}</span>
             <button onclick="addToCart('${item.id}'); openCartModal();" class="w-5 h-5 rounded text-xs font-bold bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]">+</button>
           </div>
-          <span class="font-mono font-bold text-xs text-[var(--text-primary)] w-12 text-right">$${(item.price * quantity).toFixed(2)}</span>
+          <span class="font-mono font-bold text-xs text-[var(--text-primary)] w-14 text-right">₹${(item.price * quantity).toFixed(2)}</span>
         </div>
       `;
       container.appendChild(row);
     });
 
-    document.getElementById('modal-grand-total').textContent = `$${total.toFixed(2)}`;
+    document.getElementById('modal-grand-total').textContent = `₹${total.toFixed(2)}`;
     document.getElementById('cart-modal').classList.remove('hidden');
     lucide.createIcons();
   }
@@ -520,7 +518,7 @@
             <span class="font-bold text-xs text-[var(--text-primary)]">Order Ticket</span>
             <p class="text-[11px] text-[var(--text-muted)] truncate max-w-xs">${itemsList}</p>
           </div>
-          <span class="font-mono font-bold text-xs text-[var(--accent)]">$${parseFloat(order.totalAmount).toFixed(2)}</span>
+          <span class="font-mono font-bold text-xs text-[var(--accent)]">₹${parseFloat(order.totalAmount).toFixed(2)}</span>
         </div>
 
         <!-- Progress Timeline -->

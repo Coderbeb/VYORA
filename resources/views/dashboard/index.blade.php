@@ -36,7 +36,7 @@
         </div>
       </div>
       <div>
-        <h3 id="stat-revenue" class="font-serif text-2xl md:text-3xl font-bold text-[var(--text-primary)]">$0.00</h3>
+        <h3 id="stat-revenue" class="font-serif text-2xl md:text-3xl font-bold text-[var(--text-primary)]">₹0.00</h3>
         <p class="text-[10px] text-[var(--text-muted)] mt-1">Non-cancelled orders today</p>
       </div>
     </div>
@@ -146,7 +146,7 @@
       const res = await fetch('/api/stats', { headers: window.getAuthHeader() });
       const data = await res.json();
       if (data.success && data.data) {
-        document.getElementById('stat-revenue').textContent = '$' + parseFloat(data.data.todayRevenue).toFixed(2);
+        document.getElementById('stat-revenue').textContent = '₹' + parseFloat(data.data.todayRevenue).toFixed(2);
         document.getElementById('stat-pending').textContent = data.data.pendingOrders;
         document.getElementById('stat-tables').textContent = data.data.tables;
         document.getElementById('stat-menu').textContent = data.data.menuItems;
@@ -184,7 +184,7 @@
           tr.innerHTML = `
             <td class="p-3 font-bold text-[var(--text-primary)]">${locText}</td>
             <td class="p-3 text-[var(--text-secondary)] max-w-xs truncate" title="${itemsSummary}">${itemsSummary}</td>
-            <td class="p-3 font-bold text-[var(--text-primary)]">$${parseFloat(order.totalAmount).toFixed(2)}</td>
+            <td class="p-3 font-bold text-[var(--text-primary)]">₹${parseFloat(order.totalAmount).toFixed(2)}</td>
             <td class="p-3">${statusBadge}</td>
             <td class="p-3 text-[var(--text-muted)]">${time}</td>
           `;

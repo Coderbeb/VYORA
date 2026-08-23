@@ -90,6 +90,10 @@
               <i data-lucide="trending-up" class="w-4 h-4 shrink-0"></i>
               <span class="sidebar-label">Reports</span>
             </a>
+            <a href="/dashboard/staff" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium transition {{ request()->is('dashboard/staff*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-semibold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
+              <i data-lucide="users" class="w-4 h-4 shrink-0"></i>
+              <span class="sidebar-label">Team & Staff</span>
+            </a>
             <a href="/dashboard/settings" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium transition {{ request()->is('dashboard/settings*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-semibold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
               <i data-lucide="settings" class="w-4 h-4 shrink-0"></i>
               <span class="sidebar-label">Settings</span>

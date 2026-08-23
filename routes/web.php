@@ -24,6 +24,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/menu', [WebController::class, 'menu'])->name('dashboard.menu');
     Route::get('/tables', [WebController::class, 'tables'])->name('dashboard.tables');
     Route::get('/reports', [WebController::class, 'reports'])->name('dashboard.reports');
+    Route::get('/staff', [WebController::class, 'staff'])->name('dashboard.staff');
     Route::get('/settings', [WebController::class, 'settings'])->name('dashboard.settings');
 
     // Hotel PMS Specific Routes
@@ -40,4 +41,5 @@ Route::prefix('dashboard')->group(function () {
 Route::prefix('superadmin')->group(function () {
     Route::get('/', [WebController::class, 'superadmin'])->name('superadmin');
     Route::get('/restaurants', [WebController::class, 'superadminRestaurants'])->name('superadmin.restaurants');
+    Route::get('/settings', [WebController::class, 'superadminSettings'])->name('superadmin.settings');
 });

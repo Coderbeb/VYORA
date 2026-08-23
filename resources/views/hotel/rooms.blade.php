@@ -42,8 +42,8 @@
     </div>
   </div>
 
-  <!-- Room Grid -->
-  <div id="rooms-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+  <!-- Room Grid (Minimum 2 in a row on mobile) -->
+  <div id="rooms-grid" class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
     <div class="col-span-full p-12 text-center text-xs text-[var(--text-muted)]">Loading hotel rooms...</div>
   </div>
 </div>
@@ -97,11 +97,11 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
-          <label class="block text-xs font-semibold text-[var(--text-secondary)] mb-1">Nightly Rate ($) *</label>
+          <label class="block text-xs font-semibold text-[var(--text-secondary)] mb-1">Nightly Rate (₹) *</label>
           <input type="number" step="0.01" min="0" id="checkin-rate" required class="w-full px-3 py-2 text-sm bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] focus:outline-none focus:border-[var(--accent)] text-[var(--text-primary)]">
         </div>
         <div>
-          <label class="block text-xs font-semibold text-[var(--text-secondary)] mb-1">Advance Deposit ($)</label>
+          <label class="block text-xs font-semibold text-[var(--text-secondary)] mb-1">Advance Deposit (₹)</label>
           <input type="number" step="0.01" min="0" id="checkin-advance" value="0.00" class="w-full px-3 py-2 text-sm bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] focus:outline-none focus:border-[var(--accent)] text-[var(--text-primary)]">
         </div>
         <div>

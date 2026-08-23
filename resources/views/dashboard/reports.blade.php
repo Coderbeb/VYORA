@@ -18,19 +18,19 @@
     </div>
   </div>
 
-  <!-- Key Metrics Row -->
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <div class="p-5 rounded-[var(--radius-lg)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm">
-      <span class="text-xs font-semibold text-[var(--text-secondary)] uppercase">Completed Orders</span>
-      <h3 id="rep-orders" class="font-serif text-3xl font-bold text-[var(--text-primary)] mt-2">0</h3>
+  <!-- Key Metrics Row (Minimum 2 per row on mobile) -->
+  <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+    <div class="p-4 sm:p-5 rounded-[var(--radius-lg)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm">
+      <span class="text-[10px] sm:text-xs font-semibold text-[var(--text-secondary)] uppercase">Completed Orders</span>
+      <h3 id="rep-orders" class="font-serif text-2xl sm:text-3xl font-bold text-[var(--text-primary)] mt-1 sm:mt-2">0</h3>
     </div>
-    <div class="p-5 rounded-[var(--radius-lg)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm">
-      <span class="text-xs font-semibold text-[var(--text-secondary)] uppercase">Total Revenue</span>
-      <h3 id="rep-revenue" class="font-serif text-3xl font-bold text-[var(--accent)] mt-2">$0.00</h3>
+    <div class="p-4 sm:p-5 rounded-[var(--radius-lg)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm">
+      <span class="text-[10px] sm:text-xs font-semibold text-[var(--text-secondary)] uppercase">Total Revenue</span>
+      <h3 id="rep-revenue" class="font-serif text-2xl sm:text-3xl font-bold text-[var(--accent)] mt-1 sm:mt-2">₹0.00</h3>
     </div>
-    <div class="p-5 rounded-[var(--radius-lg)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm">
-      <span class="text-xs font-semibold text-[var(--text-secondary)] uppercase">Avg Ticket Size</span>
-      <h3 id="rep-avg" class="font-serif text-3xl font-bold text-[var(--text-primary)] mt-2">$0.00</h3>
+    <div class="p-4 sm:p-5 rounded-[var(--radius-lg)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm col-span-2 sm:col-span-1">
+      <span class="text-[10px] sm:text-xs font-semibold text-[var(--text-secondary)] uppercase">Avg Ticket Size</span>
+      <h3 id="rep-avg" class="font-serif text-2xl sm:text-3xl font-bold text-[var(--text-primary)] mt-1 sm:mt-2">₹0.00</h3>
     </div>
   </div>
 
@@ -104,8 +104,8 @@
       if (data.success && data.data) {
         const m = data.data.metrics;
         document.getElementById('rep-orders').textContent = m.totalOrders;
-        document.getElementById('rep-revenue').textContent = '$' + parseFloat(m.totalRevenue).toFixed(2);
-        document.getElementById('rep-avg').textContent = '$' + parseFloat(m.averageTicketSize).toFixed(2);
+        document.getElementById('rep-revenue').textContent = '₹' + parseFloat(m.totalRevenue).toFixed(2);
+        document.getElementById('rep-avg').textContent = '₹' + parseFloat(m.averageTicketSize).toFixed(2);
 
         renderChart(data.data.dailySales || []);
         renderTopItems(data.data.topItems || []);
@@ -131,7 +131,7 @@
       const col = document.createElement('div');
       col.className = 'flex-1 min-w-[36px] flex flex-col items-center gap-1 h-full justify-end group';
       col.innerHTML = `
-        <div class="opacity-0 group-hover:opacity-100 transition text-[10px] font-mono text-[var(--accent)] font-bold mb-1">$${day.revenue.toFixed(0)}</div>
+        <div class="opacity-0 group-hover:opacity-100 transition text-[10px] font-mono text-[var(--accent)] font-bold mb-1">₹${day.revenue.toFixed(0)}</div>
         <div class="w-full rounded-t-[var(--radius-sm)] bg-[var(--accent)] group-hover:bg-[var(--accent-hover)] transition-all" style="height: ${heightPercent}%;"></div>
         <span class="text-[9px] text-[var(--text-muted)] mt-1 truncate max-w-full font-mono">${day.date.slice(5)}</span>
       `;
@@ -155,7 +155,7 @@
         <td class="p-3 font-bold text-[var(--accent)]">#${idx + 1}</td>
         <td class="p-3 font-semibold text-[var(--text-primary)]">${item.name}</td>
         <td class="p-3 font-mono">${item.quantity} orders</td>
-        <td class="p-3 font-mono font-bold text-[var(--text-primary)]">$${parseFloat(item.revenue).toFixed(2)}</td>
+        <td class="p-3 font-mono font-bold text-[var(--text-primary)]">₹${parseFloat(item.revenue).toFixed(2)}</td>
       `;
       tbody.appendChild(tr);
     });

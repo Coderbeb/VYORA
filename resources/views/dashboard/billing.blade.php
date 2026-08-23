@@ -33,8 +33,8 @@
     </div>
   </div>
 
-  <!-- Tables Billing Grid -->
-  <div id="billing-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+  <!-- Tables Billing Grid (Minimum 2 per row) -->
+  <div id="billing-grid" class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
     <div class="col-span-full p-8 text-center text-[var(--text-muted)]">Loading table billing statuses...</div>
   </div>
 </div>
@@ -43,10 +43,10 @@
 <div id="receipt-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
   <div class="bg-[var(--bg-surface)] border border-[var(--border)] rounded-[var(--radius-xl)] shadow-[var(--shadow-lg)] w-full max-w-md p-6 relative max-h-[90vh] flex flex-col justify-between">
     <div class="overflow-y-auto pr-1">
-      <div class="flex items-center justify-between pb-3 border-b border-[var(--border)] mb-4">
+      <div class="flex justify-between items-center pb-3 border-b border-[var(--border)] mb-4">
         <div>
-          <h3 id="receipt-modal-title" class="font-serif font-bold text-lg text-[var(--text-primary)]">Table # Bill</h3>
-          <p id="receipt-modal-time" class="text-[11px] text-[var(--text-muted)]">Session started at --:--</p>
+          <h3 id="receipt-modal-title" class="font-serif font-bold text-lg text-[var(--text-primary)]">Table # Session Bill</h3>
+          <p id="receipt-modal-time" class="text-xs text-[var(--text-muted)]">Session details</p>
         </div>
         <button onclick="closeReceiptModal()" class="p-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)]">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -61,7 +61,7 @@
 
         <div class="pt-3 border-t-2 border-[var(--border)] flex justify-between items-center text-sm font-bold text-[var(--text-primary)]">
           <span>Grand Total</span>
-          <span id="receipt-grand-total" class="font-mono text-base text-[var(--accent)]">$0.00</span>
+          <span id="receipt-grand-total" class="font-mono text-base text-[var(--accent)]">₹0.00</span>
         </div>
       </div>
     </div>
@@ -174,10 +174,10 @@
         btnAction = `<button disabled class="w-full py-2 rounded-[var(--radius-sm)] bg-[var(--bg-base)] text-[var(--text-muted)] text-xs font-medium cursor-not-allowed">No Active Bill</button>`;
       } else if (table.status === 'active') {
         statusBadge = '<span class="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 font-bold text-[11px] animate-pulse">Dining / Cooking</span>';
-        btnAction = `<button onclick="openReceiptModal(${table.tableNumber})" class="w-full py-2 rounded-[var(--radius-sm)] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-bold shadow-sm transition">View Bill ($${parseFloat(table.session.totalAmount).toFixed(2)})</button>`;
+        btnAction = `<button onclick="openReceiptModal(${table.tableNumber})" class="w-full py-2 rounded-[var(--radius-sm)] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-bold shadow-sm transition">View Bill (₹${parseFloat(table.session.totalAmount).toFixed(2)})</button>`;
       } else {
         statusBadge = '<span class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-bold text-[11px]">Served / Ready to Pay</span>';
-        btnAction = `<button onclick="openReceiptModal(${table.tableNumber})" class="w-full py-2 rounded-[var(--radius-sm)] bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition">Settle Bill ($${parseFloat(table.session.totalAmount).toFixed(2)})</button>`;
+        btnAction = `<button onclick="openReceiptModal(${table.tableNumber})" class="w-full py-2 rounded-[var(--radius-sm)] bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition">Settle Bill (₹${parseFloat(table.session.totalAmount).toFixed(2)})</button>`;
       }
 
       const itemCount = table.session ? table.session.items.reduce((sum, i) => sum + i.quantity, 0) : 0;
@@ -200,7 +200,7 @@
             </div>
             <div class="flex justify-between font-bold text-[var(--text-primary)] pt-1 border-t border-[var(--border)]">
               <span>Total Accrued:</span>
-              <span class="font-mono text-sm text-[var(--accent)]">$${table.session ? parseFloat(table.session.totalAmount).toFixed(2) : '0.00'}</span>
+              <span class="font-mono text-sm text-[var(--accent)]">₹${table.session ? parseFloat(table.session.totalAmount).toFixed(2) : '0.00'}</span>
             </div>
           </div>
         </div>
@@ -233,14 +233,14 @@
       row.innerHTML = `
         <div>
           <p class="font-bold text-[var(--text-primary)]"><span class="text-[var(--accent)] font-extrabold mr-1">${item.quantity}x</span> ${item.menuItemName}</p>
-          <p class="text-[10px] text-[var(--text-muted)]">$${parseFloat(item.price).toFixed(2)} each</p>
+          <p class="text-[10px] text-[var(--text-muted)]">₹${parseFloat(item.price).toFixed(2)} each</p>
         </div>
-        <span class="font-mono font-bold text-[var(--text-primary)]">$${(item.price * item.quantity).toFixed(2)}</span>
+        <span class="font-mono font-bold text-[var(--text-primary)]">₹${(item.price * item.quantity).toFixed(2)}</span>
       `;
       itemsContainer.appendChild(row);
     });
 
-    document.getElementById('receipt-grand-total').textContent = `$${parseFloat(table.session.totalAmount).toFixed(2)}`;
+    document.getElementById('receipt-grand-total').textContent = `₹${parseFloat(table.session.totalAmount).toFixed(2)}`;
     document.getElementById('receipt-modal').classList.remove('hidden');
     lucide.createIcons();
   }
@@ -285,7 +285,7 @@
     const itemsHtml = t.session.items.map(i => `
       <tr>
         <td style="padding: 4px 0;">${i.quantity}x ${i.menuItemName}</td>
-        <td style="text-align: right; padding: 4px 0;">$${(i.price * i.quantity).toFixed(2)}</td>
+        <td style="text-align: right; padding: 4px 0;">₹${(i.price * i.quantity).toFixed(2)}</td>
       </tr>
     `).join('');
 
@@ -313,7 +313,7 @@
         <hr/>
         <div style="display: flex; justify-content: space-between;" class="bold">
           <span>TOTAL:</span>
-          <span>$${parseFloat(t.session.totalAmount).toFixed(2)}</span>
+          <span>₹${parseFloat(t.session.totalAmount).toFixed(2)}</span>
         </div>
         <hr/>
         <div class="center">Thank you for dining with us!</div>

@@ -58,6 +58,11 @@ class WebController extends Controller
         return view('dashboard.reports');
     }
 
+    public function staff()
+    {
+        return view('dashboard.staff');
+    }
+
     public function settings()
     {
         return view('dashboard.settings');
@@ -71,6 +76,11 @@ class WebController extends Controller
     public function superadminRestaurants()
     {
         return view('superadmin.restaurants');
+    }
+
+    public function superadminSettings()
+    {
+        return view('superadmin.settings');
     }
 
     // Hotel PMS Views

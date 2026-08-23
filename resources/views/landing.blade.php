@@ -202,7 +202,7 @@
           <div>
             <span class="px-2.5 py-1 rounded-md bg-[var(--accent-glow)] text-[var(--accent)] font-bold text-xs uppercase">Free</span>
             <div class="mt-4 mb-2 flex items-baseline gap-1">
-              <span class="font-serif text-4xl font-bold text-[var(--text-primary)]">$0</span>
+              <span class="font-serif text-4xl font-bold text-[var(--text-primary)]">₹0</span>
               <span class="text-xs text-[var(--text-muted)]">/month</span>
             </div>
             <p class="text-xs text-[var(--text-secondary)] mb-6">Perfect for small bistros & starter cafes.</p>
@@ -221,7 +221,7 @@
           <div>
             <span class="px-2.5 py-1 rounded-md bg-[var(--accent-glow)] text-[var(--accent)] font-bold text-xs uppercase">Pro</span>
             <div class="mt-4 mb-2 flex items-baseline gap-1">
-              <span class="font-serif text-4xl font-bold text-[var(--text-primary)]">$49.99</span>
+              <span class="font-serif text-4xl font-bold text-[var(--text-primary)]">₹499</span>
               <span class="text-xs text-[var(--text-muted)]">/month</span>
             </div>
             <p class="text-xs text-[var(--text-secondary)] mb-6">Ideal for busy high-volume restaurants.</p>
@@ -240,7 +240,7 @@
           <div>
             <span class="px-2.5 py-1 rounded-md bg-[var(--accent-glow)] text-[var(--accent)] font-bold text-xs uppercase">Premium</span>
             <div class="mt-4 mb-2 flex items-baseline gap-1">
-              <span class="font-serif text-4xl font-bold text-[var(--text-primary)]">$99.99</span>
+              <span class="font-serif text-4xl font-bold text-[var(--text-primary)]">₹999</span>
               <span class="text-xs text-[var(--text-muted)]">/month</span>
             </div>
             <p class="text-xs text-[var(--text-secondary)] mb-6">Multi-floor venues & restaurant chains.</p>
