@@ -1,34 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vyora — Unified Hospitality Operating System (Hotel PMS, Dining POS & Cross-Partner Network)
 
-## Getting Started
+<p align="center">
+  <img src="public/images/logo.png" width="160" alt="Vyora Logo" style="border-radius: 20px;">
+</p>
 
-First, run the development server:
+<p align="center">
+  <strong>The modern, unified operating platform for Hotel Property Management (PMS), In-Room QR Services, Restaurant POS, Kitchen KDS, and Cross-Business Dining Networks.</strong>
+</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🌟 Core Modules
+
+1. **🏨 Hotel Property Management (PMS)**
+   * Live Color-Coded Room Grid (Clean 🟢, Turnover Dirty 🟠, Occupied 🔵, Maintenance 🔴).
+   * 1-Tap Guest Check-In & Check-Out with ID capture.
+   * Unified Guest Folio Invoicing (Room Tariff + In-House Food - Advance Deposit).
+   * Housekeeping & Concierge live dispatch queue.
+
+2. **📱 In-Room QR Guest Portal (`/room/{hotelId}/{roomNumber}`)**
+   * Cryptographic HMAC-SHA256 authenticated guest sessions.
+   * Tab 1: In-Room Dining Menu (with dietary instructions and live tracking).
+   * Tab 2: Housekeeping & Amenities (Clean Room, Towels, Mineral Water, Toiletries).
+   * Tab 3: Concierge & Front Desk (Wake-up Calls, Luggage Assistance, Taxi booking).
+
+3. **🍽️ Restaurant POS & Table QR (`/order/{ownerId}/{tableNumber}`)**
+   * Real-time Customer Mobile Menu.
+   * Orders Kanban Board & Kitchen Display System (KDS).
+   * Table Bill Settlement with thermal receipts.
+
+4. **🤝 Cross-Business Partner Network (`/dashboard/hotel/partner`)**
+   * Hotels can link nearby partner restaurants to fulfill room service food orders.
+   * Restaurant kitchens receive tickets with full origin details: `🏨 [Hotel Name] • Room #[Number]`.
+
+---
+
+## 🚀 MilesWeb / cPanel Deployment Instructions
+
+### 1. Database Configuration
+In your MilesWeb cPanel / mPanel:
+* **Database Name**: `arrwalle1_vyora`
+* **Database User**: `arrwalle1_vyora`
+* **Database Host**: `localhost` (or `127.0.0.1`)
+
+Import the clean pre-seeded schema dump into phpMyAdmin:
+* Upload and execute [`database/schema_mysql.sql`](database/schema_mysql.sql).
+
+### 2. Configure `.env` on Server
+Create or update your `.env` file in the root folder:
+
+```env
+APP_NAME=Vyora
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://your-domain.com
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=arrwalle1_vyora
+DB_USERNAME=arrwalle1_vyora
+DB_PASSWORD=YOUR_DB_PASSWORD
+
+JWT_SECRET=your_super_secret_jwt_random_key_here
+
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_APP_CLUSTER=mt1
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Permissions & Optimization
+```bash
+# Set folder permissions
+chmod -R 775 storage bootstrap/cache
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+# Generate application key & optimize
+php artisan key:generate
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🧪 Default Demo Accounts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Model | Username | Password | Role |
+|---|---|---|---|
+| 🏨 **Hotel PMS** | `grandhorizon` | `demo123` | Grand Horizon Hotel & Suites |
+| 🍽️ **Restaurant POS** | `spicehub` | `demo123` | SpiceHub Dining |
+| 🛡️ **Super Admin** | `superadmin` | `admin123` | Vyora Platform Admin |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 License
+Vyora is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

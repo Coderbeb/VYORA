@@ -4,12 +4,12 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-# QRestro Agent Guidelines
+# Vyora Agent Guidelines
 
 You must follow these rules without exception:
 
 ## Product Name
-- The official product name is **QRestro**. Always ensure user-facing strings, logs, page titles, and comments refer to the system as **QRestro** (never *QRBite*).
+- The official product name is **Vyora**. Always ensure user-facing strings, logs, page titles, and comments refer to the system as **Vyora** (never *QRestro* or *QRBite*).
 
 ## Code Style & Architecture
 - Use TypeScript with explicit types (avoid `any` where possible).
