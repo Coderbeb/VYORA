@@ -1,6 +1,6 @@
-# QRestro Design System & Apple UI Specifications
+# Vyora Design System & Apple UI Specifications
 
-This document outlines the concrete design specifications, tokens, and component guidelines for **QRestro**, adhering strictly to Apple's Human Interface Guidelines (HIG) and web-responsive design patterns.
+This document outlines the concrete design specifications, tokens, and component guidelines for **Vyora**, adhering strictly to Apple's Human Interface Guidelines (HIG) and web-responsive design patterns.
 
 ---
 

@@ -1,30 +1,75 @@
-*.log
-.DS_Store
+# ─────────────────────────────────────────────────────────────
+# Vyora — Git Ignore Rules
+# ─────────────────────────────────────────────────────────────
+
+# Environment & Secret Files
 .env
 .env.backup
 .env.production
+.env.local
+.env.*.local
 .phpactor.json
-.phpunit.result.cache
-/.codex
-/.cursor/
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
-/node_modules
-/public/build
-/public/fonts-manifest.dev.json
-/public/hot
-/public/storage
+auth.json
+
+# Laravel Storage & Framework Runtime Caches
 /storage/*.key
 /storage/pail
-/vendor
-_ide_helper.php
-/.next
-*.tsbuildinfo
+/storage/framework/cache/data/*
+!storage/framework/cache/data/.gitignore
+/storage/framework/sessions/*
+!storage/framework/sessions/.gitignore
+/storage/framework/testing/*
+!storage/framework/testing/.gitignore
+/storage/framework/views/*
+!storage/framework/views/.gitignore
+/storage/logs/*
+!storage/logs/.gitignore
+/bootstrap/cache/*.php
+!bootstrap/cache/.gitignore
+
+# SQLite Databases & Journals
 /database/*.sqlite
 /database/*.sqlite-journal
 /database/*.sqlite-wal
 /database/*.sqlite-shm
+
+# Composer & PHP Dependencies
+/vendor
+composer.phar
+_ide_helper.php
+_ide_helper_models.php
+.phpunit.result.cache
+/.phpunit.cache
+
+# Node, Vite & Frontend Assets
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/public/fonts-manifest.dev.json
+/.next
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Logs & Temporary Test Outputs
+*.log
+error_output.html
+*.tmp
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDEs & Editor Metadata
+/.vscode
+/.idea
+/.cursor
+/.codex
+/.nova
+/.zed

@@ -11,7 +11,7 @@ class SecurityService
 {
     private static function getSecret(): string
     {
-        return config('app.jwt_secret') ?: (config('app.key') ?: 'qrestro-secret-fallback-key-32chars');
+        return config('app.jwt_secret') ?: (config('app.key') ?: 'vyora-secret-fallback-key-32chars');
     }
 
     public static function getTableSignature(string $ownerId, int $tableNumber): string
