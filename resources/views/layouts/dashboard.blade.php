@@ -124,21 +124,15 @@
           <i data-lucide="menu" class="w-5 h-5"></i>
         </button>
         <div>
-          <h1 class="font-serif font-bold text-xl md:text-2xl text-[var(--text-primary)] tracking-tight">
+          <h1 class="font-sans font-black text-xl md:text-2xl text-slate-900 tracking-tight">
             @yield('page_title', 'Dashboard')
           </h1>
-          <span id="business-type-badge" class="hidden sm:inline-block text-[10px] font-bold text-[var(--accent)] uppercase tracking-wider">RESTAURANT</span>
+          <span id="business-type-badge" class="hidden sm:inline-block text-[10px] font-extrabold text-[var(--accent)] uppercase tracking-wider">RESTAURANT</span>
         </div>
       </div>
 
       <!-- Topbar Actions -->
       <div class="flex items-center gap-3">
-        <!-- Theme Toggle -->
-        <button onclick="toggleTheme()" class="p-2 rounded-[var(--radius-sm)] border border-[var(--border)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] transition" title="Toggle Theme">
-          <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
-          <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
-        </button>
-
         <!-- Sound Alert Indicator -->
         <button onclick="window.playNotificationSound()" class="p-2 rounded-[var(--radius-sm)] border border-[var(--border)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] transition" title="Test Notification Chime">
           <i data-lucide="volume-2" class="w-4 h-4"></i>

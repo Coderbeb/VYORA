@@ -141,7 +141,7 @@
       `).join('');
 
       const notes = order.notes ? `
-        <div class="p-2.5 rounded-[var(--radius-sm)] bg-amber-500/10 border border-amber-500/20 text-xs text-amber-800 dark:text-amber-200">
+        <div class="p-2.5 rounded-[var(--radius-sm)] bg-amber-500/10 border border-amber-500/20 text-xs text-amber-900 font-semibold">
           <strong>Special Request:</strong> ${order.notes}
         </div>
       ` : '';
@@ -154,7 +154,7 @@
         : `<span class="font-serif font-bold text-base text-[var(--text-primary)]">Table #${order.tableNumber}</span>`;
 
       const statusBadge = isPending
-        ? `<span class="px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-600 dark:text-orange-400 font-bold text-[10px] uppercase tracking-wider animate-pulse flex items-center gap-1">
+        ? `<span class="px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-600 font-bold text-[10px] uppercase tracking-wider animate-pulse flex items-center gap-1">
              <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> New Order
            </span>`
         : '';

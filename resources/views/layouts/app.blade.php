@@ -19,16 +19,20 @@
 
   <!-- Tailwind CSS CDN + Vyora Custom Global CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class', // Strictly class-based; never auto-evaluates @media prefers-color-scheme
+    };
+  </script>
   <link rel="stylesheet" href="/css/globals.css">
 
   <script>
-    // Theme Initializer
+    // Theme Initializer (Vyora default is light mode; clean slate prevents stale dark mode bleed)
     (function() {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      } else {
-        document.documentElement.removeAttribute('data-theme');
+      document.documentElement.removeAttribute('data-theme');
+      document.documentElement.classList.remove('dark');
+      if (localStorage.getItem('theme') === 'dark') {
+        localStorage.removeItem('theme');
       }
 
       // Business Type Initializer (Eliminates sidebar flash on navigation)

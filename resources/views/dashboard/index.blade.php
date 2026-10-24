@@ -176,7 +176,7 @@
           else statusBadge = '<span class="px-2 py-0.5 rounded-full bg-red-500/10 text-red-600 font-bold">Cancelled</span>';
 
           const locText = order.orderType === 'room_service'
-            ? `<span class="inline-flex items-center gap-1 text-purple-600 dark:text-purple-400 font-bold"><i data-lucide="hotel" class="w-3.5 h-3.5"></i> <span>${order.hotelName || 'Hotel'} • Room #${order.roomNumber}</span></span>`
+            ? `<span class="inline-flex items-center gap-1 text-purple-700 font-bold"><i data-lucide="hotel" class="w-3.5 h-3.5"></i> <span>${order.hotelName || 'Hotel'} • Room #${order.roomNumber}</span></span>`
             : `Table #${order.tableNumber}`;
 
           const tr = document.createElement('tr');

@@ -22,7 +22,7 @@
     <div class="flex items-center gap-3">
       <span class="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-        <span class="font-semibold text-emerald-600 dark:text-emerald-400">Live</span>
+        <span class="font-semibold text-emerald-600">Live</span>
       </span>
       <button onclick="loadServices()" class="p-2 rounded-[var(--radius-sm)] border border-[var(--border)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] transition" title="Refresh">
         <i data-lucide="refresh-cw" id="serv-ref-icon" class="w-4 h-4"></i>

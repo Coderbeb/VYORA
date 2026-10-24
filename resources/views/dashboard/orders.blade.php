@@ -47,49 +47,49 @@
     <div class="p-4 rounded-[var(--radius-xl)] bg-[var(--bg-surface)] border-2 border-orange-500/30 shadow-xs flex flex-col justify-between relative overflow-hidden transition hover:shadow-md">
       <div class="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-orange-500/10 pointer-events-none"></div>
       <div class="flex items-center justify-between pb-2 border-b border-[var(--border)]">
-        <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400 flex items-center gap-1.5">
+        <span class="text-xs font-bold uppercase tracking-wider text-orange-600 flex items-center gap-1.5">
           <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
           <span>Pending Attention</span>
         </span>
         <i data-lucide="bell-ring" class="w-4 h-4 text-orange-500"></i>
       </div>
       <div class="pt-2 flex items-baseline justify-between">
-        <h3 id="stat-pending-count" class="font-sans font-black text-2xl sm:text-3xl text-slate-900 dark:text-slate-50">0</h3>
-        <span id="stat-pending-sum" class="font-mono text-xs font-bold text-orange-600 dark:text-orange-400">₹0.00</span>
+        <h3 id="stat-pending-count" class="font-sans font-black text-2xl sm:text-3xl text-slate-900">0</h3>
+        <span id="stat-pending-sum" class="font-mono text-xs font-bold text-orange-600">₹0.00</span>
       </div>
-      <p class="text-xs text-slate-600 dark:text-slate-300 font-medium mt-1">Awaiting kitchen acceptance</p>
+      <p class="text-xs text-slate-600 font-medium mt-1">Awaiting kitchen acceptance</p>
     </div>
 
     <!-- Metric 2: Cooking (In the Fire) -->
     <div class="p-4 rounded-[var(--radius-xl)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-xs flex flex-col justify-between relative overflow-hidden transition hover:shadow-md">
       <div class="flex items-center justify-between pb-2 border-b border-[var(--border)]">
-        <span class="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+        <span class="text-xs font-bold uppercase tracking-wider text-amber-600 flex items-center gap-1.5">
           <i data-lucide="flame" class="w-3.5 h-3.5 text-amber-500"></i>
           <span>In the Fire</span>
         </span>
-        <span class="text-xs font-bold text-amber-700 dark:text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded">Cooking</span>
+        <span class="text-xs font-bold text-amber-700 bg-amber-500/10 px-2 py-0.5 rounded">Cooking</span>
       </div>
       <div class="pt-2 flex items-baseline justify-between">
-        <h3 id="stat-cooking-count" class="font-sans font-black text-2xl sm:text-3xl text-slate-900 dark:text-slate-50">0</h3>
-        <span id="stat-cooking-sum" class="font-mono text-xs font-bold text-amber-600 dark:text-amber-400">₹0.00</span>
+        <h3 id="stat-cooking-count" class="font-sans font-black text-2xl sm:text-3xl text-slate-900">0</h3>
+        <span id="stat-cooking-sum" class="font-mono text-xs font-bold text-amber-600">₹0.00</span>
       </div>
-      <p class="text-xs text-slate-600 dark:text-slate-300 font-medium mt-1">Active chef preparation</p>
+      <p class="text-xs text-slate-600 font-medium mt-1">Active chef preparation</p>
     </div>
 
     <!-- Metric 3: Ready (Plated for Pass) -->
     <div class="p-4 rounded-[var(--radius-xl)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-xs flex flex-col justify-between relative overflow-hidden transition hover:shadow-md">
       <div class="flex items-center justify-between pb-2 border-b border-[var(--border)]">
-        <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+        <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 flex items-center gap-1.5">
           <i data-lucide="utensils" class="w-3.5 h-3.5 text-emerald-500"></i>
           <span>Ready to Serve</span>
         </span>
-        <span class="text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded">Pass Ready</span>
+        <span class="text-xs font-bold text-emerald-700 bg-emerald-500/10 px-2 py-0.5 rounded">Pass Ready</span>
       </div>
       <div class="pt-2 flex items-baseline justify-between">
-        <h3 id="stat-ready-count" class="font-sans font-black text-2xl sm:text-3xl text-slate-900 dark:text-slate-50">0</h3>
-        <span id="stat-ready-sum" class="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400">₹0.00</span>
+        <h3 id="stat-ready-count" class="font-sans font-black text-2xl sm:text-3xl text-slate-900">0</h3>
+        <span id="stat-ready-sum" class="font-mono text-xs font-bold text-emerald-600">₹0.00</span>
       </div>
-      <p class="text-xs text-slate-600 dark:text-slate-300 font-medium mt-1">Waiting table / room delivery</p>
+      <p class="text-xs text-slate-600 font-medium mt-1">Waiting table / room delivery</p>
     </div>
 
     <!-- Metric 4: Fulfilled Today -->
@@ -99,13 +99,13 @@
           <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-[var(--accent)]"></i>
           <span>Fulfilled Today</span>
         </span>
-        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-zinc-800 px-2 py-0.5 rounded">Settled</span>
+        <span class="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">Settled</span>
       </div>
       <div class="pt-2 flex items-baseline justify-between">
-        <h3 id="stat-completed-count" class="font-sans font-black text-2xl sm:text-3xl text-slate-900 dark:text-slate-50">0</h3>
+        <h3 id="stat-completed-count" class="font-sans font-black text-2xl sm:text-3xl text-slate-900">0</h3>
         <span id="stat-completed-sum" class="font-mono text-xs font-bold text-[var(--accent)]">₹0.00</span>
       </div>
-      <p class="text-xs text-slate-600 dark:text-slate-300 font-medium mt-1">Completed orders</p>
+      <p class="text-xs text-slate-600 font-medium mt-1">Completed orders</p>
     </div>
   </div>
 
@@ -133,7 +133,7 @@
         <i data-lucide="hotel" class="w-3 h-3 text-purple-500"></i>
         <span>Room Service</span>
       </button>
-      <button onclick="setOriginFilter('urgent')" id="filter-origin-urgent" class="px-3 py-1.5 rounded-full text-xs font-semibold border border-[var(--border)] text-red-600 dark:text-red-400 hover:bg-red-500/10 transition flex items-center gap-1 shrink-0">
+      <button onclick="setOriginFilter('urgent')" id="filter-origin-urgent" class="px-3 py-1.5 rounded-full text-xs font-semibold border border-[var(--border)] text-red-600 hover:bg-red-500/10 transition flex items-center gap-1 shrink-0">
         <i data-lucide="clock" class="w-3 h-3 text-red-500"></i>
         <span>Urgent (>10m)</span>
       </button>
@@ -153,7 +153,7 @@
       </button>
 
       <!-- Live Broadcast Badge -->
-      <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[11px] border border-emerald-500/20 shadow-xs">
+      <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 font-bold text-[11px] border border-emerald-500/20 shadow-xs">
         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-live-beacon"></span>
         <span>Auto-Sync 5s</span>
       </div>
@@ -178,10 +178,10 @@
       <div class="sticky top-0 z-20 px-4 py-3 bg-[var(--bg-surface)]/95 backdrop-blur-md border-b border-orange-500/20 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-orange-500 animate-ping"></span>
-          <h3 class="font-bold text-xs uppercase tracking-wider text-orange-600 dark:text-orange-400">1. Pending</h3>
+          <h3 class="font-bold text-xs uppercase tracking-wider text-orange-600">1. Pending</h3>
         </div>
         <div class="flex items-center gap-1.5">
-          <span id="count-pending" class="px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-600 dark:text-orange-400 font-bold font-mono text-xs">0</span>
+          <span id="count-pending" class="px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-600 font-bold font-mono text-xs">0</span>
           <span id="sum-pending" class="text-[10px] font-mono text-[var(--text-muted)] hidden xl:inline">₹0</span>
         </div>
       </div>
@@ -201,10 +201,10 @@
       <div class="sticky top-0 z-20 px-4 py-3 bg-[var(--bg-surface)]/95 backdrop-blur-md border-b border-[var(--border)] flex items-center justify-between">
         <div class="flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-          <h3 class="font-bold text-xs uppercase tracking-wider text-amber-600 dark:text-amber-400">2. Preparing</h3>
+          <h3 class="font-bold text-xs uppercase tracking-wider text-amber-600">2. Preparing</h3>
         </div>
         <div class="flex items-center gap-1.5">
-          <span id="count-preparing" class="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 font-bold font-mono text-xs">0</span>
+          <span id="count-preparing" class="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 font-bold font-mono text-xs">0</span>
           <span id="sum-preparing" class="text-[10px] font-mono text-[var(--text-muted)] hidden xl:inline">₹0</span>
         </div>
       </div>
@@ -224,10 +224,10 @@
       <div class="sticky top-0 z-20 px-4 py-3 bg-[var(--bg-surface)]/95 backdrop-blur-md border-b border-[var(--border)] flex items-center justify-between">
         <div class="flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-          <h3 class="font-bold text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400">3. Ready</h3>
+          <h3 class="font-bold text-xs uppercase tracking-wider text-emerald-600">3. Ready</h3>
         </div>
         <div class="flex items-center gap-1.5">
-          <span id="count-ready" class="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold font-mono text-xs">0</span>
+          <span id="count-ready" class="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 font-bold font-mono text-xs">0</span>
           <span id="sum-ready" class="text-[10px] font-mono text-[var(--text-muted)] hidden xl:inline">₹0</span>
         </div>
       </div>
@@ -247,10 +247,10 @@
       <div class="sticky top-0 z-20 px-4 py-3 bg-[var(--bg-surface)]/95 backdrop-blur-md border-b border-[var(--border)] flex items-center justify-between">
         <div class="flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
-          <h3 class="font-bold text-xs uppercase tracking-wider text-slate-600 dark:text-slate-400">4. Served</h3>
+          <h3 class="font-bold text-xs uppercase tracking-wider text-slate-600">4. Served</h3>
         </div>
         <div class="flex items-center gap-1.5">
-          <span id="count-completed" class="px-2 py-0.5 rounded-full bg-slate-500/15 text-slate-600 dark:text-slate-400 font-bold font-mono text-xs">0</span>
+          <span id="count-completed" class="px-2 py-0.5 rounded-full bg-slate-500/15 text-slate-600 font-bold font-mono text-xs">0</span>
           <span id="sum-completed" class="text-[10px] font-mono text-[var(--text-muted)] hidden xl:inline">₹0</span>
         </div>
       </div>
@@ -422,7 +422,7 @@
       if (f === filter) {
         btn.className = 'px-3 py-1.5 rounded-full text-xs font-bold transition bg-[var(--accent)] text-white shadow-xs shrink-0 flex items-center gap-1';
       } else {
-        const textCol = f === 'urgent' ? 'text-red-600 dark:text-red-400' : 'text-[var(--text-secondary)]';
+        const textCol = f === 'urgent' ? 'text-red-600' : 'text-[var(--text-secondary)]';
         btn.className = `px-3 py-1.5 rounded-full text-xs font-semibold border border-[var(--border)] ${textCol} hover:bg-[var(--bg-hover)] transition flex items-center gap-1 shrink-0`;
       }
     });
@@ -579,34 +579,34 @@
       cardBorder = 'border-emerald-500/30 hover:border-emerald-500';
     }
 
-    card.className = `p-4 rounded-[var(--radius-xl)] bg-[var(--bg-surface)] dark:bg-[#121c18] border-2 ${cardBorder} shadow-xs hover:shadow-md transition-all duration-200 space-y-3 relative overflow-hidden animate-in fade-in duration-200`;
+    card.className = `p-4 rounded-[var(--radius-xl)] bg-[var(--bg-surface)] border-2 ${cardBorder} shadow-xs hover:shadow-md transition-all duration-200 space-y-3 relative overflow-hidden animate-in fade-in duration-200`;
 
     // Time Urgency Pill
-    let timePillClass = 'bg-gray-500/10 text-[var(--text-muted)]';
+    let timePillClass = 'bg-gray-500/10 text-slate-700';
     let timeIcon = '<i data-lucide="clock" class="w-3 h-3"></i>';
     if (timeInfo.minutes >= 15) {
-      timePillClass = 'bg-red-500/15 text-red-600 dark:text-red-400 font-extrabold animate-pulse';
+      timePillClass = 'bg-red-500/15 text-red-600 font-extrabold animate-pulse';
       timeIcon = '<i data-lucide="alert-circle" class="w-3 h-3 text-red-600"></i>';
     } else if (timeInfo.minutes >= 8) {
-      timePillClass = 'bg-amber-500/15 text-amber-600 dark:text-amber-400 font-bold';
-      timeIcon = '<i data-lucide="clock" class="w-3 h-3 text-amber-500"></i>';
+      timePillClass = 'bg-amber-500/15 text-amber-700 font-bold';
+      timeIcon = '<i data-lucide="clock" class="w-3 h-3 text-amber-600"></i>';
     } else {
-      timePillClass = 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-semibold';
+      timePillClass = 'bg-emerald-500/10 text-emerald-800 font-semibold';
       timeIcon = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>';
     }
 
     // Location Header
     const locationBadge = isRoomService
       ? `<div class="flex items-center gap-2.5">
-           <span class="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-700 dark:text-purple-300 font-bold text-sm flex items-center justify-center shrink-0">
+           <span class="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-700 font-bold text-sm flex items-center justify-center shrink-0">
              <i data-lucide="hotel" class="w-4 h-4"></i>
            </span>
            <div class="min-w-0">
              <div class="flex items-center gap-1.5">
-               <h4 class="font-extrabold text-sm sm:text-base text-slate-900 dark:text-slate-50">Room #${order.roomNumber}</h4>
-               <span class="text-[11px] px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-700 dark:text-purple-300 font-bold uppercase tracking-wide">Folio</span>
+               <h4 class="font-extrabold text-sm sm:text-base text-slate-900">Room #${order.roomNumber}</h4>
+               <span class="text-[11px] px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-700 font-bold uppercase tracking-wide">Folio</span>
              </div>
-             <p class="text-xs text-purple-700 dark:text-purple-300 font-semibold truncate max-w-[140px]">${order.hotelName || 'Partner Hotel'}</p>
+             <p class="text-xs text-purple-700 font-semibold truncate max-w-[140px]">${order.hotelName || 'Partner Hotel'}</p>
            </div>
          </div>`
       : `<div class="flex items-center gap-2.5">
@@ -615,10 +615,10 @@
            </span>
            <div class="min-w-0">
              <div class="flex items-center gap-1.5">
-               <h4 class="font-extrabold text-sm sm:text-base text-slate-900 dark:text-slate-50">Table #${order.tableNumber}</h4>
-               <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 font-bold uppercase tracking-wide">Dine-in</span>
+               <h4 class="font-extrabold text-sm sm:text-base text-slate-900">Table #${order.tableNumber}</h4>
+               <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 font-bold uppercase tracking-wide">Dine-in</span>
              </div>
-             <p class="text-xs text-slate-600 dark:text-slate-300 font-medium">Dining Floor</p>
+             <p class="text-xs text-slate-600 font-medium">Dining Floor</p>
            </div>
          </div>`;
 
@@ -630,23 +630,23 @@
       return `
         <div class="flex items-center justify-between py-1.5 border-b border-[var(--border)] last:border-0 text-xs sm:text-sm gap-2">
           <div class="flex items-center gap-2 min-w-0">
-            <span class="w-5 h-5 rounded-md bg-[var(--bg-base)] border border-slate-300 dark:border-zinc-700 font-mono font-bold text-xs text-slate-900 dark:text-slate-100 flex items-center justify-center shrink-0">
+            <span class="w-5 h-5 rounded-md bg-[var(--bg-base)] border border-slate-300 font-mono font-bold text-xs text-slate-900 flex items-center justify-center shrink-0">
               ${i.quantity}x
             </span>
             ${dietDot}
-            <span class="font-bold text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm">${i.menuItemName}</span>
+            <span class="font-bold text-slate-900 truncate text-xs sm:text-sm">${i.menuItemName}</span>
           </div>
-          <span class="font-mono font-bold text-slate-800 dark:text-slate-200 text-xs sm:text-sm shrink-0">₹${(i.price * i.quantity).toFixed(2)}</span>
+          <span class="font-mono font-bold text-slate-800 text-xs sm:text-sm shrink-0">₹${(i.price * i.quantity).toFixed(2)}</span>
         </div>
       `;
     }).join('');
 
-    // Chef Note Callout (Replaced the awkward beige box with a modern frosted callout)
+    // Chef Note Callout
     const notesHtml = order.notes ? `
-      <div class="p-3 rounded-[var(--radius-md)] bg-amber-500/15 border-l-4 border-amber-600 border border-amber-500/30 text-xs text-amber-950 dark:text-amber-100 flex items-start gap-2 shadow-xs">
-        <i data-lucide="message-square" class="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5"></i>
+      <div class="p-3 rounded-[var(--radius-md)] bg-amber-500/15 border-l-4 border-amber-600 border border-amber-500/30 text-xs text-amber-950 flex items-start gap-2 shadow-xs">
+        <i data-lucide="message-square" class="w-4 h-4 text-amber-700 shrink-0 mt-0.5"></i>
         <div class="min-w-0">
-          <span class="font-extrabold text-[11px] uppercase tracking-wider text-amber-800 dark:text-amber-300 block">Chef Instruction</span>
+          <span class="font-extrabold text-[11px] uppercase tracking-wider text-amber-800 block">Chef Instruction</span>
           <span class="text-xs font-bold leading-relaxed">${order.notes}</span>
         </div>
       </div>
@@ -677,7 +677,7 @@
       `;
     } else if (order.status === 'completed') {
       actionBtn = `
-        <div class="flex-1 py-1.5 px-2.5 rounded-[var(--radius-md)] bg-slate-500/10 text-slate-600 dark:text-slate-400 font-semibold text-xs flex items-center justify-center gap-1">
+        <div class="flex-1 py-1.5 px-2.5 rounded-[var(--radius-md)] bg-slate-500/10 text-slate-600 font-semibold text-xs flex items-center justify-center gap-1">
           <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
           <span>Fulfilled</span>
         </div>
@@ -715,10 +715,10 @@
 
       <!-- Financial Total Bar -->
       <div class="flex items-center justify-between pt-2.5 border-t border-[var(--border)] text-xs">
-        <span class="text-slate-600 dark:text-slate-300 text-xs font-bold">${itemCount} ${itemCount === 1 ? 'item' : 'items'} in ticket</span>
+        <span class="text-slate-600 text-xs font-bold">${itemCount} ${itemCount === 1 ? 'item' : 'items'} in ticket</span>
         <div class="flex items-baseline gap-1.5">
-          <span class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Total</span>
-          <span class="font-mono font-black text-base text-slate-900 dark:text-slate-50">₹${parseFloat(order.totalAmount).toFixed(2)}</span>
+          <span class="text-xs text-slate-600 font-bold uppercase tracking-wider">Total</span>
+          <span class="font-mono font-black text-base text-slate-900">₹${parseFloat(order.totalAmount).toFixed(2)}</span>
         </div>
       </div>
 

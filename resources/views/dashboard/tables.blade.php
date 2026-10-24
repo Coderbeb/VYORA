@@ -112,7 +112,7 @@
     grid.innerHTML = '';
     tables.forEach(table => {
       const card = document.createElement('div');
-      card.className = `p-5 rounded-[var(--radius-xl)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm flex flex-col justify-between space-y-4 transition hover:shadow-md ${!table.isActive ? 'opacity-60 bg-gray-50 dark:bg-zinc-900' : ''}`;
+      card.className = `p-5 rounded-[var(--radius-xl)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm flex flex-col justify-between space-y-4 transition hover:shadow-md ${!table.isActive ? 'opacity-60 bg-gray-100' : ''}`;
 
       card.innerHTML = `
         <div>
