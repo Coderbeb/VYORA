@@ -303,43 +303,78 @@
     const t = activeSelectedTable;
     const itemsHtml = t.session.items.map(i => `
       <tr>
-        <td style="padding: 4px 0;">${i.quantity}x ${i.menuItemName}</td>
-        <td style="text-align: right; padding: 4px 0;">₹${(i.price * i.quantity).toFixed(2)}</td>
+        <td style="padding: 4px 0; vertical-align: top;">${i.quantity}x ${i.menuItemName}</td>
+        <td style="text-align: right; padding: 4px 0; font-family: monospace; vertical-align: top;">₹${(i.price * i.quantity).toFixed(2)}</td>
       </tr>
     `).join('');
 
-    const receiptWin = window.open('', '_blank', 'width=350,height=500');
-    receiptWin.document.write(`
+    const printContent = `<!DOCTYPE html>
       <html>
       <head>
+        <meta charset="utf-8">
         <title>Receipt Table #${t.tableNumber}</title>
         <style>
-          body { font-family: monospace; padding: 20px; font-size: 12px; color: #000; }
+          @page { size: 80mm auto; margin: 4mm; }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+            padding: 10px;
+            font-size: 13px;
+            color: #000;
+            background: #fff;
+            width: 72mm;
+            margin: 0 auto;
+          }
           .center { text-align: center; }
           .bold { font-weight: bold; }
-          hr { border: none; border-top: 1px dashed #000; margin: 10px 0; }
-          table { width: 100%; border-collapse: collapse; }
+          hr { border: none; border-top: 1px dashed #444; margin: 8px 0; }
+          table { width: 100%; border-collapse: collapse; font-size: 12px; }
+          @media print {
+            body { width: 100%; margin: 0; padding: 0; }
+          }
         </style>
       </head>
-      <body onload="window.print();window.close();">
-        <div class="center bold" style="font-size: 16px;">VYORA RECEIPT</div>
-        <div class="center">Table #${t.tableNumber}</div>
-        <div class="center">${new Date().toLocaleString()}</div>
+      <body>
+        <div class="center bold" style="font-size: 16px; letter-spacing: 1px;">VYORA</div>
+        <div class="center" style="font-size: 11px; margin-top: 2px;">Table #${t.tableNumber} Dining Receipt</div>
+        <div class="center" style="font-size: 10px; color: #555; margin-top: 2px;">${new Date().toLocaleString()}</div>
         <hr/>
         <table>
-          ${itemsHtml}
+          <tbody>
+            ${itemsHtml}
+          </tbody>
         </table>
         <hr/>
-        <div style="display: flex; justify-content: space-between;" class="bold">
-          <span>TOTAL:</span>
-          <span>₹${parseFloat(t.session.totalAmount).toFixed(2)}</span>
+        <div style="display: flex; justify-content: space-between; font-size: 14px;" class="bold">
+          <span>TOTAL AMOUNT:</span>
+          <span style="font-family: monospace;">₹${parseFloat(t.session.totalAmount).toFixed(2)}</span>
         </div>
         <hr/>
-        <div class="center">Thank you for dining with us!</div>
+        <div class="center" style="font-size: 11px; margin-top: 6px;">Thank you for dining with us!</div>
       </body>
-      </html>
-    `);
-    receiptWin.document.close();
+      </html>`;
+
+    let printFrame = document.getElementById('receipt-print-frame');
+    if (printFrame) printFrame.remove();
+
+    printFrame = document.createElement('iframe');
+    printFrame.id = 'receipt-print-frame';
+    printFrame.style.position = 'fixed';
+    printFrame.style.right = '0';
+    printFrame.style.bottom = '0';
+    printFrame.style.width = '0';
+    printFrame.style.height = '0';
+    printFrame.style.border = '0';
+    document.body.appendChild(printFrame);
+
+    const doc = printFrame.contentWindow.document;
+    doc.open();
+    doc.write(printContent);
+    doc.close();
+
+    printFrame.contentWindow.focus();
+    setTimeout(() => {
+      printFrame.contentWindow.print();
+    }, 250);
   }
 </script>
 @endsection

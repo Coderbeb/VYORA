@@ -43,12 +43,8 @@ class PublicMenuController extends Controller
         $isValid = false;
         $isExpiredToken = false;
 
-        if ($code) {
-            $expectedSignature = SecurityService::getTableSignature($ownerId, $tableNumber);
-            if ($code === $expectedSignature) {
-                $isValid = true;
-            }
-        } elseif ($sessionToken) {
+        // 1. If a session token is present, check whether this client's previous dining session was settled
+        if ($sessionToken) {
             if (SecurityService::verifySessionToken($sessionToken, $table->updated_at)) {
                 $isValid = true;
             } else {
@@ -56,11 +52,19 @@ class PublicMenuController extends Controller
             }
         }
 
+        // 2. If no valid session token exists (e.g. freshly scanned QR code from camera), verify QR HMAC code
+        if (!$isValid && !$isExpiredToken && $code) {
+            $expectedSignature = SecurityService::getTableSignature($ownerId, $tableNumber);
+            if (hash_equals($expectedSignature, (string) $code)) {
+                $isValid = true;
+            }
+        }
+
         if (!$isValid) {
             if ($isExpiredToken) {
                 return response()->json([
                     'success' => false,
-                    'error' => ['code' => 'SESSION_EXPIRED', 'message' => 'Dining session has expired. Please scan the table QR code again to start a new session.']
+                    'error' => ['code' => 'SESSION_EXPIRED', 'message' => 'Dining session has expired. The table bill has been settled. Please scan the table QR code again to start a new session.']
                 ], 403);
             }
             return response()->json([

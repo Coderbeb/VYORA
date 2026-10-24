@@ -45,16 +45,30 @@ class PublicRoomPortalController extends Controller
         }
 
         // Validate cryptographic access
-        $validSig = SecurityService::getRoomSignature($hotelId, $roomNumber);
-        $hasValidSig = $code && hash_equals($validSig, (string) $code);
-        $hasValidSession = SecurityService::verifySessionToken($sessionToken, $room->updated_at);
+        $isValid = false;
+        $isExpiredSession = false;
 
-        if (!$hasValidSig && !$hasValidSession) {
+        if ($sessionToken) {
+            if (SecurityService::verifySessionToken($sessionToken, $room->updated_at)) {
+                $isValid = true;
+            } else {
+                $isExpiredSession = true;
+            }
+        }
+
+        if (!$isValid && !$isExpiredSession && $code) {
+            $validSig = SecurityService::getRoomSignature($hotelId, $roomNumber);
+            if (hash_equals($validSig, (string) $code)) {
+                $isValid = true;
+            }
+        }
+
+        if (!$isValid) {
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'code' => $sessionToken ? 'SESSION_EXPIRED' : 'INVALID_SIGNATURE',
-                    'message' => 'Invalid or expired room access. Please scan the QR code in your room.'
+                    'code' => $isExpiredSession ? 'SESSION_EXPIRED' : 'INVALID_SIGNATURE',
+                    'message' => $isExpiredSession ? 'Room stay has concluded. Please scan the QR code in your room to begin a new session.' : 'Invalid or expired room access. Please scan the QR code in your room.'
                 ]
             ], 403);
         }

@@ -370,6 +370,28 @@
       </div>
     </div>
   </div>
+
+  <!-- Dining Session Settled / Concluded Modal -->
+  <div id="session-settled-modal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 hidden backdrop-blur-md transition-opacity">
+    <div class="bg-white border-2 border-slate-200 rounded-3xl shadow-2xl w-full max-w-sm p-6 text-center space-y-4 animate-in zoom-in-95 duration-200">
+      <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto border-2 border-emerald-200 shadow-xs">
+        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div class="space-y-1.5">
+        <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-black text-[11px] uppercase tracking-wide">
+          Bill Settled
+        </span>
+        <h3 id="settled-modal-title" class="font-sans font-black text-xl text-slate-900">Dining Session Concluded</h3>
+        <p id="settled-modal-desc" class="text-xs text-slate-600 leading-relaxed font-medium">The bill for Table #{{ $tableNumber }} has been settled. Thank you for dining with us! Please scan the table QR code to start a new dining session.</p>
+      </div>
+      <div class="pt-2">
+        <button onclick="location.reload()" class="w-full py-3.5 rounded-xl bg-[#034d37] hover:bg-[#023d2b] text-white font-black text-sm shadow-md transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+          <span>Scan Table QR Code</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -479,16 +501,62 @@
 
         channel.bind('table:reset', function(data) {
           if (data && data.tableNumber === TABLE_NUMBER) {
-            sessionStorage.removeItem(SESSION_KEY);
-            activeLiveOrders = [];
-            document.getElementById('tracking-toggle-btn').classList.add('hidden');
-            document.getElementById('tracking-modal').classList.add('hidden');
-            window.showToast('Your table session has been settled. Thank you for dining with us!');
+            showSessionSettledScreen('Your table bill has been settled. Thank you for dining with us! Please scan the table QR code to start a new session.', true);
           }
         });
       } catch(err) {
         console.warn('Pusher initialization error:', err);
       }
+    }
+  }
+
+  function showSessionSettledScreen(message, isSettled = true) {
+    sessionStorage.removeItem(SESSION_KEY);
+    activeLiveOrders = [];
+    cart.clear();
+    
+    // Close all open interactive sheets
+    const cartModal = document.getElementById('cart-modal');
+    if (cartModal) cartModal.classList.add('hidden');
+    const detailModal = document.getElementById('dish-detail-modal');
+    if (detailModal) detailModal.classList.add('hidden');
+    const trackingModal = document.getElementById('tracking-modal');
+    if (trackingModal) trackingModal.classList.add('hidden');
+    const cartBar = document.getElementById('cust-cart-bar');
+    if (cartBar) cartBar.classList.add('hidden');
+    const trackingBtn = document.getElementById('tracking-toggle-btn');
+    if (trackingBtn) trackingBtn.classList.add('hidden');
+
+    // Show persistent session settled modal
+    const modal = document.getElementById('session-settled-modal');
+    if (modal) {
+      const titleEl = document.getElementById('settled-modal-title');
+      const descEl = document.getElementById('settled-modal-desc');
+      if (titleEl) titleEl.textContent = isSettled ? 'Dining Session Concluded' : 'Access Restricted';
+      if (descEl) descEl.textContent = message || 'The bill for Table #' + TABLE_NUMBER + ' has been settled. Thank you for dining with us! Please scan the table QR code to start a new dining session.';
+      modal.classList.remove('hidden');
+    }
+
+    // Replace dishes container with informative banner
+    const mainContainer = document.getElementById('cust-dishes-container');
+    if (mainContainer) {
+      mainContainer.innerHTML = `
+        <div class="col-span-full p-8 sm:p-12 text-center rounded-3xl bg-white border-2 border-emerald-500/20 shadow-lg space-y-4">
+          <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-200">
+            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="space-y-1">
+            <h3 class="font-sans font-black text-xl text-slate-900">${isSettled ? 'Dining Session Concluded' : 'QR Scan Required'}</h3>
+            <p class="text-xs sm:text-sm text-slate-600 max-w-sm mx-auto font-medium">${message || 'The bill for Table #' + TABLE_NUMBER + ' has been settled. Please scan the QR code on your table to start a new dining session.'}</p>
+          </div>
+          <div class="pt-2">
+            <button onclick="location.reload()" class="px-6 py-3 rounded-xl bg-[#034d37] hover:bg-[#023d2b] text-white font-black text-xs shadow-md transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2 mx-auto">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+              <span>Scan QR Code to Order Again</span>
+            </button>
+          </div>
+        </div>
+      `;
     }
   }
 
@@ -509,18 +577,22 @@
           sessionStorage.setItem(SESSION_KEY, data.data.sessionToken);
         }
 
+        // Clean the URL query params so they can't reload or bookmark the code param from browser history
+        if (code) {
+          window.history.replaceState({}, '', window.location.pathname);
+        }
+
         allMenuItems = data.data.items || [];
         allCategories = data.data.categories || [];
 
         renderCategoryTabs();
         renderDishes();
       } else {
-        document.getElementById('cust-dishes-container').innerHTML = `
-          <div class="col-span-full p-8 rounded-[var(--radius-xl)] bg-red-500/10 border border-red-500/20 text-center text-xs text-red-600">
-            <h4 class="font-bold text-sm mb-1">${data.error?.code === 'SESSION_EXPIRED' ? 'Session Expired' : 'Access Restricted'}</h4>
-            <p>${data.error?.message || 'Please scan the table QR code to view the live menu.'}</p>
-          </div>
-        `;
+        if (data.error?.code === 'SESSION_EXPIRED') {
+          showSessionSettledScreen(data.error?.message, true);
+        } else {
+          showSessionSettledScreen(data.error?.message || 'Access Denied: Please scan the table QR code to view the menu.', false);
+        }
       }
     } catch(err) {
       console.error('Menu load error:', err);
@@ -1022,6 +1094,10 @@
         await loadLiveOrders();
         toggleTrackingSheet();
       } else {
+        if (data.error?.code === 'SESSION_EXPIRED') {
+          showSessionSettledScreen('Cannot place order: This dining session has ended because the bill was settled. Please scan the QR code at your table to start a new session.', true);
+          return;
+        }
         alert(data.error?.message || 'Failed to place order.');
       }
     } catch (err) {
@@ -1071,6 +1147,10 @@
           }
         }, 1000);
       } else {
+        if (data.error?.code === 'SESSION_EXPIRED') {
+          showSessionSettledScreen('Table session has been settled. Please scan the QR code on your table to start a new session.', true);
+          return;
+        }
         alert(data.error?.message || 'Request failed');
         btn.disabled = false;
       }
@@ -1087,6 +1167,10 @@
     try {
       const res = await fetch(`/api/public/orders?ownerId=${OWNER_ID}&tableNumber=${TABLE_NUMBER}&sessionToken=${sessionToken}`);
       const data = await res.json();
+      if (!data.success && data.error?.code === 'SESSION_EXPIRED') {
+        showSessionSettledScreen('Dining session has concluded. The table bill has been settled. Please scan the QR code at your table to start a new session.', true);
+        return;
+      }
       if (data.success && Array.isArray(data.data)) {
         activeLiveOrders = data.data.filter(o => o.status !== 'cancelled');
         const trackingBtn = document.getElementById('tracking-toggle-btn');

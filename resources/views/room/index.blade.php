@@ -392,6 +392,28 @@
       </div>
     </div>
   </div>
+
+  <!-- Room Stay Concluded / Settled Modal -->
+  <div id="room-session-settled-modal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 hidden backdrop-blur-md transition-opacity">
+    <div class="bg-white border-2 border-slate-200 rounded-3xl shadow-2xl w-full max-w-sm p-6 text-center space-y-4 animate-in zoom-in-95 duration-200">
+      <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto border-2 border-emerald-200 shadow-xs">
+        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div class="space-y-1.5">
+        <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-black text-[11px] uppercase tracking-wide">
+          Stay Concluded
+        </span>
+        <h3 id="room-settled-modal-title" class="font-sans font-black text-xl text-slate-900">Room Stay Concluded</h3>
+        <p id="room-settled-modal-desc" class="text-xs text-slate-600 leading-relaxed font-medium">Your stay for Room #{{ $roomNumber }} has ended. Thank you for staying with us! Please scan the QR code in your room to start a new guest session.</p>
+      </div>
+      <div class="pt-2">
+        <button onclick="location.reload()" class="w-full py-3.5 rounded-xl bg-[#034d37] hover:bg-[#023d2b] text-white font-black text-sm shadow-md transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+          <span>Scan Room QR Code</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -536,11 +558,55 @@
 
       channel.bind('table:reset', function(data) {
         if (data.roomNumber === ROOM_NUMBER) {
-          sessionStorage.removeItem(SESSION_KEY);
-          window.showToast('Your room stay has concluded. Thank you!');
-          location.reload();
+          showRoomSessionSettledScreen('Your room stay has concluded. Thank you for staying with us! Please scan the room QR code if you are beginning a new stay.');
         }
       });
+    }
+  }
+
+  function showRoomSessionSettledScreen(message) {
+    sessionStorage.removeItem(SESSION_KEY);
+    activeLiveOrders = [];
+    activeLiveServices = [];
+    cart.clear();
+
+    const cartModal = document.getElementById('room-cart-modal');
+    if (cartModal) cartModal.classList.add('hidden');
+    const detailModal = document.getElementById('dish-detail-modal');
+    if (detailModal) detailModal.classList.add('hidden');
+    const trackingModal = document.getElementById('tracking-modal');
+    if (trackingModal) trackingModal.classList.add('hidden');
+    const cartBar = document.getElementById('room-cart-bar');
+    if (cartBar) cartBar.classList.add('hidden');
+    const trackingBtn = document.getElementById('room-tracking-btn');
+    if (trackingBtn) trackingBtn.classList.add('hidden');
+
+    const modal = document.getElementById('room-session-settled-modal');
+    if (modal) {
+      const descEl = document.getElementById('room-settled-modal-desc');
+      if (descEl) descEl.textContent = message || 'Your room stay has concluded. Thank you for staying with us! Please scan the QR code in your room to start a new guest session.';
+      modal.classList.remove('hidden');
+    }
+
+    const diningList = document.getElementById('dining-dishes-list');
+    if (diningList) {
+      diningList.innerHTML = `
+        <div class="col-span-full p-8 sm:p-12 text-center rounded-3xl bg-white border-2 border-emerald-500/20 shadow-lg space-y-4">
+          <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-200">
+            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="space-y-1">
+            <h3 class="font-sans font-black text-xl text-slate-900">Room Stay Concluded</h3>
+            <p class="text-xs sm:text-sm text-slate-600 max-w-sm mx-auto font-medium">${message || 'Your room stay has concluded. Please scan the QR code in your room to start a new guest session.'}</p>
+          </div>
+          <div class="pt-2">
+            <button onclick="location.reload()" class="px-6 py-3 rounded-xl bg-[#034d37] hover:bg-[#023d2b] text-white font-black text-xs shadow-md transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2 mx-auto">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+              <span>Scan QR Code to Start Stay</span>
+            </button>
+          </div>
+        </div>
+      `;
     }
   }
 
@@ -565,6 +631,10 @@
           sessionStorage.setItem(SESSION_KEY, hotelPortalData.sessionToken);
         }
 
+        if (code) {
+          window.history.replaceState({}, '', window.location.pathname);
+        }
+
         document.getElementById('food-billing-text').textContent = hotelPortalData.food.billingNote;
 
         menuItems = hotelPortalData.food.items || [];
@@ -574,12 +644,11 @@
         renderDishes();
         loadLiveStatus();
       } else {
-        document.getElementById('dining-dishes-list').innerHTML = `
-          <div class="p-8 rounded-[var(--radius-xl)] bg-red-500/10 border border-red-500/20 text-center text-xs text-red-600">
-            <h4 class="font-bold text-sm mb-1">${data.error?.code === 'SESSION_EXPIRED' ? 'Session Expired' : 'Access Denied'}</h4>
-            <p>${data.error?.message || 'Please scan the QR code in your room.'}</p>
-          </div>
-        `;
+        if (data.error?.code === 'SESSION_EXPIRED') {
+          showRoomSessionSettledScreen(data.error?.message);
+        } else {
+          showRoomSessionSettledScreen(data.error?.message || 'Access Denied: Please scan the QR code in your room.');
+        }
       }
     } catch(err) {
       console.error(err);
@@ -984,6 +1053,10 @@
         loadLiveStatus();
         toggleTrackingSheet();
       } else {
+        if (data.error?.code === 'SESSION_EXPIRED') {
+          showRoomSessionSettledScreen('Cannot place order: Your room stay has concluded. Please scan the QR code in your room if you are starting a new stay.');
+          return;
+        }
         alert(data.error?.message || 'Failed to place order.');
       }
     } catch (err) {
@@ -1015,6 +1088,10 @@
         loadLiveStatus();
         toggleTrackingSheet();
       } else {
+        if (data.error?.code === 'SESSION_EXPIRED') {
+          showRoomSessionSettledScreen('Your room stay has concluded. Please scan the QR code in your room if you are starting a new stay.');
+          return;
+        }
         alert(data.error?.message || 'Request failed');
       }
     } catch(err) {
@@ -1036,6 +1113,10 @@
     try {
       const res = await fetch(`/api/public/room/orders?hotelId=${HOTEL_ID}&roomNumber=${ROOM_NUMBER}&sessionToken=${sessionToken}`);
       const data = await res.json();
+      if (!data.success && data.error?.code === 'SESSION_EXPIRED') {
+        showRoomSessionSettledScreen('Your room stay has concluded. Please scan the QR code in your room if you are starting a new stay.');
+        return;
+      }
       if (data.success && data.data) {
         activeLiveOrders = data.data.orders || [];
         activeLiveServices = data.data.services || [];

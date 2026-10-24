@@ -50,6 +50,22 @@ class QRService
     }
 
     /**
+     * Alias for buildTableUrl for compatibility.
+     */
+    public static function buildOrderUrl(string $ownerId, int $tableNumber, ?string $requestHost = null): string
+    {
+        return self::buildTableUrl($ownerId, $tableNumber, $requestHost);
+    }
+
+    /**
+     * Alias for generateSvgDataUri for compatibility.
+     */
+    public static function generateQRCodeDataURL(string $payload, int $size = 250): string
+    {
+        return self::generateSvgDataUri($payload, $size);
+    }
+
+    /**
      * Build the hotel room guest portal URL.
      */
     public static function buildRoomUrl(string $hotelId, string $roomNumber, ?string $requestHost = null): string
