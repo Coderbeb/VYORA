@@ -41,11 +41,15 @@ class BillingController extends Controller
                 ];
             }
 
+            $servedOrders = $sessionOrders->filter(fn($o) => $o->status === 'completed')->values();
+            $unservedOrders = $sessionOrders->filter(fn($o) => $o->status !== 'completed')->values();
+
             $itemMap = [];
             $totalAmount = 0;
-            $allCompleted = $sessionOrders->every(fn($o) => $o->status === 'completed');
+            $allCompleted = $sessionOrders->isNotEmpty() && $sessionOrders->every(fn($o) => $o->status === 'completed');
 
-            foreach ($sessionOrders as $order) {
+            // Strictly include ONLY served (completed) orders into the billable items and total
+            foreach ($servedOrders as $order) {
                 $totalAmount += (float) $order->total_amount;
                 foreach ($order->items as $item) {
                     $key = $item->menu_item_name;
@@ -62,21 +66,38 @@ class BillingController extends Controller
                 }
             }
 
+            // Track unserved items so cashier is informed
+            $unservedItems = [];
+            foreach ($unservedOrders as $order) {
+                foreach ($order->items as $item) {
+                    $unservedItems[] = [
+                        'menuItemName' => $item->menu_item_name,
+                        'quantity' => $item->quantity,
+                        'price' => (float) $item->price,
+                        'status' => $order->status,
+                    ];
+                }
+            }
+
             return [
                 'tableId' => $table->id,
                 'tableNumber' => $table->table_number,
-                'status' => $allCompleted ? 'completed_unpaid' : 'active',
+                'status' => $allCompleted ? 'completed_unpaid' : ($servedOrders->isNotEmpty() ? 'active' : 'cooking'),
                 'session' => [
                     'orders' => $sessionOrders->map(function ($o) {
                         return [
                             'id' => $o->id,
                             'status' => $o->status,
+                            'isServed' => $o->status === 'completed',
                             'totalAmount' => (float) $o->total_amount,
                             'createdAt' => $o->created_at->toISOString(),
                         ];
                     }),
                     'items' => array_values($itemMap),
                     'totalAmount' => $totalAmount,
+                    'servedOrdersCount' => $servedOrders->count(),
+                    'unservedOrdersCount' => $unservedOrders->count(),
+                    'unservedItems' => $unservedItems,
                     'createdAt' => $sessionOrders[0]->created_at->toISOString(),
                 ]
             ];

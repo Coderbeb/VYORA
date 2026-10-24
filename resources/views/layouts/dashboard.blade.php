@@ -1,5 +1,29 @@
 @extends('layouts.app')
 
+@push('styles')
+<style>
+  @view-transition {
+    navigation: auto;
+  }
+  #main-sidebar {
+    view-transition-name: main-sidebar;
+  }
+  #dashboard-topbar {
+    view-transition-name: dashboard-topbar;
+  }
+  ::view-transition-old(main-sidebar),
+  ::view-transition-new(main-sidebar) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  ::view-transition-old(dashboard-topbar),
+  ::view-transition-new(dashboard-topbar) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+</style>
+@endpush
+
 @section('content')
 <div class="flex min-h-screen relative" id="dashboard-wrapper">
   <!-- Mobile Sidebar Backdrop Overlay -->
@@ -118,7 +142,7 @@
   <!-- Main Content Body -->
   <div class="flex-1 flex flex-col min-w-0 bg-[var(--bg-base)]">
     <!-- Topbar Header -->
-    <header class="sticky top-0 z-30 flex items-center justify-between px-4 md:px-8 py-3 bg-[var(--bg-topbar)] backdrop-blur-md border-b border-[var(--border)] transition-colors">
+    <header id="dashboard-topbar" class="sticky top-0 z-30 flex items-center justify-between px-4 md:px-8 py-3 bg-[var(--bg-topbar)] backdrop-blur-md border-b border-[var(--border)] transition-colors">
       <div class="flex items-center gap-3">
         <button onclick="toggleMobileSidebar()" class="md:hidden p-2 rounded-[var(--radius-sm)] border border-[var(--border)] hover:bg-[var(--bg-hover)] transition">
           <i data-lucide="menu" class="w-5 h-5"></i>
@@ -421,5 +445,20 @@
       btn.disabled = false;
     }
   }
+
+  // Instant hover prefetching to make navigations instantaneous and flicker-free
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#main-sidebar a[href]').forEach(link => {
+      link.addEventListener('mouseenter', () => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('#') && !document.querySelector(`link[rel="prefetch"][href="${href}"]`)) {
+          const prefetch = document.createElement('link');
+          prefetch.rel = 'prefetch';
+          prefetch.href = href;
+          document.head.appendChild(prefetch);
+        }
+      }, { once: true });
+    });
+  });
 </script>
 @endsection

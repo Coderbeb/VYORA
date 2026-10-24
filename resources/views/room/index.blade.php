@@ -68,24 +68,43 @@
 
       <!-- Dietary Filter Tabs (Veg vs Non-Veg with authentic luxury vector emblems) -->
       <div class="flex items-center gap-1.5 p-1 rounded-[var(--radius-lg)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-xs text-xs font-bold">
-        <button onclick="setRoomDietFilter('all')" id="room-diet-tab-all" class="flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition bg-[var(--accent)] text-white shadow-xs flex items-center justify-center gap-1.5">
+        <button onclick="setRoomDietFilter('all')" id="room-diet-tab-all" class="flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition bg-[var(--accent)] text-white shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
           <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           <span>All</span>
         </button>
-        <button onclick="setRoomDietFilter('veg')" id="room-diet-tab-veg" class="flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/10 flex items-center justify-center gap-1.5">
+        <button onclick="setRoomDietFilter('veg')" id="room-diet-tab-veg" class="flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/10 flex items-center justify-center gap-1.5 cursor-pointer">
           <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="none">
             <rect x="1" y="1" width="14" height="14" rx="3.5" stroke="#059669" stroke-width="1.8" fill="#ECFDF5"/>
             <circle cx="8" cy="8" r="3.5" fill="#059669"/>
           </svg>
           <span>Pure Veg</span>
         </button>
-        <button onclick="setRoomDietFilter('nonveg')" id="room-diet-tab-nonveg" class="flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-orange-700 dark:text-orange-400 hover:bg-orange-500/10 flex items-center justify-center gap-1.5">
+        <button onclick="setRoomDietFilter('nonveg')" id="room-diet-tab-nonveg" class="flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-orange-700 dark:text-orange-400 hover:bg-orange-500/10 flex items-center justify-center gap-1.5 cursor-pointer">
           <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="none">
             <rect x="1" y="1" width="14" height="14" rx="3.5" stroke="#DC2626" stroke-width="1.8" fill="#FEF2F2"/>
             <polygon points="8,4.2 12,11.5 4,11.5" fill="#DC2626"/>
           </svg>
           <span>Non-Veg</span>
         </button>
+      </div>
+
+      <!-- Quick Price Sort Filters (Low to High / High to Low) -->
+      <div class="flex items-center justify-between gap-2 px-1">
+        <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 flex items-center gap-1">
+          <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+          <span>Sort:</span>
+        </span>
+        <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+          <button onclick="setRoomSortFilter('default')" id="room-sort-btn-default" class="px-3 py-1 rounded-full text-[11px] font-black bg-[#034d37] text-white shadow-xs transition shrink-0 cursor-pointer">
+            Recommended
+          </button>
+          <button onclick="setRoomSortFilter('price_asc')" id="room-sort-btn-price_asc" class="px-3 py-1 rounded-full text-[11px] font-bold border border-slate-300 bg-white text-slate-700 hover:border-slate-400 transition shrink-0 flex items-center gap-1 cursor-pointer">
+            <span>₹ Low → High</span>
+          </button>
+          <button onclick="setRoomSortFilter('price_desc')" id="room-sort-btn-price_desc" class="px-3 py-1 rounded-full text-[11px] font-bold border border-slate-300 bg-white text-slate-700 hover:border-slate-400 transition shrink-0 flex items-center gap-1 cursor-pointer">
+            <span>₹ High → Low</span>
+          </button>
+        </div>
       </div>
 
       <!-- Category Filter Tabs -->
@@ -255,36 +274,39 @@
   </div>
 
   <!-- Cart Modal / Bottom Sheet -->
-  <div id="room-cart-modal" class="fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden backdrop-blur-sm">
-    <div class="bg-[var(--bg-surface)] border border-[var(--border)] rounded-t-[var(--radius-xl)] sm:rounded-[var(--radius-xl)] shadow-2xl w-full max-w-lg p-6 max-h-[85vh] flex flex-col justify-between">
+  <div id="room-cart-modal" class="fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden backdrop-blur-sm transition-opacity">
+    <div id="room-cart-sheet" class="bg-white border-2 border-slate-200 rounded-t-[28px] sm:rounded-2xl shadow-2xl w-full max-w-lg p-5 sm:p-6 max-h-[85vh] flex flex-col justify-between animate-in slide-in-from-bottom duration-300 relative">
+      <!-- Swipe Down Drag Handle -->
+      <div class="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-3 cursor-grab active:cursor-grabbing"></div>
+
       <div class="overflow-y-auto pr-1">
-        <div class="flex items-center justify-between pb-3 border-b border-[var(--border)] mb-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
           <div class="flex items-center gap-2">
             <i data-lucide="shopping-bag" class="w-5 h-5 text-[var(--accent)]"></i>
-            <h3 class="font-serif font-bold text-lg text-[var(--text-primary)]">Room Service Order</h3>
+            <h3 class="font-sans font-black text-lg text-slate-900">Room Service Order</h3>
           </div>
-          <button onclick="closeRoomCartModal()" class="p-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)]">
-            <i data-lucide="x" class="w-5 h-5"></i>
+          <button onclick="closeRoomCartModal()" class="p-1.5 rounded-full text-slate-500 hover:text-slate-900 bg-slate-100 cursor-pointer">
+            <i data-lucide="x" class="w-4 h-4"></i>
           </button>
         </div>
 
-        <div id="room-cart-modal-items" class="divide-y divide-[var(--border)] text-xs mb-4">
+        <div id="room-cart-modal-items" class="divide-y divide-slate-100 text-xs mb-4">
           <!-- Populated by JS -->
         </div>
 
         <div class="mb-4">
-          <label class="block text-xs font-semibold text-[var(--text-secondary)] mb-1">Kitchen & Delivery Notes</label>
-          <textarea id="room-order-notes" rows="2" placeholder="e.g. Cutlery for 2, extra napkins, bell ring on delivery" class="w-full px-3 py-2 text-xs bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] focus:outline-none focus:border-[var(--accent)] text-[var(--text-primary)]"></textarea>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Kitchen & Delivery Notes</label>
+          <textarea id="room-order-notes" rows="2" placeholder="e.g. Cutlery for 2, extra napkins, bell ring on delivery" class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-[var(--accent)] text-slate-900 font-medium"></textarea>
         </div>
 
-        <div class="pt-3 border-t-2 border-[var(--border)] flex justify-between items-center text-sm font-bold text-[var(--text-primary)]">
-          <span>Order Total</span>
-          <span id="room-modal-grand-total" class="font-mono text-base text-[var(--accent)]">₹0.00</span>
+        <div class="pt-3 border-t-2 border-slate-200 flex justify-between items-center text-sm font-bold text-slate-900">
+          <span>Order Subtotal</span>
+          <span id="room-modal-grand-total" class="font-mono text-base text-[#034d37] font-black">₹0.00</span>
         </div>
       </div>
 
-      <div class="pt-4 border-t border-[var(--border)]">
-        <button onclick="submitRoomOrder()" id="room-place-order-btn" class="w-full py-3.5 rounded-[var(--radius-md)] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2 active:scale-95">
+      <div class="pt-4 border-t border-slate-200">
+        <button onclick="submitRoomOrder()" id="room-place-order-btn" class="w-full py-3.5 rounded-xl bg-[#034d37] hover:bg-[#023d2b] text-white font-black text-sm shadow-md transition-transform flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
           <span>Transmit Room Service Order</span>
           <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
@@ -292,13 +314,76 @@
     </div>
   </div>
 
+  <!-- Single Product Details Modal / Bottom Sheet -->
+  <div id="dish-detail-modal" class="fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden backdrop-blur-sm transition-opacity">
+    <div id="dish-detail-sheet" class="bg-white border-2 border-slate-200 rounded-t-[28px] sm:rounded-2xl shadow-2xl w-full max-w-lg p-5 sm:p-6 max-h-[88vh] flex flex-col justify-between animate-in slide-in-from-bottom duration-300 relative">
+      <!-- Swipe Down Drag Handle -->
+      <div class="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-3 cursor-grab active:cursor-grabbing"></div>
+
+      <!-- Close Button -->
+      <button onclick="closeDishDetailModal()" class="absolute top-4 right-4 z-10 p-1.5 rounded-full bg-slate-900/80 hover:bg-slate-950 text-white transition cursor-pointer">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <div class="overflow-y-auto pr-1 space-y-4">
+        <!-- Hero Dish Image -->
+        <div id="detail-image-container" class="relative w-full h-52 sm:h-60 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+          <img id="detail-image" src="" alt="" class="w-full h-full object-cover">
+        </div>
+
+        <!-- Badges & Prep Time -->
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="detail-diet-badge"></span>
+            <span id="detail-category-badge" class="px-2.5 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-800 text-xs font-bold"></span>
+          </div>
+          <span id="detail-prep-time" class="text-xs font-mono font-bold text-slate-600 flex items-center gap-1"></span>
+        </div>
+
+        <!-- Dish Title & Price -->
+        <div class="flex items-baseline justify-between gap-3">
+          <h3 id="detail-title" class="font-sans font-black text-xl sm:text-2xl text-slate-900 leading-tight"></h3>
+          <span id="detail-price" class="font-mono font-black text-2xl text-[#034d37] shrink-0"></span>
+        </div>
+
+        <!-- Full Description -->
+        <div>
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 mb-1">About This Dish</h4>
+          <p id="detail-desc" class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium"></p>
+        </div>
+      </div>
+
+      <!-- Bottom Order CTA -->
+      <div class="pt-4 mt-3 border-t border-slate-200 flex items-center gap-3">
+        <!-- Stepper -->
+        <div class="flex items-center bg-slate-100 border-2 border-slate-300 rounded-xl p-1 shrink-0">
+          <button onclick="decrementDetailQty()" class="w-9 h-9 rounded-lg bg-white text-slate-800 font-black hover:bg-slate-200 transition flex items-center justify-center cursor-pointer shadow-xs active:scale-90">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <span id="detail-qty" class="w-8 text-center font-mono font-black text-base text-slate-900">1</span>
+          <button onclick="incrementDetailQty()" class="w-9 h-9 rounded-lg bg-[#034d37] text-white font-black hover:bg-[#023d2b] transition flex items-center justify-center cursor-pointer shadow-xs active:scale-90">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+
+        <!-- Add to Order Button -->
+        <button onclick="addDetailToCart()" id="detail-add-btn" class="flex-1 py-3.5 px-4 rounded-xl bg-[#034d37] hover:bg-[#023d2b] text-white font-black text-sm shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
+          <span>Add to In-Room Order</span>
+          <span id="detail-btn-price" class="font-mono opacity-90 font-bold">• ₹0.00</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Live Tracking Timeline Modal -->
-  <div id="tracking-modal" class="fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden backdrop-blur-sm">
-    <div class="bg-[var(--bg-surface)] border border-[var(--border)] rounded-t-[var(--radius-xl)] sm:rounded-[var(--radius-xl)] shadow-2xl w-full max-w-lg p-6 max-h-[85vh] overflow-y-auto">
-      <div class="flex items-center justify-between pb-3 border-b border-[var(--border)] mb-4">
-        <h3 class="font-serif font-bold text-lg text-[var(--text-primary)]">Active Orders & Requests</h3>
-        <button onclick="toggleTrackingSheet()" class="p-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)]">
-          <i data-lucide="x" class="w-5 h-5"></i>
+  <div id="tracking-modal" class="fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden backdrop-blur-sm transition-opacity">
+    <div id="room-tracking-sheet" class="bg-white border-2 border-slate-200 rounded-t-[28px] sm:rounded-2xl shadow-2xl w-full max-w-lg p-5 sm:p-6 max-h-[85vh] overflow-y-auto animate-in slide-in-from-bottom duration-300">
+      <div class="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-3 cursor-grab active:cursor-grabbing"></div>
+
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
+        <h3 class="font-sans font-black text-base sm:text-lg text-slate-900">Active Orders & Requests</h3>
+        <button onclick="toggleTrackingSheet()" class="p-1.5 rounded-full text-slate-500 hover:text-slate-900 bg-slate-100 cursor-pointer">
+          <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
@@ -363,8 +448,21 @@
   let cart = new Map();
   let selectedCategory = 'all';
   let activeDietFilter = 'all';
+  let activeSortFilter = 'default';
+  let activeDetailDish = null;
+  let detailQty = 1;
   let activeLiveOrders = [];
   let activeLiveServices = [];
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
 
   // Non-Veg Detection Helper
   function isNonVegDish(item) {
@@ -383,25 +481,44 @@
 
     if (tabAll) {
       tabAll.className = filter === 'all'
-        ? 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition bg-[var(--accent)] text-white shadow-xs flex items-center justify-center gap-1.5'
-        : 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] flex items-center justify-center gap-1.5';
+        ? 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition bg-[var(--accent)] text-white shadow-xs flex items-center justify-center gap-1.5 cursor-pointer'
+        : 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-slate-700 hover:bg-slate-100 flex items-center justify-center gap-1.5 cursor-pointer';
     }
     if (tabVeg) {
       tabVeg.className = filter === 'veg'
-        ? 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition bg-emerald-600 text-white shadow-xs flex items-center justify-center gap-1.5'
-        : 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/10 flex items-center justify-center gap-1.5';
+        ? 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition bg-emerald-700 text-white shadow-xs flex items-center justify-center gap-1.5 cursor-pointer'
+        : 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-emerald-800 hover:bg-emerald-50 flex items-center justify-center gap-1.5 cursor-pointer';
     }
     if (tabNonVeg) {
       tabNonVeg.className = filter === 'nonveg'
-        ? 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition bg-orange-600 text-white shadow-xs flex items-center justify-center gap-1.5'
-        : 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-orange-700 dark:text-orange-400 hover:bg-orange-500/10 flex items-center justify-center gap-1.5';
+        ? 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition bg-orange-700 text-white shadow-xs flex items-center justify-center gap-1.5 cursor-pointer'
+        : 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-orange-800 hover:bg-orange-50 flex items-center justify-center gap-1.5 cursor-pointer';
     }
+    renderDishes();
+  }
+
+  function setRoomSortFilter(sortType) {
+    activeSortFilter = sortType;
+    ['default', 'price_asc', 'price_desc'].forEach(s => {
+      const btn = document.getElementById(`room-sort-btn-${s}`);
+      if (!btn) return;
+      if (s === sortType) {
+        btn.className = 'px-3 py-1 rounded-full text-[11px] font-black bg-[#034d37] text-white shadow-xs transition shrink-0 cursor-pointer';
+      } else {
+        btn.className = 'px-3 py-1 rounded-full text-[11px] font-bold border border-slate-300 bg-white text-slate-700 hover:border-slate-400 transition shrink-0 flex items-center gap-1 cursor-pointer';
+      }
+    });
     renderDishes();
   }
 
   document.addEventListener('DOMContentLoaded', () => {
     loadPortalInfo();
     initPusher();
+
+    // Enable touch drag-down gesture dismiss for bottom sheets (Cart, Product Detail, Tracking)
+    enableSwipeDownToDismiss('room-cart-modal', 'room-cart-sheet', closeRoomCartModal);
+    enableSwipeDownToDismiss('dish-detail-modal', 'dish-detail-sheet', closeDishDetailModal);
+    enableSwipeDownToDismiss('tracking-modal', 'room-tracking-sheet', toggleTrackingSheet);
   });
 
   function initPusher() {
@@ -524,81 +641,109 @@
       filtered = filtered.filter(i => isNonVegDish(i));
     }
     if (q) {
-      filtered = filtered.filter(i => i.name.toLowerCase().includes(q) || (i.description && i.description.toLowerCase().includes(q)));
+      filtered = filtered.filter(i => (i.name || '').toLowerCase().includes(q) || (i.description && i.description.toLowerCase().includes(q)));
+    }
+
+    // Sort filter (Low to High / High to Low)
+    if (activeSortFilter === 'price_asc') {
+      filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+    } else if (activeSortFilter === 'price_desc') {
+      filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
     }
 
     if (filtered.length === 0) {
-      container.innerHTML = '<div class="col-span-full p-8 text-center text-xs text-[var(--text-muted)]">No dishes found in menu.</div>';
+      container.innerHTML = `
+        <div class="col-span-full p-10 text-center rounded-2xl bg-white border border-slate-200 text-xs text-slate-500 space-y-1">
+          <p class="font-bold text-sm text-slate-800">No dishes found</p>
+          <p>Try clearing filters or search terms.</p>
+        </div>
+      `;
       return;
     }
 
     container.innerHTML = '';
     filtered.forEach(dish => {
       const isNonVeg = isNonVegDish(dish);
-      const card = document.createElement('div');
-      
-      if (isNonVeg) {
-        card.className = 'p-3 sm:p-3.5 rounded-[var(--radius-xl)] bg-gradient-to-br from-[#fff7ed] via-[#fff1f2] to-[#ffedd5] dark:from-[#2a1207] dark:via-[#350f14] dark:to-[#220d06] border border-orange-300 dark:border-orange-500/40 shadow-[0_4px_16px_-2px_rgba(234,88,12,0.15)] flex flex-col justify-between space-y-2.5 transition-all duration-200 hover:border-orange-500 active:scale-[0.99] relative overflow-hidden';
-      } else {
-        card.className = 'p-3 sm:p-3.5 rounded-[var(--radius-xl)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-xs flex flex-col justify-between space-y-2.5 transition-all duration-200 hover:border-emerald-500/40 active:scale-[0.99] relative overflow-hidden';
-      }
-
-      // Veg / Non-Veg Emblem Badge
-      const emblemBadge = isNonVeg ? VYORA_ICONS.nonVegEmblem : VYORA_ICONS.vegEmblem;
-
       const qty = cart.get(dish.id)?.quantity || 0;
 
+      // Modern Apple-HIG product card (Clean, luxury alabaster card)
+      const card = document.createElement('div');
+      card.className = 'group p-3 sm:p-3.5 rounded-2xl bg-white border border-slate-200 shadow-xs hover:shadow-md transition-all duration-200 active:scale-[0.99] flex flex-col justify-between space-y-2 relative overflow-hidden cursor-pointer';
+
+      // Tap card body to open One Product Details Page
+      card.onclick = (e) => {
+        if (e.target.closest('button')) return;
+        openDishDetailModal(dish.id);
+      };
+
+      // Floating Diet Emblem
+      const emblemBadge = isNonVeg ? `
+        <span class="inline-flex items-center gap-1 bg-white/95 backdrop-blur-md px-1.5 py-0.5 rounded-md border border-red-200 text-[10px] font-black text-red-700 shadow-xs">
+          ${VYORA_ICONS.nonVegDot} Non-Veg
+        </span>
+      ` : `
+        <span class="inline-flex items-center gap-1 bg-white/95 backdrop-blur-md px-1.5 py-0.5 rounded-md border border-emerald-200 text-[10px] font-black text-emerald-800 shadow-xs">
+          ${VYORA_ICONS.vegDot} Veg
+        </span>
+      `;
+
+      // Modern Squircle Image with Floating Tags
+      const imgHtml = dish.imageUrl ? `
+        <div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 mb-1">
+          <img src="${dish.imageUrl}" alt="${escapeHtml(dish.name)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+          <div class="absolute top-2 left-2">
+            ${emblemBadge}
+          </div>
+          <div class="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-bold flex items-center gap-1 shadow-xs">
+            ${VYORA_ICONS.clock} ${dish.preparationTime || 15}m
+          </div>
+        </div>
+      ` : `
+        <div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden mb-1 flex items-center justify-center ${isNonVeg ? 'bg-orange-50 text-orange-400' : 'bg-emerald-50 text-emerald-500'} border border-slate-200">
+          <svg class="w-8 h-8 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4V2"/><path d="M4 18h16"/><path d="M4 18a8 8 0 0 1 16 0"/><circle cx="12" cy="4" r="2"/></svg>
+          <div class="absolute top-2 left-2">
+            ${emblemBadge}
+          </div>
+          <div class="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-bold flex items-center gap-1 shadow-xs">
+            ${VYORA_ICONS.clock} ${dish.preparationTime || 15}m
+          </div>
+        </div>
+      `;
+
+      // Stepper Control
       let actionControl = '';
       if (qty === 0) {
         actionControl = `
-          <button onclick="addToCart('${dish.id}')" class="w-full py-1.5 rounded-[var(--radius-md)] ${isNonVeg ? 'bg-orange-600 hover:bg-orange-700 text-white' : 'bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white'} font-bold text-xs shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5">
+          <button onclick="event.stopPropagation(); addToCart('${dish.id}')" class="w-full py-2 rounded-xl bg-[#034d37] hover:bg-[#023d2b] text-white font-black text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
             ${VYORA_ICONS.plus}
             <span>Add</span>
           </button>
         `;
       } else {
         actionControl = `
-          <div class="flex items-center justify-between bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-md)] p-0.5">
-            <button onclick="removeFromCart('${dish.id}')" class="w-6 h-6 rounded bg-[var(--bg-surface)] text-[var(--text-primary)] font-bold text-xs flex items-center justify-center hover:bg-red-500 hover:text-white transition active:scale-75 shadow-xs">
+          <div class="flex items-center justify-between bg-slate-100 border border-slate-300 rounded-xl p-0.5 shadow-xs" onclick="event.stopPropagation()">
+            <button onclick="event.stopPropagation(); removeFromCart('${dish.id}')" class="w-7 h-7 rounded-lg bg-white text-slate-800 font-black hover:bg-red-50 hover:text-red-600 transition flex items-center justify-center shadow-xs active:scale-75 cursor-pointer">
               ${VYORA_ICONS.minus}
             </button>
-            <span class="font-bold text-xs ${isNonVeg ? 'text-orange-600' : 'text-[var(--accent)]'} font-mono">${qty}</span>
-            <button onclick="addToCart('${dish.id}')" class="w-6 h-6 rounded ${isNonVeg ? 'bg-orange-600 text-white' : 'bg-[var(--accent)] text-white'} font-bold text-xs flex items-center justify-center hover:opacity-90 transition active:scale-75 shadow-xs">
+            <span class="font-mono font-black text-xs text-slate-900 px-2">${qty}</span>
+            <button onclick="event.stopPropagation(); addToCart('${dish.id}')" class="w-7 h-7 rounded-lg bg-[#034d37] text-white font-black hover:bg-[#023d2b] transition flex items-center justify-center shadow-xs active:scale-75 cursor-pointer">
               ${VYORA_ICONS.plus}
             </button>
           </div>
         `;
       }
 
-      const imgHtml = dish.imageUrl ? `
-        <div class="relative w-full h-24 sm:h-28 rounded-[var(--radius-lg)] overflow-hidden border border-[var(--border)] mb-1.5 bg-black/5">
-          <img src="${dish.imageUrl}" alt="${dish.name}" loading="lazy" class="w-full h-full object-cover">
-        </div>
-      ` : `
-        <div class="relative w-full h-16 sm:h-20 rounded-[var(--radius-lg)] overflow-hidden border border-[var(--border)] mb-1.5 flex items-center justify-center ${isNonVeg ? 'bg-orange-500/10 text-orange-600' : 'bg-emerald-500/10 text-emerald-600'}">
-          <svg class="w-6 h-6 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 4V2"/>
-            <path d="M4 18h16"/>
-            <path d="M4 18a8 8 0 0 1 16 0"/>
-            <circle cx="12" cy="4" r="2"/>
-          </svg>
-        </div>
-      `;
-
       card.innerHTML = `
         <div class="overflow-hidden">
-          <div class="flex items-center justify-between mb-1.5">
-            ${emblemBadge}
-            <span class="text-xs text-slate-500 dark:text-slate-400 font-mono font-semibold flex items-center">${VYORA_ICONS.clock} ${dish.preparationTime}m</span>
-          </div>
           ${imgHtml}
-          <h4 class="font-sans font-extrabold text-sm sm:text-base text-slate-900 dark:text-slate-50 truncate mt-1 leading-snug">${dish.name}</h4>
-          <p class="text-xs text-slate-600 dark:text-slate-300 font-medium line-clamp-2 mt-1 min-h-[32px] leading-relaxed">${dish.description || 'Prepared fresh by master chef.'}</p>
-          <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-[var(--border)]">
-            <span class="font-mono font-black text-sm sm:text-base ${isNonVeg ? 'text-orange-700 dark:text-orange-300' : 'text-[var(--accent)] dark:text-emerald-400'}">₹${parseFloat(dish.price).toFixed(2)}</span>
+          <h4 class="font-sans font-black text-sm sm:text-base text-slate-900 leading-snug line-clamp-1 group-hover:text-[#034d37] transition-colors mt-1">${escapeHtml(dish.name)}</h4>
+          <p class="text-[11px] sm:text-xs text-slate-600 font-medium line-clamp-2 mt-0.5 leading-relaxed min-h-[30px]">${escapeHtml(dish.description || 'Prepared fresh by master chef.')}</p>
+          <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-slate-100">
+            <span class="font-mono font-black text-base text-slate-900">₹${parseFloat(dish.price).toFixed(2)}</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tap for info</span>
           </div>
         </div>
-        <div class="pt-2">
+        <div class="pt-1 relative">
           ${actionControl}
         </div>
       `;
@@ -606,8 +751,124 @@
       container.appendChild(card);
     });
 
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
     updateCartBar();
+  }
+
+  // --- ONE PRODUCT DETAILS PAGE (MODAL) ---
+  function openDishDetailModal(dishId) {
+    const dish = menuItems.find(i => i.id === dishId);
+    if (!dish) return;
+
+    activeDetailDish = dish;
+    const inCartQty = cart.get(dish.id)?.quantity || 0;
+    detailQty = inCartQty > 0 ? inCartQty : 1;
+
+    const isNonVeg = isNonVegDish(dish);
+    const imgEl = document.getElementById('detail-image');
+    if (dish.imageUrl) {
+      imgEl.src = dish.imageUrl;
+      document.getElementById('detail-image-container').classList.remove('hidden');
+    } else {
+      document.getElementById('detail-image-container').classList.add('hidden');
+    }
+
+    document.getElementById('detail-diet-badge').innerHTML = isNonVeg
+      ? `<span class="inline-flex items-center gap-1 bg-red-50 border border-red-300 text-red-800 px-2.5 py-1 rounded-md text-xs font-black shadow-2xs">${VYORA_ICONS.nonVegDot} Non-Veg</span>`
+      : `<span class="inline-flex items-center gap-1 bg-emerald-50 border border-emerald-300 text-emerald-800 px-2.5 py-1 rounded-md text-xs font-black shadow-2xs">${VYORA_ICONS.vegDot} Pure Veg</span>`;
+
+    document.getElementById('detail-category-badge').textContent = dish.category?.name || 'Chef Special';
+    document.getElementById('detail-prep-time').innerHTML = `${VYORA_ICONS.clock} Prep: ${dish.preparationTime || 15} mins`;
+    document.getElementById('detail-title').textContent = dish.name;
+    document.getElementById('detail-price').textContent = `₹${parseFloat(dish.price).toFixed(2)}`;
+    document.getElementById('detail-desc').textContent = dish.description || 'Prepared fresh with fine ingredients and authentic spices by our master culinary team.';
+
+    updateDetailPriceUI();
+    document.getElementById('dish-detail-modal').classList.remove('hidden');
+  }
+
+  function closeDishDetailModal() {
+    activeDetailDish = null;
+    document.getElementById('dish-detail-modal').classList.add('hidden');
+  }
+
+  function incrementDetailQty() {
+    detailQty++;
+    updateDetailPriceUI();
+  }
+
+  function decrementDetailQty() {
+    if (detailQty > 1) {
+      detailQty--;
+      updateDetailPriceUI();
+    }
+  }
+
+  function updateDetailPriceUI() {
+    if (!activeDetailDish) return;
+    document.getElementById('detail-qty').textContent = detailQty;
+    const subtotal = parseFloat(activeDetailDish.price) * detailQty;
+    document.getElementById('detail-btn-price').textContent = `• ₹${subtotal.toFixed(2)}`;
+  }
+
+  function addDetailToCart() {
+    if (!activeDetailDish) return;
+    cart.set(activeDetailDish.id, { item: activeDetailDish, quantity: detailQty });
+    renderDishes();
+    closeDishDetailModal();
+    window.showToast?.(`Added ${detailQty}x ${activeDetailDish.name} to order!`);
+  }
+
+  // --- MOBILE BOTTOM SHEET SWIPE-DOWN GESTURE HANDLER ---
+  function enableSwipeDownToDismiss(modalId, sheetContainerId, closeCallback) {
+    const modal = document.getElementById(modalId);
+    const sheet = document.getElementById(sheetContainerId);
+    if (!modal || !sheet) return;
+
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+
+    sheet.addEventListener('touchstart', (e) => {
+      const scrollable = sheet.querySelector('.overflow-y-auto') || sheet;
+      if (scrollable.scrollTop <= 5) {
+        startY = e.touches[0].clientY;
+        currentY = startY;
+        isDragging = true;
+        sheet.style.transition = 'none';
+      }
+    }, { passive: true });
+
+    sheet.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      currentY = e.touches[0].clientY;
+      const deltaY = currentY - startY;
+
+      if (deltaY > 0) {
+        sheet.style.transform = `translateY(${deltaY}px)`;
+        if (e.cancelable) e.preventDefault();
+      }
+    }, { passive: false });
+
+    sheet.addEventListener('touchend', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      const deltaY = currentY - startY;
+      sheet.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+
+      if (deltaY > 80) {
+        sheet.style.transform = 'translateY(100%)';
+        setTimeout(() => {
+          sheet.style.transform = '';
+          closeCallback();
+        }, 220);
+      } else {
+        sheet.style.transform = 'translateY(0)';
+        setTimeout(() => {
+          sheet.style.transform = '';
+        }, 300);
+      }
+    }, { passive: true });
   }
 
   function addToCart(dishId) {

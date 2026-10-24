@@ -21,13 +21,13 @@
     <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
       <div class="flex items-center bg-[var(--bg-base)] p-1 rounded-[var(--radius-sm)] border border-[var(--border)] text-xs">
         <button onclick="setKdsFilter('all')" id="kds-filter-all" class="px-2.5 py-1 rounded-[var(--radius-sm)] font-bold bg-[var(--accent)] text-white shadow-xs transition">
-          All (<span id="kds-count-all">0</span>)
-        </button>
-        <button onclick="setKdsFilter('pending')" id="kds-filter-pending" class="px-2.5 py-1 rounded-[var(--radius-sm)] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">
-          Pending (<span id="kds-count-pending">0</span>)
+          Accepted Queue (<span id="kds-count-all">0</span>)
         </button>
         <button onclick="setKdsFilter('preparing')" id="kds-filter-preparing" class="px-2.5 py-1 rounded-[var(--radius-sm)] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">
           Cooking (<span id="kds-count-preparing">0</span>)
+        </button>
+        <button onclick="setKdsFilter('ready')" id="kds-filter-ready" class="px-2.5 py-1 rounded-[var(--radius-sm)] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">
+          Pass Ready (<span id="kds-count-ready">0</span>)
         </button>
       </div>
 
@@ -42,7 +42,7 @@
     <div class="col-span-full p-12 text-center rounded-[var(--radius-xl)] bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-muted)]">
       <i data-lucide="check-circle-2" class="w-10 h-10 text-emerald-500 mx-auto mb-3"></i>
       <h3 class="font-bold text-sm text-[var(--text-primary)] mb-1">Kitchen All Clear!</h3>
-      <p class="text-xs">No pending or cooking tickets in the kitchen right now.</p>
+      <p class="text-xs">No active cooking tickets in the kitchen right now.</p>
     </div>
   </div>
 </div>
@@ -50,6 +50,20 @@
 <script>
   let kdsOrders = [];
   let kdsActiveFilter = 'all';
+
+  // Filter out non-kitchen items like water bottles, mineral water, and packaged drinks
+  function isKitchenDish(item) {
+    const name = (item.menuItemName || item.name || '').toLowerCase().trim();
+    const nonKitchenKeywords = [
+      'water bottle', 'bottle water', 'mineral water', 'packaged water',
+      'bisleri', 'aquafina', 'kinley', 'packaged drink', 'packaged beverage'
+    ];
+    for (const kw of nonKitchenKeywords) {
+      if (name.includes(kw)) return false;
+    }
+    if (name === 'water') return false;
+    return true;
+  }
 
   document.addEventListener('DOMContentLoaded', () => {
     loadKDS();
@@ -59,14 +73,16 @@
 
     window.addEventListener('qrestro:order:new', (e) => {
       loadKDS();
+    });
+    window.addEventListener('qrestro:order:updated', () => {
+      loadKDS();
       if (window.playNotificationSound) window.playNotificationSound();
     });
-    window.addEventListener('qrestro:order:updated', () => loadKDS());
   });
 
   function setKdsFilter(f) {
     kdsActiveFilter = f;
-    ['all', 'pending', 'preparing'].forEach(k => {
+    ['all', 'preparing', 'ready'].forEach(k => {
       const btn = document.getElementById(`kds-filter-${k}`);
       if (!btn) return;
       if (k === f) {
@@ -86,8 +102,15 @@
       const res = await fetch('/api/orders?limit=100', { headers: window.getAuthHeader() });
       const data = await res.json();
       if (data.success && Array.isArray(data.data)) {
-        // Filter to active kitchen tickets (pending or preparing)
-        const kitchenTickets = data.data.filter(o => o.status === 'pending' || o.status === 'preparing');
+        // As requested: KDS shows ONLY accepted orders (preparing or ready), NEVER pending!
+        const acceptedOrders = data.data.filter(o => o.status === 'preparing' || o.status === 'ready');
+
+        // As requested: exclude water bottles / non-kitchen items. If an order ONLY has water bottles, hide ticket entirely from chef.
+        const kitchenTickets = acceptedOrders.filter(o => {
+          const kitchenItems = (o.items || []).filter(isKitchenDish);
+          return kitchenItems.length > 0;
+        });
+
         // FIFO queue: oldest tickets first
         kdsOrders = kitchenTickets.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
         renderKDS(kdsOrders);
@@ -101,26 +124,26 @@
 
   function renderKDS(orders) {
     const grid = document.getElementById('kds-grid');
-    const pendingCount = orders.filter(o => o.status === 'pending').length;
     const prepCount = orders.filter(o => o.status === 'preparing').length;
+    const readyCount = orders.filter(o => o.status === 'ready').length;
 
     const cntAll = document.getElementById('kds-count-all');
-    const cntPend = document.getElementById('kds-count-pending');
     const cntPrep = document.getElementById('kds-count-preparing');
+    const cntReady = document.getElementById('kds-count-ready');
     if (cntAll) cntAll.textContent = orders.length;
-    if (cntPend) cntPend.textContent = pendingCount;
     if (cntPrep) cntPrep.textContent = prepCount;
+    if (cntReady) cntReady.textContent = readyCount;
 
     let filtered = orders;
-    if (kdsActiveFilter === 'pending') filtered = orders.filter(o => o.status === 'pending');
-    else if (kdsActiveFilter === 'preparing') filtered = orders.filter(o => o.status === 'preparing');
+    if (kdsActiveFilter === 'preparing') filtered = orders.filter(o => o.status === 'preparing');
+    else if (kdsActiveFilter === 'ready') filtered = orders.filter(o => o.status === 'ready');
 
     if (filtered.length === 0) {
       grid.innerHTML = `
         <div class="col-span-full p-12 text-center rounded-[var(--radius-xl)] bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-muted)] animate-in fade-in">
           <i data-lucide="check-circle-2" class="w-10 h-10 text-emerald-500 mx-auto mb-3"></i>
           <h3 class="font-bold text-sm text-[var(--text-primary)] mb-1">Kitchen All Clear!</h3>
-          <p class="text-xs">No ${kdsActiveFilter === 'all' ? 'active' : kdsActiveFilter} meal tickets in the queue right now.</p>
+          <p class="text-xs">No active cooking tickets in the queue right now.</p>
         </div>
       `;
       if (window.lucide) lucide.createIcons();
@@ -130,11 +153,13 @@
     grid.innerHTML = '';
     filtered.forEach((order, idx) => {
       const card = document.createElement('div');
-      const isPending = order.status === 'pending';
-      const borderClass = isPending ? 'border-orange-500/40 bg-orange-500/[0.02]' : 'border-[var(--border)] bg-[var(--bg-surface)]';
+      const isReady = order.status === 'ready';
+      const borderClass = isReady ? 'border-emerald-500/40 bg-emerald-50/[0.03]' : 'border-amber-500/40 bg-[var(--bg-surface)]';
       card.className = `p-5 rounded-[var(--radius-xl)] ${borderClass} border-2 shadow-md space-y-4 flex flex-col justify-between transition hover:border-[var(--accent)] animate-in fade-in duration-200`;
 
-      const itemsList = (order.items || []).map(i => `
+      // Filter out water bottles from ticket line items
+      const kitchenItems = (order.items || []).filter(isKitchenDish);
+      const itemsList = kitchenItems.map(i => `
         <li class="flex items-center justify-between text-xs py-1.5 border-b border-[var(--border)] last:border-0">
           <span class="font-bold text-[var(--text-primary)] text-sm"><strong class="text-amber-600 font-extrabold mr-1.5">${i.quantity}x</strong> ${i.menuItemName}</span>
         </li>
@@ -153,19 +178,23 @@
            </span>`
         : `<span class="font-serif font-bold text-base text-[var(--text-primary)]">Table #${order.tableNumber}</span>`;
 
-      const statusBadge = isPending
-        ? `<span class="px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-600 font-bold text-[10px] uppercase tracking-wider animate-pulse flex items-center gap-1">
-             <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> New Order
-           </span>`
-        : '';
+      const isReadyState = order.status === 'ready';
 
-      const actionBtn = isPending
-        ? `<button onclick="updateKdsStatus('${order.id}', 'preparing')" class="w-full py-3 rounded-[var(--radius-md)] bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs shadow-sm transition active:scale-95 flex items-center justify-center gap-2">
-             <i data-lucide="flame" class="w-4 h-4"></i>
-             <span>Accept & Start Cooking</span>
+      const statusBadge = isReadyState
+        ? `<span class="px-2.5 py-1 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 font-black text-[11px] uppercase tracking-wider flex items-center gap-1">
+             <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-700"></i> Pass Ready
+           </span>`
+        : `<span class="px-2.5 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-900 font-black text-[11px] uppercase tracking-wider flex items-center gap-1">
+             <i data-lucide="flame" class="w-3.5 h-3.5 text-amber-700"></i> Cooking
+           </span>`;
+
+      const actionBtn = isReadyState
+        ? `<button onclick="updateKdsStatus('${order.id}', 'completed')" class="w-full py-3 rounded-[var(--radius-md)] bg-[var(--accent)] hover:bg-[#023d2b] text-white font-bold text-xs shadow-sm transition active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+             <i data-lucide="bell" class="w-4 h-4"></i>
+             <span>Served to Guest</span>
            </button>`
-        : `<button onclick="updateKdsStatus('${order.id}', 'ready')" class="w-full py-3 rounded-[var(--radius-md)] bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition active:scale-95 flex items-center justify-center gap-2">
-             <i data-lucide="check" class="w-4 h-4"></i>
+        : `<button onclick="updateKdsStatus('${order.id}', 'ready')" class="w-full py-3 rounded-[var(--radius-md)] bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+             <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
              <span>Order Ready / Plate Up</span>
            </button>`;
 

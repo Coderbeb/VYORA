@@ -227,18 +227,37 @@
     const itemsContainer = document.getElementById('receipt-items-list');
     itemsContainer.innerHTML = '';
 
-    table.session.items.forEach(item => {
-      const row = document.createElement('div');
-      row.className = 'flex justify-between items-center py-2';
-      row.innerHTML = `
-        <div>
-          <p class="font-bold text-[var(--text-primary)]"><span class="text-[var(--accent)] font-extrabold mr-1">${item.quantity}x</span> ${item.menuItemName}</p>
-          <p class="text-[10px] text-[var(--text-muted)]">₹${parseFloat(item.price).toFixed(2)} each</p>
+    if (table.session.items.length === 0) {
+      itemsContainer.innerHTML = `
+        <div class="p-4 text-center text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 rounded-lg">
+          No items served yet. Items are only added to billing once served at the table.
         </div>
-        <span class="font-mono font-bold text-[var(--text-primary)]">₹${(item.price * item.quantity).toFixed(2)}</span>
       `;
-      itemsContainer.appendChild(row);
-    });
+    } else {
+      table.session.items.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'flex justify-between items-center py-2';
+        row.innerHTML = `
+          <div>
+            <p class="font-bold text-[var(--text-primary)]"><span class="text-[var(--accent)] font-extrabold mr-1">${item.quantity}x</span> ${item.menuItemName}</p>
+            <p class="text-[10px] text-[var(--text-muted)]">₹${parseFloat(item.price).toFixed(2)} each • <span class="text-emerald-700 font-bold">Served</span></p>
+          </div>
+          <span class="font-mono font-bold text-[var(--text-primary)]">₹${(item.price * item.quantity).toFixed(2)}</span>
+        `;
+        itemsContainer.appendChild(row);
+      });
+    }
+
+    // Display unserved notice if items are still in kitchen
+    if (table.session.unservedOrdersCount > 0) {
+      const notice = document.createElement('div');
+      notice.className = 'mt-3 p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-900 font-medium flex items-center gap-2';
+      notice.innerHTML = `
+        <i data-lucide="clock" class="w-4 h-4 text-amber-600 shrink-0"></i>
+        <span><strong>${table.session.unservedOrdersCount} active ticket(s)</strong> still cooking in kitchen. Only served dishes are billed.</span>
+      `;
+      itemsContainer.appendChild(notice);
+    }
 
     document.getElementById('receipt-grand-total').textContent = `₹${parseFloat(table.session.totalAmount).toFixed(2)}`;
     document.getElementById('receipt-modal').classList.remove('hidden');
