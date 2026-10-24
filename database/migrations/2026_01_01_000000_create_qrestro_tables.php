@@ -75,6 +75,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->longText('image_url')->nullable();
             $table->integer('preparation_time')->default(15);
+            $table->boolean('is_veg')->default(true);
             $table->boolean('is_available')->default(true);
             $table->timestamps();
 

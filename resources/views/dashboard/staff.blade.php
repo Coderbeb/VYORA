@@ -69,12 +69,12 @@
       </div>
       <select id="staff-role-filter" onchange="filterStaff()" class="px-3 py-2 text-xs bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] focus:outline-none text-[var(--text-primary)]">
         <option value="ALL">All Roles</option>
-        <option value="FRONT_DESK">🛎️ Front Desk / Reception</option>
-        <option value="HOUSEKEEPING">🧹 Housekeeping</option>
-        <option value="CHEF">👨‍🍳 Chef / Kitchen</option>
-        <option value="WAITER">🍽️ Waiter / Captain</option>
-        <option value="CASHIER">💳 Cashier / Billing</option>
-        <option value="MANAGER">👔 Store / Floor Manager</option>
+        <option value="FRONT_DESK">Front Desk / Reception</option>
+        <option value="HOUSEKEEPING">Housekeeping</option>
+        <option value="CHEF">Chef / Kitchen</option>
+        <option value="WAITER">Waiter / Captain</option>
+        <option value="CASHIER">Cashier / Billing</option>
+        <option value="MANAGER">Store / Floor Manager</option>
       </select>
     </div>
 
@@ -124,12 +124,12 @@
         <div>
           <label class="block text-xs font-semibold text-[var(--text-secondary)] mb-1">Assigned Role *</label>
           <select id="staff-form-role" required class="w-full px-3 py-2 text-sm bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] focus:outline-none focus:border-[var(--accent)] text-[var(--text-primary)]">
-            <option value="FRONT_DESK">🛎️ Front Desk / Reception</option>
-            <option value="HOUSEKEEPING">🧹 Housekeeping</option>
-            <option value="CHEF">👨‍🍳 Chef / Kitchen</option>
-            <option value="WAITER">🍽️ Waiter / Captain</option>
-            <option value="CASHIER">💳 Cashier / Billing</option>
-            <option value="MANAGER">👔 Store Manager</option>
+            <option value="FRONT_DESK">Front Desk / Reception</option>
+            <option value="HOUSEKEEPING">Housekeeping</option>
+            <option value="CHEF">Chef / Kitchen</option>
+            <option value="WAITER">Waiter / Captain</option>
+            <option value="CASHIER">Cashier / Billing</option>
+            <option value="MANAGER">Store Manager</option>
           </select>
         </div>
       </div>
@@ -364,7 +364,7 @@
       const data = await res.json();
       if (data.success) {
         closeStaffModal();
-        window.showToast(`✅ Employee ${id ? 'updated' : 'added'} successfully!`);
+        window.showToast(`Employee ${id ? 'updated' : 'added'} successfully!`, 'success');
         loadStaff();
       } else {
         alert(data.error?.message || 'Failed to save staff member');

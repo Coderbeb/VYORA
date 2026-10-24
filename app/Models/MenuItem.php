@@ -20,12 +20,14 @@ class MenuItem extends Model
         'price',
         'image_url',
         'preparation_time',
+        'is_veg',
         'is_available',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'preparation_time' => 'integer',
+        'is_veg' => 'boolean',
         'is_available' => 'boolean',
     ];
 

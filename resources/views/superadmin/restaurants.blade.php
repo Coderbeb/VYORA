@@ -15,9 +15,9 @@
       </div>
       <select id="type-filter" onchange="filterTenants()" class="px-3 py-2 text-xs bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] focus:outline-none text-[var(--text-primary)]">
         <option value="ALL">All Types</option>
-        <option value="HOTEL">Hotels 🏨</option>
-        <option value="RESTAURANT">Restaurants 🍽️</option>
-        <option value="BOTH">Combos (Hotel+Dining) 🏨🍽️</option>
+        <option value="HOTEL">Hotels</option>
+        <option value="RESTAURANT">Restaurants</option>
+        <option value="BOTH">Combos (Hotel & Dining)</option>
       </select>
     </div>
 
@@ -80,9 +80,9 @@
         <div>
           <label class="block text-xs font-semibold text-[var(--text-secondary)] mb-1">Business Type *</label>
           <select id="onb-btype" required class="w-full px-3 py-2 text-sm bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] focus:outline-none focus:border-[var(--accent)] text-[var(--text-primary)]">
-            <option value="RESTAURANT">Dining Restaurant 🍽️</option>
-            <option value="HOTEL">Hotel PMS 🏨</option>
-            <option value="BOTH">Combo (Hotel + Dining) 🏨🍽️</option>
+            <option value="RESTAURANT">Dining Restaurant</option>
+            <option value="HOTEL">Hotel PMS</option>
+            <option value="BOTH">Combo (Hotel + Dining)</option>
           </select>
         </div>
         <div>
@@ -211,7 +211,7 @@
             r.businessType === 'HOTEL' ? 'bg-amber-500/10 text-amber-600' :
             (r.businessType === 'BOTH' ? 'bg-purple-500/10 text-purple-600' : 'bg-emerald-500/10 text-emerald-600')
           }">
-            ${r.businessType === 'HOTEL' ? '🏨 Hotel' : (r.businessType === 'BOTH' ? '🏨🍽️ Combo' : '🍽️ Dining')}
+            ${r.businessType === 'HOTEL' ? 'Hotel PMS' : (r.businessType === 'BOTH' ? 'Hotel & Dining' : 'Dining Restaurant')}
           </span>
         </td>
         <td class="p-3.5 text-[var(--text-secondary)]">
@@ -260,7 +260,7 @@
                 r.businessType === 'HOTEL' ? 'bg-amber-500/10 text-amber-600' :
                 (r.businessType === 'BOTH' ? 'bg-purple-500/10 text-purple-600' : 'bg-emerald-500/10 text-emerald-600')
               }">
-                ${r.businessType === 'HOTEL' ? '🏨 Hotel' : (r.businessType === 'BOTH' ? '🏨🍽️ Combo' : '🍽️ Dining')}
+                ${r.businessType === 'HOTEL' ? 'Hotel PMS' : (r.businessType === 'BOTH' ? 'Hotel & Dining' : 'Dining Restaurant')}
               </span>
               <h4 class="font-bold text-sm text-[var(--text-primary)]">${r.restaurantName || 'Unnamed'}</h4>
             </div>
@@ -335,7 +335,7 @@
       const data = await res.json();
       if (data.success) {
         closeOnboardModal();
-        window.showToast('✅ Tenant onboarded successfully!');
+        window.showToast('Tenant onboarded successfully!', 'success');
         loadRestaurants();
       } else {
         alert(data.error?.message || 'Failed to onboard tenant');

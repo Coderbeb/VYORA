@@ -47,6 +47,7 @@ class MenuController extends Controller
                 'price' => (float) $item->price,
                 'imageUrl' => $item->image_url,
                 'preparationTime' => $item->preparation_time,
+                'isVeg' => (bool) ($item->is_veg ?? true),
                 'isAvailable' => (bool) $item->is_available,
                 'createdAt' => $item->created_at->toISOString(),
                 'updatedAt' => $item->updated_at->toISOString(),
@@ -64,12 +65,20 @@ class MenuController extends Controller
             'price' => 'required|numeric|min:0',
         ]);
 
+        $isVeg = true;
+        if ($request->has('isVeg')) {
+            $isVeg = filter_var($request->input('isVeg'), FILTER_VALIDATE_BOOLEAN);
+        } elseif ($request->has('is_veg')) {
+            $isVeg = filter_var($request->input('is_veg'), FILTER_VALIDATE_BOOLEAN);
+        }
+
         $item = MenuItem::create([
             'owner_id' => $user->id,
             'name' => $request->input('name'),
             'description' => $request->input('description'),
             'price' => (float) $request->input('price'),
             'preparation_time' => (int) ($request->input('preparationTime') ?: 15),
+            'is_veg' => $isVeg,
             'is_available' => $request->input('isAvailable', true) !== false,
             'category_id' => $request->input('categoryId'),
             'image_url' => $request->input('imageUrl'),
@@ -89,6 +98,7 @@ class MenuController extends Controller
                 'price' => (float) $item->price,
                 'imageUrl' => $item->image_url,
                 'preparationTime' => $item->preparation_time,
+                'isVeg' => (bool) ($item->is_veg ?? true),
                 'isAvailable' => (bool) $item->is_available,
                 'createdAt' => $item->created_at->toISOString(),
                 'updatedAt' => $item->updated_at->toISOString(),
@@ -109,6 +119,8 @@ class MenuController extends Controller
         if ($request->has('description')) $item->description = $request->input('description');
         if ($request->has('price')) $item->price = (float) $request->input('price');
         if ($request->has('preparationTime')) $item->preparation_time = (int) $request->input('preparationTime');
+        if ($request->has('isVeg')) $item->is_veg = filter_var($request->input('isVeg'), FILTER_VALIDATE_BOOLEAN);
+        elseif ($request->has('is_veg')) $item->is_veg = filter_var($request->input('is_veg'), FILTER_VALIDATE_BOOLEAN);
         if ($request->has('isAvailable')) $item->is_available = (bool) $request->input('isAvailable');
         if ($request->has('categoryId')) $item->category_id = $request->input('categoryId');
         if ($request->has('imageUrl')) $item->image_url = $request->input('imageUrl');
@@ -128,6 +140,7 @@ class MenuController extends Controller
                 'price' => (float) $item->price,
                 'imageUrl' => $item->image_url,
                 'preparationTime' => $item->preparation_time,
+                'isVeg' => (bool) ($item->is_veg ?? true),
                 'isAvailable' => (bool) $item->is_available,
                 'createdAt' => $item->created_at->toISOString(),
                 'updatedAt' => $item->updated_at->toISOString(),

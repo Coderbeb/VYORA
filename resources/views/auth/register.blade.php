@@ -21,15 +21,18 @@
         <label class="block text-xs font-semibold text-[var(--text-secondary)] mb-2">Select Business Model *</label>
         <div class="grid grid-cols-3 gap-2">
           <button type="button" onclick="selectBizType('RESTAURANT')" id="biz-btn-RESTAURANT" class="p-3 rounded-[var(--radius-md)] border-2 border-[var(--accent)] bg-[var(--accent)] text-white text-center transition">
-            <span class="block text-base mb-0.5">🍽️</span>
+            <i data-lucide="utensils" class="w-5 h-5 mx-auto mb-1"></i>
             <span class="block font-bold text-xs">Restaurant</span>
           </button>
           <button type="button" onclick="selectBizType('HOTEL')" id="biz-btn-HOTEL" class="p-3 rounded-[var(--radius-md)] border-2 border-[var(--border)] bg-[var(--bg-base)] text-[var(--text-secondary)] hover:border-[var(--accent)] text-center transition">
-            <span class="block text-base mb-0.5">🏨</span>
+            <i data-lucide="hotel" class="w-5 h-5 mx-auto mb-1"></i>
             <span class="block font-bold text-xs">Hotel Only</span>
           </button>
           <button type="button" onclick="selectBizType('BOTH')" id="biz-btn-BOTH" class="p-3 rounded-[var(--radius-md)] border-2 border-[var(--border)] bg-[var(--bg-base)] text-[var(--text-secondary)] hover:border-[var(--accent)] text-center transition">
-            <span class="block text-base mb-0.5">🏨🍽️</span>
+            <span class="flex items-center justify-center gap-1 mb-1">
+              <i data-lucide="hotel" class="w-4 h-4"></i>
+              <i data-lucide="utensils" class="w-4 h-4"></i>
+            </span>
             <span class="block font-bold text-xs">Both (Combo)</span>
           </button>
         </div>

@@ -285,7 +285,7 @@
 
       channel.bind('order:new', function(data) {
         window.playNotificationSound();
-        window.showToast(`🔔 New ${data.orderType === 'room_service' ? 'Room #' + data.roomNumber : 'Table #' + data.tableNumber} Order!`);
+        window.showToast(`New ${data.orderType === 'room_service' ? 'Room #' + data.roomNumber : 'Table #' + data.tableNumber} Order!`, 'order');
         window.dispatchEvent(new CustomEvent('qrestro:order:new', { detail: data }));
       });
 
@@ -296,7 +296,7 @@
       channel.bind('service:request', function(data) {
         window.playNotificationSound();
         const loc = data.roomNumber ? `Room #${data.roomNumber}` : `Table #${data.tableNumber}`;
-        window.showToast(`🛎️ ${loc}: ${data.serviceName || data.type}`);
+        window.showToast(`${loc}: ${data.serviceName || data.type}`, 'waiter');
         window.dispatchEvent(new CustomEvent('qrestro:service:request', { detail: data }));
       });
 
@@ -348,7 +348,10 @@
   });
 
   function logoutOwner() {
+    localStorage.removeItem('token');
     localStorage.removeItem('qrestro_token');
+    localStorage.removeItem('owner');
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax";
     window.location.href = '/auth/login';
   }
 

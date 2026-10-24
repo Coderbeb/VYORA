@@ -92,6 +92,7 @@ class PublicMenuController extends Controller
                 'price' => (float) $item->price,
                 'imageUrl' => $item->image_url,
                 'preparationTime' => $item->preparation_time,
+                'isVeg' => (bool) ($item->is_veg ?? true),
                 'isAvailable' => (bool) $item->is_available,
                 'categoryId' => $item->category_id,
                 'category' => $item->category ? [

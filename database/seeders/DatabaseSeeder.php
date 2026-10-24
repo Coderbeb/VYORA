@@ -102,6 +102,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Char-grilled cottage cheese cubes marinated in aromatic spices and yogurt.',
                 'price' => 280.00,
                 'preparation_time' => 15,
+                'is_veg' => true,
                 'is_available' => true,
             ]);
 
@@ -112,6 +113,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Tender chicken simmered in rich creamy tomato and cashew butter gravy.',
                 'price' => 380.00,
                 'preparation_time' => 20,
+                'is_veg' => false,
                 'is_available' => true,
             ]);
 
@@ -122,6 +124,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Slow-cooked black lentils simmered overnight with fresh cream and butter.',
                 'price' => 260.00,
                 'preparation_time' => 15,
+                'is_veg' => true,
                 'is_available' => true,
             ]);
 
@@ -132,6 +135,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Chilled packaged drinking water bottle.',
                 'price' => 30.00,
                 'preparation_time' => 2,
+                'is_veg' => true,
                 'is_available' => true,
             ]);
         }

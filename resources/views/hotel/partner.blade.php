@@ -19,12 +19,18 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 text-xs">
       <div class="p-4 rounded-[var(--radius-md)] bg-[var(--bg-base)] border border-[var(--border)] space-y-1">
-        <h4 class="font-bold text-[var(--text-primary)]">🏨 For Hotels (Guest Choice)</h4>
+        <h4 class="font-bold text-[var(--text-primary)] flex items-center gap-1.5">
+          <i data-lucide="hotel" class="w-4 h-4 text-purple-600"></i>
+          <span>For Hotels (Guest Choice)</span>
+        </h4>
         <p class="text-[var(--text-secondary)]">Link 1 or more partner restaurants below. Guests in their room can switch between partner restaurant menus. Orders dispatch straight to the partner kitchen!</p>
       </div>
       <div class="p-4 rounded-[var(--radius-md)] bg-[var(--bg-base)] border border-[var(--border)] space-y-1">
-        <h4 class="font-bold text-[var(--text-primary)]">🍽️ For Restaurants (Incoming Room Tickets)</h4>
-        <p class="text-[var(--text-secondary)]">When partner hotel guests order, your Kanban Board and Kitchen KDS will clearly display: <strong class="text-purple-600">🏨 [Hotel Name] - Room #[Room Number]</strong>.</p>
+        <h4 class="font-bold text-[var(--text-primary)] flex items-center gap-1.5">
+          <i data-lucide="utensils" class="w-4 h-4 text-[var(--accent)]"></i>
+          <span>For Restaurants (Incoming Room Tickets)</span>
+        </h4>
+        <p class="text-[var(--text-secondary)]">When partner hotel guests order, your Kanban Board and Kitchen KDS will clearly display: <strong class="text-purple-600">Hotel Name • Room #[Number]</strong>.</p>
       </div>
     </div>
   </div>
@@ -96,7 +102,12 @@
             </div>
             <div>
               <h4 class="font-bold text-sm text-[var(--text-primary)]">${p.name}</h4>
-              <p class="text-xs text-[var(--text-secondary)]">${p.cuisine || 'Restaurant'} • 📞 ${p.phone || 'No phone'}</p>
+              <p class="text-xs text-[var(--text-secondary)] flex items-center gap-1.5 mt-0.5">
+                <span>${p.cuisine || 'Restaurant'}</span>
+                <span>•</span>
+                <i data-lucide="phone" class="w-3 h-3 text-[var(--text-muted)]"></i>
+                <span>${p.phone || 'No phone'}</span>
+              </p>
             </div>
           </div>
           <button onclick="togglePartnerLink('${p.id}', false)" class="px-3 py-1.5 rounded-[var(--radius-sm)] border border-red-500/20 text-red-500 hover:bg-red-500/10 text-xs font-semibold">
@@ -132,7 +143,14 @@
             <h4 class="font-bold text-sm text-[var(--text-primary)]">${r.name}</h4>
             ${r.isLinked ? '<span class="px-2 py-0.5 rounded bg-purple-500/10 text-purple-600 font-bold text-[10px]">Active Partner</span>' : ''}
           </div>
-          <p class="text-xs text-[var(--text-secondary)]">${r.cuisine || 'General Dining'} • ${r.itemCount || 0} menu dishes • 👤 ${r.ownerName}</p>
+          <p class="text-xs text-[var(--text-secondary)] flex items-center gap-1.5 mt-0.5">
+            <span>${r.cuisine || 'General Dining'}</span>
+            <span>•</span>
+            <span>${r.itemCount || 0} menu dishes</span>
+            <span>•</span>
+            <i data-lucide="user" class="w-3 h-3 text-[var(--text-muted)]"></i>
+            <span>${r.ownerName}</span>
+          </p>
         </div>
         <div>
           ${r.isLinked ? `

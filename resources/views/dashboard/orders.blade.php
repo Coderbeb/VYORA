@@ -98,13 +98,31 @@
 <script>
   let allOrders = [];
   let pendingCancelOrderId = null;
+  let pollTimer = null;
 
   document.addEventListener('DOMContentLoaded', () => {
     loadOrders();
 
-    window.addEventListener('qrestro:order:new', () => loadOrders());
+    // Auto-poll every 5 seconds for live resilience even without Pusher
+    pollTimer = setInterval(loadOrders, 5000);
+
+    window.addEventListener('qrestro:order:new', (e) => {
+      loadOrders();
+      if (window.playNotificationSound) window.playNotificationSound();
+    });
     window.addEventListener('qrestro:order:updated', () => loadOrders());
   });
+
+  function formatTimeAgo(isoString) {
+    if (!isoString) return 'just now';
+    const diffSec = Math.max(0, Math.floor((Date.now() - new Date(isoString).getTime()) / 1000));
+    if (diffSec < 45) return 'just now';
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return `${diffMin}m ago`;
+    const diffHours = Math.floor(diffMin / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${Math.floor(diffHours / 24)}d ago`;
+  }
 
   async function loadOrders() {
     const icon = document.getElementById('refresh-icon');
@@ -113,27 +131,30 @@
     try {
       const res = await fetch('/api/orders?limit=100', { headers: window.getAuthHeader() });
       const data = await res.json();
-      if (data.success && data.data) {
+      if (data.success && Array.isArray(data.data)) {
         allOrders = data.data;
-        renderKanban(allOrders);
+        filterOrders();
       }
     } catch(e) {
-      console.error(e);
+      console.error('Error loading orders:', e);
     } finally {
       if (icon) setTimeout(() => icon.classList.remove('animate-spin'), 400);
     }
   }
 
   function filterOrders() {
-    const q = document.getElementById('order-search').value.toLowerCase().trim();
+    const searchEl = document.getElementById('order-search');
+    const q = searchEl ? searchEl.value.toLowerCase().trim() : '';
     if (!q) {
       renderKanban(allOrders);
       return;
     }
     const filtered = allOrders.filter(o => {
-      const matchTable = `table #${o.tableNumber}`.includes(q) || String(o.tableNumber).includes(q);
-      const matchItems = o.items.some(i => i.menuItemName.toLowerCase().includes(q));
-      return matchTable || matchItems;
+      const matchTable = `table #${o.tableNumber}`.toLowerCase().includes(q) || String(o.tableNumber).includes(q);
+      const matchRoom = o.roomNumber ? (`room #${o.roomNumber}`.toLowerCase().includes(q) || String(o.roomNumber).includes(q)) : false;
+      const matchHotel = o.hotelName ? o.hotelName.toLowerCase().includes(q) : false;
+      const matchItems = (o.items || []).some(i => (i.menuItemName || '').toLowerCase().includes(q));
+      return matchTable || matchRoom || matchHotel || matchItems;
     });
     renderKanban(filtered);
   }
@@ -147,7 +168,7 @@
     };
 
     const counts = { pending: 0, preparing: 0, ready: 0, completed: 0 };
-    Object.values(cols).forEach(col => col.innerHTML = '');
+    Object.values(cols).forEach(col => { if (col) col.innerHTML = ''; });
 
     orders.forEach(order => {
       if (order.status === 'cancelled') return;
@@ -169,14 +190,14 @@
       }
     });
 
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
   }
 
   function createOrderCard(order) {
     const card = document.createElement('div');
-    card.className = 'p-4 rounded-[var(--radius-md)] bg-[var(--bg-order-card)] border border-[var(--border)] shadow-sm space-y-3 transition hover:shadow-[var(--shadow-md)]';
+    card.className = 'p-4 rounded-[var(--radius-md)] bg-[var(--bg-order-card)] border border-[var(--border)] shadow-sm space-y-3 transition hover:shadow-[var(--shadow-md)] animate-in fade-in duration-200';
 
-    const itemsHtml = order.items.map(i => `
+    const itemsHtml = (order.items || []).map(i => `
       <div class="flex justify-between items-center text-xs">
         <span class="text-[var(--text-primary)] font-medium"><strong class="text-[var(--accent)] font-bold mr-1">${i.quantity}x</strong> ${i.menuItemName}</span>
         <span class="text-[var(--text-muted)] font-mono">₹${(i.price * i.quantity).toFixed(2)}</span>
@@ -193,26 +214,26 @@
     let actionBtn = '';
     if (order.status === 'pending') {
       actionBtn = `
-        <button onclick="updateOrderStatus('${order.id}', 'preparing')" class="flex-1 py-1.5 rounded-[var(--radius-sm)] bg-[var(--status-preparing)] hover:opacity-90 text-white font-bold text-xs shadow-sm transition">
+        <button onclick="updateOrderStatus('${order.id}', 'preparing')" class="flex-1 py-1.5 rounded-[var(--radius-sm)] bg-[var(--status-preparing)] hover:opacity-90 text-white font-bold text-xs shadow-sm transition active:scale-95">
           Accept & Cook
         </button>
       `;
     } else if (order.status === 'preparing') {
       actionBtn = `
-        <button onclick="updateOrderStatus('${order.id}', 'ready')" class="flex-1 py-1.5 rounded-[var(--radius-sm)] bg-[var(--status-ready)] hover:opacity-90 text-white font-bold text-xs shadow-sm transition">
+        <button onclick="updateOrderStatus('${order.id}', 'ready')" class="flex-1 py-1.5 rounded-[var(--radius-sm)] bg-[var(--status-ready)] hover:opacity-90 text-white font-bold text-xs shadow-sm transition active:scale-95">
           Mark Ready
         </button>
       `;
     } else if (order.status === 'ready') {
       actionBtn = `
-        <button onclick="updateOrderStatus('${order.id}', 'completed')" class="flex-1 py-1.5 rounded-[var(--radius-sm)] bg-[var(--status-completed)] hover:opacity-90 text-white font-bold text-xs shadow-sm transition">
+        <button onclick="updateOrderStatus('${order.id}', 'completed')" class="flex-1 py-1.5 rounded-[var(--radius-sm)] bg-[var(--status-completed)] hover:opacity-90 text-white font-bold text-xs shadow-sm transition active:scale-95">
           Served / Done
         </button>
       `;
     }
 
     const cancelBtn = order.status !== 'completed' ? `
-      <button onclick="openCancelModal('${order.id}')" class="px-2.5 py-1.5 rounded-[var(--radius-sm)] border border-red-500/20 text-red-500 hover:bg-red-500/10 text-xs font-semibold" title="Cancel Order">
+      <button onclick="openCancelModal('${order.id}')" class="px-2.5 py-1.5 rounded-[var(--radius-sm)] border border-red-500/20 text-red-500 hover:bg-red-500/10 text-xs font-semibold transition" title="Cancel Order">
         <i data-lucide="x" class="w-3.5 h-3.5"></i>
       </button>
     ` : '';
@@ -223,6 +244,8 @@
            <strong class="truncate max-w-[140px]">${order.hotelName || 'Partner Hotel'}</strong> • Room #${order.roomNumber}
          </span>`
       : `<span class="font-bold text-sm font-serif text-[var(--text-primary)]">Table #${order.tableNumber}</span>`;
+
+    const timeAgo = formatTimeAgo(order.createdAt);
 
     card.innerHTML = `
       <div class="flex items-center justify-between pb-2 border-b border-[var(--border)]">

@@ -151,7 +151,12 @@
         const trFood = document.createElement('tr');
         trFood.className = 'py-2 text-[var(--text-secondary)]';
         trFood.innerHTML = `
-          <td class="py-2 text-[11px]"><span class="text-[var(--accent)] mr-1">🍽️</span> ${item.name}</td>
+          <td class="py-2 text-[11px]">
+            <span class="inline-flex items-center gap-1.5">
+              <i data-lucide="utensils" class="w-3 h-3 text-[var(--accent)]"></i>
+              <span>${item.name}</span>
+            </span>
+          </td>
           <td class="py-2 text-center font-mono">${item.quantity}</td>
           <td class="py-2 text-right font-mono">₹${item.price.toFixed(2)}</td>
           <td class="py-2 text-right font-mono font-bold text-[var(--text-primary)]">₹${item.lineTotal.toFixed(2)}</td>
@@ -159,6 +164,8 @@
         tbody.appendChild(trFood);
       });
     });
+
+    if (window.lucide) lucide.createIcons();
 
     // Totals
     document.getElementById('inv-room-subtotal').textContent = `₹${f.stay.roomTotal.toFixed(2)}`;

@@ -42,7 +42,7 @@ class PublicOrderController extends Controller
 
         $orders = Order::where('owner_id', $ownerId)
             ->where('table_number', $tableNumber)
-            ->where('created_at', '>', $table->updated_at)
+            ->where('created_at', '>=', $table->updated_at)
             ->with('items')
             ->orderBy('created_at', 'asc')
             ->get();

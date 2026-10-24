@@ -9,7 +9,7 @@
     <div class="max-w-2xl mx-auto flex items-center justify-between">
       <div class="flex items-center gap-2.5">
         <div class="w-8 h-8 rounded-lg bg-[var(--accent)] text-white flex items-center justify-center font-bold text-base font-serif">
-          H
+          V
         </div>
         <div>
           <h1 id="hotel-name-header" class="font-serif font-bold text-base tracking-tight truncate max-w-[180px] sm:max-w-xs">Loading Portal...</h1>
@@ -66,6 +66,28 @@
         <i data-lucide="search" class="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2"></i>
       </div>
 
+      <!-- Dietary Filter Tabs (Veg vs Non-Veg with authentic luxury vector emblems) -->
+      <div class="flex items-center gap-1.5 p-1 rounded-[var(--radius-lg)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-xs text-xs font-bold">
+        <button onclick="setRoomDietFilter('all')" id="room-diet-tab-all" class="flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition bg-[var(--accent)] text-white shadow-xs flex items-center justify-center gap-1.5">
+          <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>All</span>
+        </button>
+        <button onclick="setRoomDietFilter('veg')" id="room-diet-tab-veg" class="flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/10 flex items-center justify-center gap-1.5">
+          <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="none">
+            <rect x="1" y="1" width="14" height="14" rx="3.5" stroke="#059669" stroke-width="1.8" fill="#ECFDF5"/>
+            <circle cx="8" cy="8" r="3.5" fill="#059669"/>
+          </svg>
+          <span>Pure Veg</span>
+        </button>
+        <button onclick="setRoomDietFilter('nonveg')" id="room-diet-tab-nonveg" class="flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-orange-700 dark:text-orange-400 hover:bg-orange-500/10 flex items-center justify-center gap-1.5">
+          <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="none">
+            <rect x="1" y="1" width="14" height="14" rx="3.5" stroke="#DC2626" stroke-width="1.8" fill="#FEF2F2"/>
+            <polygon points="8,4.2 12,11.5 4,11.5" fill="#DC2626"/>
+          </svg>
+          <span>Non-Veg</span>
+        </button>
+      </div>
+
       <!-- Category Filter Tabs -->
       <div id="dining-cat-tabs" class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         <button onclick="selectCategory('all')" id="cat-tab-all" class="px-4 py-1.5 rounded-full text-xs font-bold transition bg-[var(--accent)] text-white shadow-sm shrink-0">
@@ -75,8 +97,12 @@
 
       <!-- Dishes List Container (Minimum 2 per row) -->
       <div id="dining-dishes-list" class="grid grid-cols-2 gap-3 sm:gap-4 pt-2">
-        <div class="p-12 text-center text-xs text-[var(--text-muted)]">
-          <span class="animate-spin inline-block mr-2">⏳</span> Loading in-room menu...
+        <div class="col-span-full p-12 text-center text-xs text-[var(--text-muted)] flex flex-col items-center justify-center gap-2">
+          <svg class="w-6 h-6 animate-spin text-[var(--accent)]" viewBox="0 0 24 24" fill="none">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+          </svg>
+          <span>Loading in-room menu...</span>
         </div>
       </div>
     </div>
@@ -288,13 +314,90 @@
   const ROOM_NUMBER = "{{ $roomNumber }}";
   const SESSION_KEY = `roomSessionToken_${HOTEL_ID}_${ROOM_NUMBER}`;
 
+  // Bespoke Luxury Vector Icons Suite
+  const VYORA_ICONS = {
+    vegEmblem: `<div class="flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/25 px-1.5 py-0.5 rounded text-[9px] font-bold text-emerald-700 dark:text-emerald-300 shrink-0">
+      <svg class="w-3 h-3 shrink-0" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="1" width="14" height="14" rx="3.5" stroke="#059669" stroke-width="1.8" fill="#ECFDF5"/>
+        <circle cx="8" cy="8" r="3.5" fill="#059669"/>
+      </svg>
+      <span>Pure Veg</span>
+    </div>`,
+
+    nonVegEmblem: `<div class="flex items-center gap-1 bg-red-500/10 border border-red-500/25 px-1.5 py-0.5 rounded text-[9px] font-bold text-red-700 dark:text-red-300 shrink-0">
+      <svg class="w-3 h-3 shrink-0" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="1" width="14" height="14" rx="3.5" stroke="#DC2626" stroke-width="1.8" fill="#FEF2F2"/>
+        <polygon points="8,4.2 12,11.5 4,11.5" fill="#DC2626"/>
+      </svg>
+      <span>Non-Veg</span>
+    </div>`,
+
+    vegDot: `<svg class="w-3 h-3 shrink-0" viewBox="0 0 16 16" fill="none">
+      <rect x="1" y="1" width="14" height="14" rx="3.5" stroke="#059669" stroke-width="1.8" fill="#ECFDF5"/>
+      <circle cx="8" cy="8" r="3.5" fill="#059669"/>
+    </svg>`,
+
+    nonVegDot: `<svg class="w-3 h-3 shrink-0" viewBox="0 0 16 16" fill="none">
+      <rect x="1" y="1" width="14" height="14" rx="3.5" stroke="#DC2626" stroke-width="1.8" fill="#FEF2F2"/>
+      <polygon points="8,4.2 12,11.5 4,11.5" fill="#DC2626"/>
+    </svg>`,
+
+    clock: `<svg class="w-3 h-3 text-[var(--text-muted)] shrink-0 inline-block mr-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/>
+      <polyline points="12 7 12 12 15 14"/>
+    </svg>`,
+
+    plus: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+
+    minus: `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+
+    spinner: `<svg class="w-4 h-4 animate-spin shrink-0 inline-block mr-1.5" viewBox="0 0 24 24" fill="none">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>`
+  };
+
   let hotelPortalData = null;
   let menuItems = [];
   let categories = [];
   let cart = new Map();
   let selectedCategory = 'all';
+  let activeDietFilter = 'all';
   let activeLiveOrders = [];
   let activeLiveServices = [];
+
+  // Non-Veg Detection Helper
+  function isNonVegDish(item) {
+    if (item.isVeg === false || item.is_veg === false || item.isVeg === 0 || item.is_veg === 0) return true;
+    if (item.isVeg === true || item.is_veg === true || item.isVeg === 1 || item.is_veg === 1) return false;
+    const text = ((item.name || '') + ' ' + (item.description || '')).toLowerCase();
+    const nonVegKeywords = ['chicken', 'mutton', 'fish', 'egg', 'beef', 'pork', 'prawn', 'crab', 'meat', 'lamb', 'bacon', 'pepperoni', 'ham', 'turkey', 'non-veg', 'non veg'];
+    return nonVegKeywords.some(kw => text.includes(kw));
+  }
+
+  function setRoomDietFilter(filter) {
+    activeDietFilter = filter;
+    const tabAll = document.getElementById('room-diet-tab-all');
+    const tabVeg = document.getElementById('room-diet-tab-veg');
+    const tabNonVeg = document.getElementById('room-diet-tab-nonveg');
+
+    if (tabAll) {
+      tabAll.className = filter === 'all'
+        ? 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition bg-[var(--accent)] text-white shadow-xs flex items-center justify-center gap-1.5'
+        : 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] flex items-center justify-center gap-1.5';
+    }
+    if (tabVeg) {
+      tabVeg.className = filter === 'veg'
+        ? 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition bg-emerald-600 text-white shadow-xs flex items-center justify-center gap-1.5'
+        : 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/10 flex items-center justify-center gap-1.5';
+    }
+    if (tabNonVeg) {
+      tabNonVeg.className = filter === 'nonveg'
+        ? 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition bg-orange-600 text-white shadow-xs flex items-center justify-center gap-1.5'
+        : 'flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-orange-700 dark:text-orange-400 hover:bg-orange-500/10 flex items-center justify-center gap-1.5';
+    }
+    renderDishes();
+  }
 
   document.addEventListener('DOMContentLoaded', () => {
     loadPortalInfo();
@@ -415,51 +518,84 @@
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(i => i.categoryId === selectedCategory);
     }
+    if (activeDietFilter === 'veg') {
+      filtered = filtered.filter(i => !isNonVegDish(i));
+    } else if (activeDietFilter === 'nonveg') {
+      filtered = filtered.filter(i => isNonVegDish(i));
+    }
     if (q) {
       filtered = filtered.filter(i => i.name.toLowerCase().includes(q) || (i.description && i.description.toLowerCase().includes(q)));
     }
 
     if (filtered.length === 0) {
-      container.innerHTML = '<div class="p-8 text-center text-xs text-[var(--text-muted)]">No dishes found in menu.</div>';
+      container.innerHTML = '<div class="col-span-full p-8 text-center text-xs text-[var(--text-muted)]">No dishes found in menu.</div>';
       return;
     }
 
     container.innerHTML = '';
     filtered.forEach(dish => {
+      const isNonVeg = isNonVegDish(dish);
       const card = document.createElement('div');
-      card.className = 'p-3 sm:p-4 rounded-[var(--radius-lg)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm flex flex-col justify-between space-y-2.5 transition hover:border-[var(--accent)]';
+      
+      if (isNonVeg) {
+        card.className = 'p-3 sm:p-3.5 rounded-[var(--radius-xl)] bg-gradient-to-br from-[#fff7ed] via-[#fff1f2] to-[#ffedd5] dark:from-[#2a1207] dark:via-[#350f14] dark:to-[#220d06] border border-orange-300 dark:border-orange-500/40 shadow-[0_4px_16px_-2px_rgba(234,88,12,0.15)] flex flex-col justify-between space-y-2.5 transition-all duration-200 hover:border-orange-500 active:scale-[0.99] relative overflow-hidden';
+      } else {
+        card.className = 'p-3 sm:p-3.5 rounded-[var(--radius-xl)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-xs flex flex-col justify-between space-y-2.5 transition-all duration-200 hover:border-emerald-500/40 active:scale-[0.99] relative overflow-hidden';
+      }
+
+      // Veg / Non-Veg Emblem Badge
+      const emblemBadge = isNonVeg ? VYORA_ICONS.nonVegEmblem : VYORA_ICONS.vegEmblem;
 
       const qty = cart.get(dish.id)?.quantity || 0;
 
       let actionControl = '';
       if (qty === 0) {
         actionControl = `
-          <button onclick="addToCart('${dish.id}')" class="w-full py-1.5 rounded-[var(--radius-sm)] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold text-xs shadow-sm transition active:scale-95">
-            + Add
+          <button onclick="addToCart('${dish.id}')" class="w-full py-1.5 rounded-[var(--radius-md)] ${isNonVeg ? 'bg-orange-600 hover:bg-orange-700 text-white' : 'bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white'} font-bold text-xs shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5">
+            ${VYORA_ICONS.plus}
+            <span>Add</span>
           </button>
         `;
       } else {
         actionControl = `
-          <div class="flex items-center justify-between bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] p-1">
-            <button onclick="removeFromCart('${dish.id}')" class="w-6 h-6 rounded bg-[var(--bg-surface)] text-[var(--text-primary)] font-bold text-xs flex items-center justify-center hover:bg-red-500 hover:text-white transition">-</button>
-            <span class="font-bold text-xs text-[var(--accent)] font-mono">${qty}</span>
-            <button onclick="addToCart('${dish.id}')" class="w-6 h-6 rounded bg-[var(--accent)] text-white font-bold text-xs flex items-center justify-center hover:bg-[var(--accent-hover)] transition">+</button>
+          <div class="flex items-center justify-between bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-md)] p-0.5">
+            <button onclick="removeFromCart('${dish.id}')" class="w-6 h-6 rounded bg-[var(--bg-surface)] text-[var(--text-primary)] font-bold text-xs flex items-center justify-center hover:bg-red-500 hover:text-white transition active:scale-75 shadow-xs">
+              ${VYORA_ICONS.minus}
+            </button>
+            <span class="font-bold text-xs ${isNonVeg ? 'text-orange-600' : 'text-[var(--accent)]'} font-mono">${qty}</span>
+            <button onclick="addToCart('${dish.id}')" class="w-6 h-6 rounded ${isNonVeg ? 'bg-orange-600 text-white' : 'bg-[var(--accent)] text-white'} font-bold text-xs flex items-center justify-center hover:opacity-90 transition active:scale-75 shadow-xs">
+              ${VYORA_ICONS.plus}
+            </button>
           </div>
         `;
       }
 
       const imgHtml = dish.imageUrl ? `
-        <img src="${dish.imageUrl}" alt="${dish.name}" class="w-full h-24 sm:h-28 rounded-[var(--radius-md)] object-cover border border-[var(--border)] mb-1">
-      ` : '';
+        <div class="relative w-full h-24 sm:h-28 rounded-[var(--radius-lg)] overflow-hidden border border-[var(--border)] mb-1.5 bg-black/5">
+          <img src="${dish.imageUrl}" alt="${dish.name}" loading="lazy" class="w-full h-full object-cover">
+        </div>
+      ` : `
+        <div class="relative w-full h-16 sm:h-20 rounded-[var(--radius-lg)] overflow-hidden border border-[var(--border)] mb-1.5 flex items-center justify-center ${isNonVeg ? 'bg-orange-500/10 text-orange-600' : 'bg-emerald-500/10 text-emerald-600'}">
+          <svg class="w-6 h-6 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 4V2"/>
+            <path d="M4 18h16"/>
+            <path d="M4 18a8 8 0 0 1 16 0"/>
+            <circle cx="12" cy="4" r="2"/>
+          </svg>
+        </div>
+      `;
 
       card.innerHTML = `
         <div class="overflow-hidden">
+          <div class="flex items-center justify-between mb-1">
+            ${emblemBadge}
+            <span class="text-[9px] text-[var(--text-muted)] font-mono flex items-center">${VYORA_ICONS.clock} ${dish.preparationTime}m</span>
+          </div>
           ${imgHtml}
           <h4 class="font-serif font-bold text-xs sm:text-sm text-[var(--text-primary)] truncate">${dish.name}</h4>
-          <p class="text-[10px] text-[var(--text-secondary)] line-clamp-1 mt-0.5">${dish.description || ''}</p>
-          <div class="flex items-center justify-between mt-1.5">
-            <span class="font-mono font-bold text-xs sm:text-sm text-[var(--accent)]">₹${parseFloat(dish.price).toFixed(2)}</span>
-            <span class="text-[10px] text-[var(--text-muted)]">⏱️ ${dish.preparationTime}m</span>
+          <p class="text-[10px] text-[var(--text-secondary)] line-clamp-2 mt-0.5 min-h-[26px]">${dish.description || ''}</p>
+          <div class="flex items-center justify-between mt-1.5 pt-1 border-t border-[var(--border)]">
+            <span class="font-mono font-bold text-xs sm:text-sm ${isNonVeg ? 'text-orange-700 dark:text-orange-300' : 'text-[var(--accent)]'}">₹${parseFloat(dish.price).toFixed(2)}</span>
           </div>
         </div>
         <div>
@@ -518,18 +654,23 @@
 
     cart.forEach(({ item, quantity }) => {
       total += quantity * item.price;
+      const isNonVeg = isNonVegDish(item);
+
       const row = document.createElement('div');
-      row.className = 'flex justify-between items-center py-2.5 border-b border-[var(--border)]';
+      row.className = 'flex justify-between items-center py-2.5 border-b border-[var(--border)] last:border-0';
       row.innerHTML = `
-        <div>
-          <p class="font-bold text-[var(--text-primary)] text-xs">${item.name}</p>
-          <span class="text-[10px] text-[var(--text-muted)] font-mono">₹${parseFloat(item.price).toFixed(2)} each</span>
+        <div class="pr-2 min-w-0 flex-1">
+          <div class="flex items-center gap-1.5">
+            ${isNonVeg ? VYORA_ICONS.nonVegDot : VYORA_ICONS.vegDot}
+            <p class="font-bold text-[var(--text-primary)] text-xs truncate">${item.name}</p>
+          </div>
+          <span class="text-[10px] text-[var(--text-muted)] font-mono pl-4">₹${parseFloat(item.price).toFixed(2)} each</span>
         </div>
-        <div class="flex items-center gap-3">
-          <div class="flex items-center gap-1.5 bg-[var(--bg-base)] border border-[var(--border)] rounded p-0.5">
-            <button onclick="removeFromCart('${item.id}'); openRoomCartModal();" class="w-5 h-5 rounded text-xs font-bold hover:bg-red-500 hover:text-white">-</button>
+        <div class="flex items-center gap-2 shrink-0">
+          <div class="flex items-center bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] p-0.5">
+            <button onclick="removeFromCart('${item.id}'); openRoomCartModal();" class="w-6 h-6 rounded text-xs font-bold hover:bg-red-500 hover:text-white transition active:scale-75 flex items-center justify-center">${VYORA_ICONS.minus}</button>
             <span class="w-4 text-center font-mono font-bold text-[var(--accent)] text-xs">${quantity}</span>
-            <button onclick="addToCart('${item.id}'); openRoomCartModal();" class="w-5 h-5 rounded text-xs font-bold bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]">+</button>
+            <button onclick="addToCart('${item.id}'); openRoomCartModal();" class="w-6 h-6 rounded text-xs font-bold bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] transition active:scale-75 flex items-center justify-center">${VYORA_ICONS.plus}</button>
           </div>
           <span class="font-mono font-bold text-xs text-[var(--text-primary)] w-14 text-right">₹${(item.price * quantity).toFixed(2)}</span>
         </div>
@@ -553,7 +694,7 @@
 
     if (cart.size === 0) return;
     btn.disabled = true;
-    btn.innerHTML = '<span class="animate-spin mr-2">⏳</span> Sending to Kitchen...';
+    btn.innerHTML = `<span class="inline-flex items-center gap-2">${VYORA_ICONS.spinner} Transmitting Order...</span>`;
 
     const items = [];
     cart.forEach(({ item, quantity }) => {
@@ -575,7 +716,7 @@
       const data = await res.json();
       if (data.success) {
         window.playNotificationSound();
-        window.showToast('🍽️ Room service order placed!');
+        window.showToast('Room service order placed!', 'order');
         cart.clear();
         closeRoomCartModal();
         renderDishes();
@@ -609,7 +750,7 @@
       });
       const data = await res.json();
       if (data.success) {
-        window.showToast(`✨ ${serviceName} requested!`);
+        window.showToast(`${serviceName} requested!`, 'bell');
         loadLiveStatus();
         toggleTrackingSheet();
       } else {
@@ -670,16 +811,34 @@
       card.className = 'p-4 rounded-[var(--radius-lg)] bg-[var(--bg-base)] border border-[var(--border)] space-y-2';
 
       let statusMsg = 'Kitchen received ticket';
-      if (order.status === 'preparing') statusMsg = 'Chef is preparing in kitchen 🔥';
-      else if (order.status === 'ready') statusMsg = 'On the way to Room ' + ROOM_NUMBER + ' 🛎️';
-      else if (order.status === 'completed') statusMsg = 'Delivered to room ✅';
+      let statusColor = 'text-orange-600 bg-orange-500/10 border-orange-500/20';
+      if (order.status === 'preparing') {
+        statusMsg = 'Chef is preparing in kitchen';
+        statusColor = 'text-amber-600 bg-amber-500/10 border-amber-500/20';
+      } else if (order.status === 'ready') {
+        statusMsg = 'On the way to Room #' + ROOM_NUMBER;
+        statusColor = 'text-emerald-600 bg-emerald-500/10 border-emerald-500/20';
+      } else if (order.status === 'completed') {
+        statusMsg = 'Delivered to room';
+        statusColor = 'text-slate-600 bg-slate-500/10 border-slate-500/20';
+      }
 
       card.innerHTML = `
-        <div class="flex justify-between items-center">
-          <span class="font-bold text-xs text-[var(--text-primary)]">🍽️ Room Service Meal</span>
+        <div class="flex justify-between items-center pb-2 border-b border-[var(--border)]">
+          <div class="flex items-center gap-1.5">
+            <span class="w-6 h-6 rounded-md bg-[var(--accent-glow)] text-[var(--accent)] flex items-center justify-center">
+              <i data-lucide="utensils" class="w-3.5 h-3.5"></i>
+            </span>
+            <span class="font-bold text-xs text-[var(--text-primary)]">Room Service Meal</span>
+          </div>
           <span class="font-mono font-bold text-xs text-[var(--accent)]">₹${parseFloat(order.total_amount).toFixed(2)}</span>
         </div>
-        <p class="text-xs font-bold text-[var(--accent)] mt-1">${statusMsg}</p>
+        <div class="pt-1">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-bold ${statusColor}">
+            <span class="w-1.5 h-1.5 rounded-full bg-current animate-pulse"></span>
+            <span>${statusMsg}</span>
+          </span>
+        </div>
       `;
       container.appendChild(card);
     });
@@ -689,9 +848,9 @@
       const card = document.createElement('div');
       card.className = 'p-4 rounded-[var(--radius-lg)] bg-[var(--bg-base)] border border-[var(--border)] flex items-center justify-between';
 
-      let statusBadge = '<span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 font-bold text-[10px]">Pending Dispatch</span>';
-      if (srv.status === 'in_progress') statusBadge = '<span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 font-bold text-[10px]">Staff En Route 🚀</span>';
-      else if (srv.status === 'completed') statusBadge = '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 font-bold text-[10px]">Resolved ✅</span>';
+      let statusBadge = '<span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20 font-bold text-[10px]">Pending Dispatch</span>';
+      if (srv.status === 'in_progress') statusBadge = '<span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 border border-blue-500/20 font-bold text-[10px] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping"></span> Staff En Route</span>';
+      else if (srv.status === 'completed') statusBadge = '<span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 font-bold text-[10px]">Resolved</span>';
 
       card.innerHTML = `
         <div>

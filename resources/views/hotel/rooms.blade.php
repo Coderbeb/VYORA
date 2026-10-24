@@ -340,7 +340,7 @@
       let mainAction = '';
 
       if (room.status === 'vacant_clean') {
-        statusBadge = '<span class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-bold text-[11px]">Vacant Clean 🟢</span>';
+        statusBadge = '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-bold text-[11px]"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Vacant Clean</span>';
         statusColor = 'border-l-4 border-l-emerald-500';
         mainAction = `
           <button onclick="openCheckinModal('${room.id}')" class="w-full py-2.5 rounded-[var(--radius-sm)] bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition flex items-center justify-center gap-1.5">
@@ -350,7 +350,7 @@
         `;
       } else if (room.status === 'occupied') {
         const guestName = room.activeBooking && room.activeBooking.guest ? room.activeBooking.guest.full_name : 'Guest';
-        statusBadge = '<span class="px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 font-bold text-[11px] animate-pulse">Occupied 🔵</span>';
+        statusBadge = '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 font-bold text-[11px]"><span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Occupied</span>';
         statusColor = 'border-l-4 border-l-blue-500';
         mainAction = `
           <div class="space-y-1.5">
@@ -361,7 +361,7 @@
           </div>
         `;
       } else if (room.status === 'vacant_dirty') {
-        statusBadge = '<span class="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 font-bold text-[11px]">Needs Cleaning 🟠</span>';
+        statusBadge = '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 font-bold text-[11px]"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Needs Cleaning</span>';
         statusColor = 'border-l-4 border-l-amber-500';
         mainAction = `
           <button onclick="updateRoomStatus('${room.id}', 'vacant_clean')" class="w-full py-2 rounded-[var(--radius-sm)] bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-sm transition flex items-center justify-center gap-1.5">
@@ -370,7 +370,7 @@
           </button>
         `;
       } else {
-        statusBadge = '<span class="px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-600 font-bold text-[11px]">Maintenance 🔴</span>';
+        statusBadge = '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-600 font-bold text-[11px]"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Maintenance</span>';
         statusColor = 'border-l-4 border-l-red-500';
         mainAction = `
           <button onclick="updateRoomStatus('${room.id}', 'vacant_dirty')" class="w-full py-2 rounded-[var(--radius-sm)] border border-[var(--border)] hover:bg-[var(--bg-hover)] text-xs font-semibold text-[var(--text-primary)] transition">
@@ -383,9 +383,15 @@
 
       const catName = room.category ? room.category.name : 'Standard Room';
       const guestInfo = room.activeBooking && room.activeBooking.guest ? `
-        <div class="p-2.5 rounded bg-[var(--bg-base)] border border-[var(--border)] text-xs">
-          <p class="font-bold text-[var(--text-primary)]">👤 ${room.activeBooking.guest.full_name}</p>
-          <p class="text-[10px] text-[var(--text-muted)]">📞 ${room.activeBooking.guest.phone || 'No phone'}</p>
+        <div class="p-2.5 rounded bg-[var(--bg-base)] border border-[var(--border)] text-xs space-y-1">
+          <p class="font-bold text-[var(--text-primary)] flex items-center gap-1.5">
+            <i data-lucide="user" class="w-3.5 h-3.5 text-[var(--accent)] shrink-0"></i>
+            <span>${room.activeBooking.guest.full_name}</span>
+          </p>
+          <p class="text-[10px] text-[var(--text-muted)] flex items-center gap-1.5">
+            <i data-lucide="phone" class="w-3 h-3 shrink-0"></i>
+            <span>${room.activeBooking.guest.phone || 'No phone'}</span>
+          </p>
         </div>
       ` : '';
 
@@ -412,9 +418,9 @@
             </button>
             <select onchange="updateRoomStatus('${room.id}', this.value)" class="text-[11px] font-semibold bg-[var(--bg-base)] border border-[var(--border)] rounded px-2 py-1">
               <option value="">Change Status...</option>
-              <option value="vacant_clean">Set Clean 🟢</option>
-              <option value="vacant_dirty">Set Dirty 🟠</option>
-              <option value="maintenance">Set Maintenance 🔴</option>
+              <option value="vacant_clean">Set Clean</option>
+              <option value="vacant_dirty">Set Dirty</option>
+              <option value="maintenance">Set Maintenance</option>
             </select>
           </div>
         </div>

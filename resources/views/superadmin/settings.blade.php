@@ -364,7 +364,7 @@
       });
       const data = await res.json();
       if (data.success) {
-        window.showToast('✅ Platform customizations saved successfully!');
+        window.showToast('Platform customizations saved successfully!', 'success');
       } else {
         alert(data.error?.message || 'Failed to save settings');
       }
@@ -404,13 +404,19 @@
             <span class="font-serif text-2xl font-bold text-[var(--text-primary)]">₹${parseFloat(p.price).toFixed(2)}</span>
             <span class="text-[10px] text-[var(--text-muted)]">/month</span>
           </div>
-          <div class="mt-2 text-xs text-[var(--text-secondary)] space-y-1">
-            <p>📊 Max Tables: <strong>${p.max_tables > 0 ? p.max_tables : 'Unlimited'}</strong></p>
-            <p>🏨 Max Rooms: <strong>${p.max_rooms > 0 ? p.max_rooms : 'Unlimited'}</strong></p>
+          <div class="mt-2 text-xs text-[var(--text-secondary)] space-y-1.5">
+            <p class="flex items-center gap-1.5">
+              <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-[var(--accent)] shrink-0"></i>
+              <span>Max Tables: <strong>${p.max_tables > 0 ? p.max_tables : 'Unlimited'}</strong></span>
+            </p>
+            <p class="flex items-center gap-1.5">
+              <i data-lucide="hotel" class="w-3.5 h-3.5 text-purple-600 shrink-0"></i>
+              <span>Max Rooms: <strong>${p.max_rooms > 0 ? p.max_rooms : 'Unlimited'}</strong></span>
+            </p>
           </div>
           ${Array.isArray(p.features) && p.features.length > 0 ? `
             <ul class="mt-3 text-[11px] text-[var(--text-secondary)] space-y-1 border-t border-[var(--border)] pt-2">
-              ${p.features.map(f => `<li class="flex items-center gap-1.5"><span class="text-emerald-600">✓</span> ${f}</li>`).join('')}
+              ${p.features.map(f => `<li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i> <span>${f}</span></li>`).join('')}
             </ul>
           ` : ''}
         </div>
@@ -461,7 +467,7 @@
       const data = await res.json();
       if (data.success) {
         closePlanModal();
-        window.showToast('✅ Subscription plan saved!');
+        window.showToast('Subscription plan saved!', 'success');
         loadPlans();
       } else {
         alert(data.error?.message || 'Failed to save plan');

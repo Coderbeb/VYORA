@@ -127,7 +127,12 @@
       tr.innerHTML = `
         <td class="p-3">
           <p class="font-bold text-[var(--text-primary)]">${b.guest ? b.guest.full_name : 'Unnamed Guest'}</p>
-          <p class="text-[10px] text-[var(--text-muted)]">📞 ${b.guest?.phone || 'No phone'} • ${b.guest?.id_type || 'ID'}: ${b.guest?.id_number || '-'}</p>
+          <p class="text-[10px] text-[var(--text-muted)] flex items-center gap-1 mt-0.5">
+            <i data-lucide="phone" class="w-3 h-3 text-[var(--text-muted)]"></i>
+            <span>${b.guest?.phone || 'No phone'}</span>
+            <span>•</span>
+            <span>${b.guest?.id_type || 'ID'}: ${b.guest?.id_number || '-'}</span>
+          </p>
         </td>
         <td class="p-3">
           <span class="font-serif font-bold text-[var(--text-primary)]">Room ${b.room ? b.room.room_number : '-'}</span>
@@ -157,6 +162,8 @@
       `;
       tbody.appendChild(tr);
     });
+
+    if (window.lucide) lucide.createIcons();
 
     lucide.createIcons();
   }

@@ -16,17 +16,22 @@ class DashboardController extends Controller
         $user = $request->attributes->get('auth_user');
         $todayStart = Carbon::today('Asia/Kolkata');
 
-        $totalOrders = Order::where('owner_id', $user->id)->count();
-        $todayOrders = Order::where('owner_id', $user->id)
+        $userMatch = function($q) use ($user) {
+            $q->where('owner_id', $user->id)
+              ->orWhere('hotel_id', $user->id);
+        };
+
+        $totalOrders = Order::where($userMatch)->count();
+        $todayOrders = Order::where($userMatch)
             ->where('created_at', '>=', $todayStart)
             ->count();
 
-        $todayRevenue = (float) Order::where('owner_id', $user->id)
+        $todayRevenue = (float) Order::where($userMatch)
             ->where('status', '!=', 'cancelled')
             ->where('created_at', '>=', $todayStart)
             ->sum('total_amount');
 
-        $pendingOrders = Order::where('owner_id', $user->id)
+        $pendingOrders = Order::where($userMatch)
             ->whereIn('status', ['pending', 'preparing', 'ready'])
             ->count();
 

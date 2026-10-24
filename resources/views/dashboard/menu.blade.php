@@ -75,6 +75,24 @@
       </div>
 
       <div>
+        <label class="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5">Dietary Type *</label>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="flex items-center gap-2 p-2.5 rounded-[var(--radius-sm)] border border-[var(--border)] cursor-pointer hover:bg-[var(--bg-hover)] transition">
+            <input type="radio" name="dish-diet-type" id="dish-type-veg" value="1" checked class="text-emerald-600 focus:ring-emerald-500">
+            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Vegetarian
+            </span>
+          </label>
+          <label class="flex items-center gap-2 p-2.5 rounded-[var(--radius-sm)] border border-[var(--border)] cursor-pointer hover:bg-[var(--bg-hover)] transition">
+            <input type="radio" name="dish-diet-type" id="dish-type-nonveg" value="0" class="text-orange-600 focus:ring-orange-500">
+            <span class="text-xs font-bold text-orange-600 dark:text-orange-400 flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span> Non-Veg
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div>
         <label class="block text-xs font-semibold text-[var(--text-secondary)] mb-1">Description</label>
         <textarea id="dish-desc" rows="2" placeholder="Brief culinary description of ingredients and spices..." class="w-full px-3 py-2 text-sm bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] focus:outline-none focus:border-[var(--accent)] text-[var(--text-primary)]"></textarea>
       </div>
@@ -235,6 +253,17 @@
         <img src="${dish.imageUrl}" alt="${dish.name}" class="w-full h-36 object-cover rounded-[var(--radius-lg)] mb-3 border border-[var(--border)]">
       ` : '';
 
+      const isVeg = dish.isVeg !== false && dish.is_veg !== false && dish.isVeg !== 0 && dish.is_veg !== 0;
+      const dietBadge = isVeg
+        ? `<span class="inline-flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/25 px-1.5 py-0.5 rounded text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
+             <svg class="w-2.5 h-2.5 shrink-0" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="3" stroke="#059669" stroke-width="2" fill="#ECFDF5"/><circle cx="8" cy="8" r="3.5" fill="#059669"/></svg>
+             <span>Veg</span>
+           </span>`
+        : `<span class="inline-flex items-center gap-1 bg-red-500/10 border border-red-500/25 px-1.5 py-0.5 rounded text-[10px] font-bold text-red-700 dark:text-red-300">
+             <svg class="w-2.5 h-2.5 shrink-0" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="3" stroke="#DC2626" stroke-width="2" fill="#FEF2F2"/><polygon points="8,4.2 12,11.5 4,11.5" fill="#DC2626"/></svg>
+             <span>Non-Veg</span>
+           </span>`;
+
       card.innerHTML = `
         <div>
           ${imgHtml}
@@ -243,9 +272,13 @@
             <span class="font-mono font-bold text-sm text-[var(--accent)] shrink-0">₹${parseFloat(dish.price).toFixed(2)}</span>
           </div>
           <p class="text-xs text-[var(--text-secondary)] line-clamp-2 mb-2">${dish.description || 'No description provided.'}</p>
-          <div class="flex items-center gap-2 text-[10px] text-[var(--text-muted)]">
+          <div class="flex items-center gap-2 text-[10px] text-[var(--text-muted)] flex-wrap">
             <span class="px-2 py-0.5 rounded bg-[var(--bg-base)] border border-[var(--border)] font-medium">${dish.category?.name || 'Uncategorized'}</span>
-            <span>⏱️ ${dish.preparationTime} mins</span>
+            ${dietBadge}
+            <span class="inline-flex items-center gap-1 font-mono">
+              <svg class="w-3 h-3 text-[var(--text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+              <span>${dish.preparationTime} mins</span>
+            </span>
           </div>
         </div>
         <div class="pt-3 border-t border-[var(--border)] flex items-center justify-between">
@@ -276,6 +309,7 @@
     document.getElementById('dish-price').value = '';
     document.getElementById('dish-prep-time').value = '15';
     document.getElementById('dish-category').value = '';
+    document.getElementById('dish-type-veg').checked = true;
     document.getElementById('dish-desc').value = '';
     document.getElementById('dish-image-file').value = '';
     document.getElementById('dish-image-url').value = '';
@@ -292,6 +326,9 @@
     document.getElementById('dish-price').value = dish.price;
     document.getElementById('dish-prep-time').value = dish.preparationTime;
     document.getElementById('dish-category').value = dish.categoryId || '';
+    const isVeg = dish.isVeg !== false && dish.is_veg !== false && dish.isVeg !== 0 && dish.is_veg !== 0;
+    document.getElementById('dish-type-veg').checked = isVeg;
+    document.getElementById('dish-type-nonveg').checked = !isVeg;
     document.getElementById('dish-desc').value = dish.description || '';
     document.getElementById('dish-image-file').value = '';
     document.getElementById('dish-image-url').value = dish.imageUrl || '';
@@ -337,6 +374,7 @@
       price: parseFloat(document.getElementById('dish-price').value),
       preparationTime: parseInt(document.getElementById('dish-prep-time').value) || 15,
       categoryId: document.getElementById('dish-category').value || null,
+      isVeg: document.getElementById('dish-type-veg').checked,
       description: document.getElementById('dish-desc').value.trim() || null,
       imageUrl: imageUrl || null,
       isAvailable: document.getElementById('dish-available').checked,

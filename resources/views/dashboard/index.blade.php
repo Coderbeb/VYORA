@@ -9,7 +9,7 @@
   <div class="p-6 md:p-8 rounded-[var(--radius-xl)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
       <h2 class="text-xl md:text-2xl font-bold font-serif text-[var(--text-primary)] mb-1">
-        Welcome back, <span id="dash-welcome-name" class="text-[var(--accent)]">Chef</span>! 👋
+        Welcome back, <span id="dash-welcome-name" class="text-[var(--accent)]">Chef</span>
       </h2>
       <p class="text-xs text-[var(--text-secondary)]">Here is what's happening at your restaurant today.</p>
     </div>
@@ -176,7 +176,7 @@
           else statusBadge = '<span class="px-2 py-0.5 rounded-full bg-red-500/10 text-red-600 font-bold">Cancelled</span>';
 
           const locText = order.orderType === 'room_service'
-            ? `<span class="text-purple-600 dark:text-purple-400 font-bold">🏨 ${order.hotelName || 'Hotel'} • Room #${order.roomNumber}</span>`
+            ? `<span class="inline-flex items-center gap-1 text-purple-600 dark:text-purple-400 font-bold"><i data-lucide="hotel" class="w-3.5 h-3.5"></i> <span>${order.hotelName || 'Hotel'} • Room #${order.roomNumber}</span></span>`
             : `Table #${order.tableNumber}`;
 
           const tr = document.createElement('tr');
@@ -190,6 +190,8 @@
           `;
           tbody.appendChild(tr);
         });
+
+        if (window.lucide) lucide.createIcons();
       } else {
         tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-[var(--text-muted)]">No orders placed today yet. Scan a table QR to test!</td></tr>';
       }
