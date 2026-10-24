@@ -30,6 +30,16 @@
       } else {
         document.documentElement.removeAttribute('data-theme');
       }
+
+      // Business Type Initializer (Eliminates sidebar flash on navigation)
+      try {
+        const ownerRaw = localStorage.getItem('owner');
+        const owner = ownerRaw ? JSON.parse(ownerRaw) : null;
+        const bType = (owner && owner.businessType) ? owner.businessType : (localStorage.getItem('businessType') || 'RESTAURANT');
+        document.documentElement.setAttribute('data-business-type', bType);
+      } catch (e) {
+        document.documentElement.setAttribute('data-business-type', 'RESTAURANT');
+      }
     })();
 
     // Pusher Config global

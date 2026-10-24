@@ -32,52 +32,52 @@
           </a>
         </div>
 
-        <!-- Hotel Management Section (Visible for Hotel & Both) -->
-        <div id="nav-hotel-section" class="hotel-only-nav">
-          <div class="sidebar-section-title px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-amber-400/80">Hotel PMS</div>
+        <!-- Dining & Kitchen Operations (Visible for Restaurant & Both) -->
+        <div id="nav-restaurant-section" class="restaurant-only-nav">
+          <div class="sidebar-section-title px-3 mb-2 text-xs font-bold uppercase tracking-wider text-white/50">Dining & Kitchen</div>
           <div class="space-y-1">
-            <a href="/dashboard/hotel/rooms" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium transition {{ request()->is('dashboard/hotel/rooms*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-semibold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
-              <i data-lucide="bed-double" class="w-4 h-4 shrink-0 text-amber-400"></i>
-              <span class="sidebar-label">Rooms & Grid</span>
+            <a href="/dashboard/orders" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-semibold transition {{ request()->is('dashboard/orders*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-bold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
+              <i data-lucide="shopping-bag" class="w-4 h-4 shrink-0"></i>
+              <span class="sidebar-label">Live Orders</span>
             </a>
-            <a href="/dashboard/hotel/guests" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium transition {{ request()->is('dashboard/hotel/guests*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-semibold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
-              <i data-lucide="users" class="w-4 h-4 shrink-0 text-amber-400"></i>
-              <span class="sidebar-label">Guests & Stays</span>
+            <a href="/dashboard/kds" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-semibold transition {{ request()->is('dashboard/kds*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-bold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
+              <i data-lucide="chef-hat" class="w-4 h-4 shrink-0"></i>
+              <span class="sidebar-label">Kitchen KDS</span>
             </a>
-            <a href="/dashboard/hotel/services" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium transition {{ request()->is('dashboard/hotel/services*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-semibold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
-              <i data-lucide="bell" class="w-4 h-4 shrink-0 text-amber-400"></i>
-              <span class="sidebar-label">Housekeeping</span>
+            <a href="/dashboard/billing" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-semibold transition {{ request()->is('dashboard/billing*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-bold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
+              <i data-lucide="credit-card" class="w-4 h-4 shrink-0"></i>
+              <span class="sidebar-label">Table Billing</span>
             </a>
-            <a href="/dashboard/hotel/partner" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium transition {{ request()->is('dashboard/hotel/partner*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-semibold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
-              <i data-lucide="link" class="w-4 h-4 shrink-0 text-amber-400"></i>
-              <span class="sidebar-label">Partner Dining</span>
+            <a href="/dashboard/menu" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-semibold transition {{ request()->is('dashboard/menu*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-bold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
+              <i data-lucide="utensils-crossed" class="w-4 h-4 shrink-0"></i>
+              <span class="sidebar-label">Menu Catalog</span>
+            </a>
+            <a href="/dashboard/tables" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-semibold transition {{ request()->is('dashboard/tables*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-bold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
+              <i data-lucide="qr-code" class="w-4 h-4 shrink-0"></i>
+              <span class="sidebar-label">Tables & QR</span>
             </a>
           </div>
         </div>
 
-        <!-- Dining & Kitchen Operations (Visible for Restaurant & Both) -->
-        <div id="nav-restaurant-section" class="restaurant-only-nav">
-          <div class="sidebar-section-title px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-white/40">Dining & Kitchen</div>
+        <!-- Hotel Management Section (Visible for Hotel & Both) -->
+        <div id="nav-hotel-section" class="hotel-only-nav">
+          <div class="sidebar-section-title px-3 mb-2 text-xs font-bold uppercase tracking-wider text-amber-400">Hotel PMS</div>
           <div class="space-y-1">
-            <a href="/dashboard/orders" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium transition {{ request()->is('dashboard/orders*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-semibold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
-              <i data-lucide="shopping-bag" class="w-4 h-4 shrink-0"></i>
-              <span class="sidebar-label">Live Orders</span>
+            <a href="/dashboard/hotel/rooms" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-semibold transition {{ request()->is('dashboard/hotel/rooms*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-bold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
+              <i data-lucide="bed-double" class="w-4 h-4 shrink-0 text-amber-400"></i>
+              <span class="sidebar-label">Rooms & Grid</span>
             </a>
-            <a href="/dashboard/kds" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium transition {{ request()->is('dashboard/kds*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-semibold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
-              <i data-lucide="chef-hat" class="w-4 h-4 shrink-0"></i>
-              <span class="sidebar-label">Kitchen KDS</span>
+            <a href="/dashboard/hotel/guests" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-semibold transition {{ request()->is('dashboard/hotel/guests*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-bold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
+              <i data-lucide="users" class="w-4 h-4 shrink-0 text-amber-400"></i>
+              <span class="sidebar-label">Guests & Stays</span>
             </a>
-            <a href="/dashboard/billing" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium transition {{ request()->is('dashboard/billing*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-semibold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
-              <i data-lucide="credit-card" class="w-4 h-4 shrink-0"></i>
-              <span class="sidebar-label">Table Billing</span>
+            <a href="/dashboard/hotel/services" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-semibold transition {{ request()->is('dashboard/hotel/services*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-bold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
+              <i data-lucide="bell" class="w-4 h-4 shrink-0 text-amber-400"></i>
+              <span class="sidebar-label">Housekeeping</span>
             </a>
-            <a href="/dashboard/menu" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium transition {{ request()->is('dashboard/menu*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-semibold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
-              <i data-lucide="utensils-crossed" class="w-4 h-4 shrink-0"></i>
-              <span class="sidebar-label">Menu Catalog</span>
-            </a>
-            <a href="/dashboard/tables" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium transition {{ request()->is('dashboard/tables*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-semibold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
-              <i data-lucide="qr-code" class="w-4 h-4 shrink-0"></i>
-              <span class="sidebar-label">Tables & QR</span>
+            <a href="/dashboard/hotel/partner" class="nav-link flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] text-sm font-semibold transition {{ request()->is('dashboard/hotel/partner*') ? 'bg-[var(--bg-sidebar-active)] text-[var(--text-sidebar-active)] font-bold' : 'text-white/80 hover:bg-[var(--bg-sidebar-hover)] hover:text-white' }}">
+              <i data-lucide="link" class="w-4 h-4 shrink-0 text-amber-400"></i>
+              <span class="sidebar-label">Partner Dining</span>
             </a>
           </div>
         </div>
@@ -148,7 +148,7 @@
         <div class="relative" id="profile-dropdown-container">
           <button onclick="toggleProfileDropdown()" class="flex items-center gap-2 p-1.5 rounded-[var(--radius-sm)] border border-[var(--border)] hover:bg-[var(--bg-hover)] transition">
             <div class="w-7 h-7 rounded-full bg-[var(--accent)] text-white flex items-center justify-center text-xs font-bold font-serif">
-              <span id="topbar-avatar-initial">Q</span>
+              <span id="topbar-avatar-initial">V</span>
             </div>
             <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[var(--text-muted)]"></i>
           </button>
@@ -216,6 +216,31 @@
   let activeOwnerId = null;
 
   document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Instant Cache Hydration (Zero Millisecond Flash)
+    try {
+      const cachedOwner = JSON.parse(localStorage.getItem('owner') || '{}');
+      if (cachedOwner.businessType) {
+        document.documentElement.setAttribute('data-business-type', cachedOwner.businessType);
+      }
+      if (cachedOwner.restaurantName) {
+        const nameEl = document.getElementById('sidebar-restaurant-name');
+        if (nameEl) nameEl.textContent = cachedOwner.restaurantName;
+        const init = cachedOwner.restaurantName.charAt(0).toUpperCase();
+        const sInit = document.getElementById('sidebar-avatar-initial');
+        const tInit = document.getElementById('topbar-avatar-initial');
+        if (sInit) sInit.textContent = init;
+        if (tInit) tInit.textContent = init;
+      }
+      if (cachedOwner.username) {
+        const uEl = document.getElementById('sidebar-username');
+        if (uEl) uEl.textContent = '@' + cachedOwner.username;
+      }
+      const badge = document.getElementById('business-type-badge');
+      if (badge && cachedOwner.businessType) {
+        badge.textContent = cachedOwner.businessType + ' PMS';
+      }
+    } catch(e) {}
+
     const token = window.getAuthToken();
     if (!token) {
       window.location.href = '/auth/login';
@@ -228,6 +253,7 @@
       });
       const data = await res.json();
       if (!data.success || !data.data) {
+        localStorage.removeItem('token');
         localStorage.removeItem('qrestro_token');
         window.location.href = '/auth/login';
         return;
@@ -235,6 +261,8 @@
 
       const u = data.data;
       activeOwnerId = u.id;
+      localStorage.setItem('owner', JSON.stringify(u));
+      localStorage.setItem('businessType', u.businessType || 'RESTAURANT');
 
       // Update Topbar & Sidebar info
       document.getElementById('sidebar-restaurant-name').textContent = u.restaurantName || 'Vyora Property';
@@ -242,7 +270,7 @@
       document.getElementById('dropdown-owner-name').textContent = u.ownerName || u.restaurantName;
       document.getElementById('dropdown-email').textContent = u.email;
 
-      const initial = (u.restaurantName || 'Q').charAt(0).toUpperCase();
+      const initial = (u.restaurantName || 'V').charAt(0).toUpperCase();
       document.getElementById('sidebar-avatar-initial').textContent = initial;
       document.getElementById('topbar-avatar-initial').textContent = initial;
 
@@ -251,8 +279,10 @@
         badge.textContent = (u.businessType || 'RESTAURANT') + ' PMS';
       }
 
-      // Adaptive Navigation based on Business Type
+      // Adaptive Navigation based on Business Type (Sync attribute and display)
       const bType = u.businessType || 'RESTAURANT';
+      document.documentElement.setAttribute('data-business-type', bType);
+
       const hotelSection = document.getElementById('nav-hotel-section');
       const restSection = document.getElementById('nav-restaurant-section');
 

@@ -316,16 +316,16 @@
 
   // Bespoke Luxury Vector Icons Suite
   const VYORA_ICONS = {
-    vegEmblem: `<div class="flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/25 px-1.5 py-0.5 rounded text-[9px] font-bold text-emerald-700 dark:text-emerald-300 shrink-0">
-      <svg class="w-3 h-3 shrink-0" viewBox="0 0 16 16" fill="none">
+    vegEmblem: `<div class="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded text-[11px] font-bold text-emerald-800 dark:text-emerald-300 shrink-0">
+      <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="none">
         <rect x="1" y="1" width="14" height="14" rx="3.5" stroke="#059669" stroke-width="1.8" fill="#ECFDF5"/>
         <circle cx="8" cy="8" r="3.5" fill="#059669"/>
       </svg>
-      <span>Pure Veg</span>
+      <span>Veg</span>
     </div>`,
 
-    nonVegEmblem: `<div class="flex items-center gap-1 bg-red-500/10 border border-red-500/25 px-1.5 py-0.5 rounded text-[9px] font-bold text-red-700 dark:text-red-300 shrink-0">
-      <svg class="w-3 h-3 shrink-0" viewBox="0 0 16 16" fill="none">
+    nonVegEmblem: `<div class="flex items-center gap-1.5 bg-red-500/10 border border-red-500/30 px-2 py-0.5 rounded text-[11px] font-bold text-red-800 dark:text-red-300 shrink-0">
+      <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="none">
         <rect x="1" y="1" width="14" height="14" rx="3.5" stroke="#DC2626" stroke-width="1.8" fill="#FEF2F2"/>
         <polygon points="8,4.2 12,11.5 4,11.5" fill="#DC2626"/>
       </svg>
@@ -587,18 +587,18 @@
 
       card.innerHTML = `
         <div class="overflow-hidden">
-          <div class="flex items-center justify-between mb-1">
+          <div class="flex items-center justify-between mb-1.5">
             ${emblemBadge}
-            <span class="text-[9px] text-[var(--text-muted)] font-mono flex items-center">${VYORA_ICONS.clock} ${dish.preparationTime}m</span>
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-mono font-semibold flex items-center">${VYORA_ICONS.clock} ${dish.preparationTime}m</span>
           </div>
           ${imgHtml}
-          <h4 class="font-serif font-bold text-xs sm:text-sm text-[var(--text-primary)] truncate">${dish.name}</h4>
-          <p class="text-[10px] text-[var(--text-secondary)] line-clamp-2 mt-0.5 min-h-[26px]">${dish.description || ''}</p>
-          <div class="flex items-center justify-between mt-1.5 pt-1 border-t border-[var(--border)]">
-            <span class="font-mono font-bold text-xs sm:text-sm ${isNonVeg ? 'text-orange-700 dark:text-orange-300' : 'text-[var(--accent)]'}">₹${parseFloat(dish.price).toFixed(2)}</span>
+          <h4 class="font-sans font-extrabold text-sm sm:text-base text-slate-900 dark:text-slate-50 truncate mt-1 leading-snug">${dish.name}</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-300 font-medium line-clamp-2 mt-1 min-h-[32px] leading-relaxed">${dish.description || 'Prepared fresh by master chef.'}</p>
+          <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-[var(--border)]">
+            <span class="font-mono font-black text-sm sm:text-base ${isNonVeg ? 'text-orange-700 dark:text-orange-300' : 'text-[var(--accent)] dark:text-emerald-400'}">₹${parseFloat(dish.price).toFixed(2)}</span>
           </div>
         </div>
-        <div>
+        <div class="pt-2">
           ${actionControl}
         </div>
       `;

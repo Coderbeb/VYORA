@@ -9,12 +9,13 @@
   --bg-card: rgba(255, 255, 255, 0.85);
   --bg-hover: rgba(3, 77, 55, 0.05); /* Soft Forest tint */
 
-  --border: rgba(3, 77, 55, 0.06); /* Soft Forest tint border */
-  --border-hover: rgba(3, 77, 55, 0.15);
+  --border: #e2e8f0; /* Crisp, clearly visible Slate 200 border */
+  --border-subtle: #f1f5f9;
+  --border-hover: #cbd5e1;
 
-  --text-primary: #111c24; /* Deep Forest Charcoal */
-  --text-secondary: #556875; /* Muted Slate-Forest */
-  --text-muted: #8e9fae; /* Muted Slate */
+  --text-primary: #0f172a; /* Deep Crisp Slate 900 - AAA Contrast (15.7:1) */
+  --text-secondary: #334155; /* Solid Slate 700 - High Contrast (9.2:1) */
+  --text-muted: #475569; /* Slate 600 - WCAG AA (>5.6:1, highly readable) */
 
   /* Brand */
   --accent: #034d37; /* Emerald Forest Green (as requested) */
@@ -86,12 +87,13 @@
   --bg-card: rgba(17, 26, 23, 0.65);
   --bg-hover: rgba(197, 168, 128, 0.08);
 
-  --border: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(255, 255, 255, 0.12);
+  --border: rgba(255, 255, 255, 0.12);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.22);
 
-  --text-primary: #f5f7f6; /* Soft Alabaster */
-  --text-secondary: #ccd4d1; /* Muted Jade Gray */
-  --text-muted: #687872; /* Darker Jade Gray */
+  --text-primary: #f8fafc; /* Crisp Slate 50 */
+  --text-secondary: #e2e8f0; /* Crisp Slate 200 - High Contrast */
+  --text-muted: #94a3b8; /* Crisp Slate 400 - Readable */
 
   --accent: #c5a880; /* Champagne Gold */
   --accent-hover: #b49b70;
@@ -340,24 +342,29 @@ html {
   font-size: 16px;
 }
 
-/* Global Viewport Ratio Typography/Spacing Scaling */
-@media (max-width: 1400px) {
-  html { font-size: 15.5px; }
+/* Ensure stable, highly readable root typography across all viewports */
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
-@media (max-width: 1200px) {
-  html { font-size: 15px; }
+@media (max-width: 380px) {
+  html { font-size: 15px; } /* Minimum floor to ensure text-xs never falls below 11.25px */
 }
-@media (max-width: 992px) {
-  html { font-size: 14.5px; }
+
+/* Zero-FOUC Adaptive Sidebar Rules (Instant Pre-Paint Navigation) */
+html:not([data-business-type="HOTEL"]):not([data-business-type="BOTH"]) .hotel-only-nav {
+  display: none !important;
 }
-@media (max-width: 768px) {
-  html { font-size: 14px; }
+html[data-business-type="RESTAURANT"] .hotel-only-nav {
+  display: none !important;
 }
-@media (max-width: 480px) {
-  html { font-size: 13.5px; }
+html[data-business-type="HOTEL"] .restaurant-only-nav {
+  display: none !important;
 }
-@media (max-width: 360px) {
-  html { font-size: 12.5px; }
+html[data-business-type="BOTH"] .hotel-only-nav,
+html[data-business-type="BOTH"] .restaurant-only-nav {
+  display: block !important;
 }
 
 body {
@@ -408,15 +415,21 @@ button { cursor: pointer; font-family: inherit; }
 input, textarea, select { font-family: inherit; }
 img { max-width: 100%; display: block; }
 
-/* ─── Typography ────────────────────────────────────────────── */
-h1, h2, h3, h4 {
+/* ─── Typography & Maximum Digital Readability ───────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+.font-editorial, .font-serif-brand {
   font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
 }
-h1 { font-size: 3.25rem; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; }
-h2 { font-size: 1.85rem; font-weight: 700; letter-spacing: -0.01em; }
-h3 { font-size: 1.35rem; font-weight: 600; }
-h4 { font-size: 1.05rem; font-weight: 600; }
-p  { color: var(--text-secondary); }
+h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.2; letter-spacing: -0.03em; }
+h2 { font-size: 1.75rem; font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
+h3 { font-size: 1.35rem; font-weight: 700; line-height: 1.3; }
+h4 { font-size: 1.1rem; font-weight: 700; line-height: 1.35; }
+p  { color: var(--text-secondary); line-height: 1.5; }
 
 /* ─── Scrollbar ─────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -911,8 +924,8 @@ input::-ms-clear {
   animation: morph-liquid 10s ease-in-out infinite;
   box-shadow: 0 0 15px var(--accent-glow);
 }
-.sidebar-logo-name { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; font-size: 0.95rem; color: var(--text-sidebar-primary, var(--text-primary)); letter-spacing: -0.01em; flex: 1; }
-.sidebar-logo-sub  { font-size: 0.55rem; color: var(--text-sidebar-muted, var(--text-muted)); margin-top: 1px; }
+.sidebar-logo-name { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.05rem; color: var(--text-sidebar-primary, var(--text-primary)); letter-spacing: -0.01em; flex: 1; }
+.sidebar-logo-sub  { font-size: 0.72rem; font-weight: 600; color: var(--text-sidebar-muted, var(--text-muted)); margin-top: 1px; }
 
 /* Close button — only visible on mobile */
 .sidebar-close-btn {
@@ -1729,18 +1742,19 @@ input::-ms-clear {
   transform: scale(1.05);
 }
 .order-item-body { padding: 0.75rem; flex: 1; display: flex; flex-direction: column; }
-.order-item-name { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.2rem; color: var(--text-primary); }
+.order-item-name { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; font-weight: 800; font-size: 1.05rem; margin-bottom: 0.25rem; color: var(--text-primary); line-height: 1.3; }
 .order-item-desc {
-  font-size: 0.76rem;
-  color: var(--text-muted);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
   margin-bottom: 0.65rem;
-  line-height: 1.4;
+  line-height: 1.45;
   flex: 1;
   display: -webkit-box;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  height: 2.2rem; /* Fixed height for clean grid alignment */
+  height: 2.5rem; /* Fixed height for clean grid alignment */
 }
 .order-item-footer {
   display: flex;
@@ -1749,8 +1763,8 @@ input::-ms-clear {
   margin-top: auto;
   gap: 0.55rem;
 }
-.order-item-price { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--accent); font-size: 0.95rem; }
-.order-item-prep { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; }
+.order-item-price { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; color: var(--accent); font-size: 1.05rem; }
+.order-item-prep { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; }
 
 @media (min-width: 768px) {
   .order-menu-grid {
@@ -1759,15 +1773,15 @@ input::-ms-clear {
     padding: 1.25rem;
   }
   .order-item-img {
-    height: 150px;
+    height: 160px;
     font-size: 3rem;
   }
-  .order-item-body { padding: 1rem; }
-  .order-item-name { font-size: 1.15rem; margin-bottom: 0.3rem; }
-  .order-item-desc { font-size: 0.82rem; margin-bottom: 0.85rem; line-height: 1.5; line-clamp: none; height: auto; }
+  .order-item-body { padding: 1.1rem; }
+  .order-item-name { font-size: 1.2rem; margin-bottom: 0.35rem; }
+  .order-item-desc { font-size: 0.875rem; margin-bottom: 0.85rem; line-height: 1.5; line-clamp: none; height: auto; }
   .order-item-footer { flex-direction: row; align-items: center; justify-content: space-between; gap: 0.5rem; }
-  .order-item-price { font-size: 1.05rem; }
-  .order-item-prep { font-size: 0.72rem; }
+  .order-item-price { font-size: 1.15rem; }
+  .order-item-prep { font-size: 0.825rem; }
 }
 
 @media (min-width: 1024px) {

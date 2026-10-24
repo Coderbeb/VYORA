@@ -62,16 +62,16 @@
         </div>
         <div class="min-w-0">
           <div class="flex items-center gap-1.5">
-            <h1 id="restaurant-name-header" class="font-serif font-bold text-sm sm:text-base tracking-tight truncate max-w-[150px] sm:max-w-xs text-[var(--text-primary)]">
+            <h1 id="restaurant-name-header" class="font-sans font-extrabold text-base sm:text-lg tracking-tight truncate max-w-[160px] sm:max-w-xs text-slate-900 dark:text-slate-50">
               Loading Menu...
             </h1>
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping shrink-0" title="Live Venue Connection"></span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" title="Live Venue Connection"></span>
           </div>
-          <div class="flex items-center gap-1.5 text-[10px]">
-            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--accent-glow)] text-[var(--accent)] font-bold uppercase tracking-wider">
-              <i data-lucide="utensils" class="w-2.5 h-2.5"></i> Table #{{ $tableNumber }}
+          <div class="flex items-center gap-1.5 text-xs">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[var(--accent-glow)] text-[var(--accent)] font-bold uppercase tracking-wider">
+              <i data-lucide="utensils" class="w-3 h-3"></i> Table #{{ $tableNumber }}
             </span>
-            <span class="text-[var(--text-muted)] hidden sm:inline">• In-Dining</span>
+            <span class="text-slate-500 dark:text-slate-400 font-medium hidden sm:inline">• Dining Floor</span>
           </div>
         </div>
       </div>
@@ -79,15 +79,15 @@
       <!-- Quick Action Controls -->
       <div class="flex items-center gap-2">
         <!-- Live Order Tracking Pill (appears when orders active) -->
-        <button id="tracking-toggle-btn" onclick="toggleTrackingSheet()" class="hidden px-2.5 py-1.5 rounded-full bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/25 font-bold text-[11px] flex items-center gap-1.5 shadow-xs transition active:scale-95 animate-pulse">
+        <button id="tracking-toggle-btn" onclick="toggleTrackingSheet()" class="hidden px-3 py-1.5 rounded-full bg-orange-500/15 text-orange-700 dark:text-orange-300 border border-orange-500/30 font-bold text-xs flex items-center gap-1.5 shadow-xs transition active:scale-95 animate-pulse">
           <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
           <span id="tracking-status-text">Track (<span id="tracking-active-count">0</span>)</span>
         </button>
 
         <!-- Theme Switcher -->
-        <button onclick="toggleTheme()" class="p-2 rounded-full border border-[var(--border)] bg-[var(--bg-base)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] transition active:scale-90" title="Toggle Theme">
+        <button onclick="toggleTheme()" class="p-2 rounded-full border border-slate-300 dark:border-zinc-700 bg-[var(--bg-base)] hover:bg-[var(--bg-hover)] text-slate-700 dark:text-slate-200 transition active:scale-90" title="Toggle Theme">
           <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
-          <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-slate-600"></i>
+          <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-slate-700"></i>
         </button>
       </div>
     </div>
@@ -98,12 +98,12 @@
     <!-- Welcome & Table Service Quick Bar -->
     <div class="p-3.5 rounded-[var(--radius-xl)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-xs flex flex-col gap-2.5">
       <div class="flex items-center justify-between text-xs">
-        <span class="text-[var(--text-secondary)] font-medium flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          <span>Waiter & Table Service</span>
+        <span class="text-slate-700 dark:text-slate-200 font-bold flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span>Staff & Table Assistance</span>
         </span>
-        <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Attendant on Floor
+        <span class="text-xs text-emerald-800 dark:text-emerald-300 font-bold bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Floor Attendant Active
         </span>
       </div>
       <div class="grid grid-cols-2 gap-2">
@@ -299,16 +299,16 @@
 
   // Bespoke Luxury Vector Icons Suite
   const VYORA_ICONS = {
-    vegEmblem: `<div class="flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/25 px-1.5 py-0.5 rounded text-[9px] font-bold text-emerald-700 dark:text-emerald-300 shrink-0">
-      <svg class="w-3 h-3 shrink-0" viewBox="0 0 16 16" fill="none">
+    vegEmblem: `<div class="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded text-[11px] font-bold text-emerald-800 dark:text-emerald-300 shrink-0">
+      <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="none">
         <rect x="1" y="1" width="14" height="14" rx="3.5" stroke="#059669" stroke-width="1.8" fill="#ECFDF5"/>
         <circle cx="8" cy="8" r="3.5" fill="#059669"/>
       </svg>
-      <span>Pure Veg</span>
+      <span>Veg</span>
     </div>`,
 
-    nonVegEmblem: `<div class="flex items-center gap-1 bg-red-500/10 border border-red-500/25 px-1.5 py-0.5 rounded text-[9px] font-bold text-red-700 dark:text-red-300 shrink-0">
-      <svg class="w-3 h-3 shrink-0" viewBox="0 0 16 16" fill="none">
+    nonVegEmblem: `<div class="flex items-center gap-1.5 bg-red-500/10 border border-red-500/30 px-2 py-0.5 rounded text-[11px] font-bold text-red-800 dark:text-red-300 shrink-0">
+      <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="none">
         <rect x="1" y="1" width="14" height="14" rx="3.5" stroke="#DC2626" stroke-width="1.8" fill="#FEF2F2"/>
         <polygon points="8,4.2 12,11.5 4,11.5" fill="#DC2626"/>
       </svg>
@@ -601,18 +601,18 @@
 
       card.innerHTML = `
         <div class="overflow-hidden relative">
-          <div class="flex items-center justify-between mb-1">
+          <div class="flex items-center justify-between mb-1.5">
             ${emblemBadge}
-            <span class="text-[9px] text-[var(--text-muted)] font-mono flex items-center">${VYORA_ICONS.clock} ${dish.preparationTime || 15}m</span>
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-mono font-semibold flex items-center">${VYORA_ICONS.clock} ${dish.preparationTime || 15}m</span>
           </div>
           ${imgHtml}
-          <h4 class="font-serif font-bold text-xs sm:text-sm text-[var(--text-primary)] truncate mt-1">${dish.name}</h4>
-          <p class="text-[10px] text-[var(--text-secondary)] line-clamp-2 mt-0.5 min-h-[26px]">${dish.description || 'Prepared fresh by chef.'}</p>
-          <div class="flex items-center justify-between mt-1.5 pt-1 border-t border-[var(--border)]">
-            <span class="font-mono font-bold text-xs sm:text-sm ${isNonVeg ? 'text-orange-700 dark:text-orange-300' : 'text-[var(--accent)]'}">₹${parseFloat(dish.price).toFixed(2)}</span>
+          <h4 class="font-sans font-extrabold text-sm sm:text-base text-slate-900 dark:text-slate-50 truncate mt-1 leading-snug">${dish.name}</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-300 font-medium line-clamp-2 mt-1 min-h-[34px] leading-relaxed">${dish.description || 'Prepared fresh by master chef.'}</p>
+          <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-[var(--border)]">
+            <span class="font-mono font-black text-sm sm:text-base ${isNonVeg ? 'text-orange-700 dark:text-orange-300' : 'text-[var(--accent)] dark:text-emerald-400'}">₹${parseFloat(dish.price).toFixed(2)}</span>
           </div>
         </div>
-        <div class="pt-1 relative">
+        <div class="pt-2 relative">
           ${actionControl}
         </div>
       `;
@@ -927,34 +927,34 @@
 
             <!-- Step 1: Pending -->
             <div class="relative z-10 flex flex-col items-center">
-              <div class="w-7 h-7 rounded-full ${currentStepIdx >= 0 ? 'bg-[var(--accent)] text-white ring-2 ring-[var(--accent-glow)]' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'} ${currentStepIdx === 0 ? 'animate-pulse-ring' : ''} flex items-center justify-center font-bold text-xs transition-all shadow-xs">
+              <div class="w-8 h-8 rounded-full ${currentStepIdx >= 0 ? 'bg-[var(--accent)] text-white ring-2 ring-[var(--accent-glow)]' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'} ${currentStepIdx === 0 ? 'animate-pulse-ring' : ''} flex items-center justify-center font-bold text-xs transition-all shadow-xs">
                 ${currentStepIdx > 0 ? VYORA_ICONS.stepCheck : VYORA_ICONS.stepTicket}
               </div>
-              <span class="text-[9px] mt-1 font-semibold text-[var(--text-muted)]">Received</span>
+              <span class="text-[11px] mt-1.5 font-bold text-slate-700 dark:text-slate-200">Received</span>
             </div>
 
             <!-- Step 2: Preparing -->
             <div class="relative z-10 flex flex-col items-center">
-              <div class="w-7 h-7 rounded-full ${currentStepIdx >= 1 ? 'bg-[var(--accent)] text-white ring-2 ring-[var(--accent-glow)]' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'} ${currentStepIdx === 1 ? 'animate-pulse-ring' : ''} flex items-center justify-center font-bold text-xs transition-all shadow-xs">
+              <div class="w-8 h-8 rounded-full ${currentStepIdx >= 1 ? 'bg-[var(--accent)] text-white ring-2 ring-[var(--accent-glow)]' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'} ${currentStepIdx === 1 ? 'animate-pulse-ring' : ''} flex items-center justify-center font-bold text-xs transition-all shadow-xs">
                 ${currentStepIdx > 1 ? VYORA_ICONS.stepCheck : VYORA_ICONS.stepFlame}
               </div>
-              <span class="text-[9px] mt-1 font-semibold text-[var(--text-muted)]">Cooking</span>
+              <span class="text-[11px] mt-1.5 font-bold text-slate-700 dark:text-slate-200">Cooking</span>
             </div>
 
             <!-- Step 3: Ready -->
             <div class="relative z-10 flex flex-col items-center">
-              <div class="w-7 h-7 rounded-full ${currentStepIdx >= 2 ? 'bg-[var(--accent)] text-white ring-2 ring-[var(--accent-glow)]' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'} ${currentStepIdx === 2 ? 'animate-pulse-ring' : ''} flex items-center justify-center font-bold text-xs transition-all shadow-xs">
+              <div class="w-8 h-8 rounded-full ${currentStepIdx >= 2 ? 'bg-[var(--accent)] text-white ring-2 ring-[var(--accent-glow)]' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'} ${currentStepIdx === 2 ? 'animate-pulse-ring' : ''} flex items-center justify-center font-bold text-xs transition-all shadow-xs">
                 ${currentStepIdx > 2 ? VYORA_ICONS.stepCheck : VYORA_ICONS.stepPlate}
               </div>
-              <span class="text-[9px] mt-1 font-semibold text-[var(--text-muted)]">Plated</span>
+              <span class="text-[11px] mt-1.5 font-bold text-slate-700 dark:text-slate-200">Plated</span>
             </div>
 
             <!-- Step 4: Completed -->
             <div class="relative z-10 flex flex-col items-center">
-              <div class="w-7 h-7 rounded-full ${currentStepIdx >= 3 ? 'bg-emerald-600 text-white ring-2 ring-emerald-500/30' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'} flex items-center justify-center font-bold text-xs transition-all shadow-xs">
+              <div class="w-8 h-8 rounded-full ${currentStepIdx >= 3 ? 'bg-emerald-600 text-white ring-2 ring-emerald-500/30' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'} flex items-center justify-center font-bold text-xs transition-all shadow-xs">
                 ${VYORA_ICONS.stepCheck}
               </div>
-              <span class="text-[9px] mt-1 font-semibold text-[var(--text-muted)]">Served</span>
+              <span class="text-[11px] mt-1.5 font-bold text-slate-700 dark:text-slate-200">Served</span>
             </div>
           </div>
 

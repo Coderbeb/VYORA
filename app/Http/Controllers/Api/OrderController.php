@@ -25,7 +25,7 @@ class OrderController extends Controller
                   ->orWhere('hotel_id', $user->id);
             })
             ->with(['items.menuItem' => function ($q) {
-                $q->select('id', 'name', 'image_url');
+                $q->select('id', 'name', 'image_url', 'is_veg');
             }, 'hotel'])
             ->orderBy('created_at', 'desc')
             ->take($limit);
@@ -66,9 +66,11 @@ class OrderController extends Controller
                         'menuItemName' => $item->menu_item_name,
                         'quantity' => $item->quantity,
                         'price' => (float) $item->price,
+                        'isVeg' => $item->menuItem ? (bool) $item->menuItem->is_veg : true,
                         'menuItem' => $item->menuItem ? [
                             'name' => $item->menuItem->name,
                             'imageUrl' => $item->menuItem->image_url,
+                            'isVeg' => (bool) $item->menuItem->is_veg,
                         ] : null,
                     ];
                 }),
@@ -87,7 +89,7 @@ class OrderController extends Controller
                   ->orWhere('hotel_id', $user->id);
             })
             ->with(['items.menuItem' => function ($q) {
-                $q->select('id', 'name', 'image_url');
+                $q->select('id', 'name', 'image_url', 'is_veg');
             }, 'hotel'])
             ->first();
 
@@ -123,6 +125,7 @@ class OrderController extends Controller
                         'menuItemName' => $item->menu_item_name,
                         'quantity' => $item->quantity,
                         'price' => (float) $item->price,
+                        'isVeg' => $item->menuItem ? (bool) $item->menuItem->is_veg : true,
                     ];
                 }),
             ]
