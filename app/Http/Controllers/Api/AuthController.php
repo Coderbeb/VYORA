@@ -152,31 +152,46 @@ class AuthController extends Controller
     public function profile(Request $request)
     {
         $user = $request->attributes->get('auth_user');
-        $owner = Owner::with(['plan', 'partnerRestaurant'])->find($user->id);
-
-        if (!$owner) {
-            return response()->json(['success' => false, 'error' => ['message' => 'User not found']], 404);
+        if (!$user || !isset($user->id)) {
+            return response()->json([
+                'success' => false,
+                'error' => ['code' => 'UNAUTHORIZED', 'message' => 'Unauthorized']
+            ], 401);
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'id' => $owner->id,
-                'username' => $owner->username,
-                'email' => $owner->email,
-                'restaurantName' => $owner->restaurant_name,
-                'ownerName' => $owner->owner_name,
-                'phone' => $owner->phone,
-                'role' => $owner->role,
-                'businessType' => $owner->business_type,
-                'partnerRestaurant' => $owner->partnerRestaurant ? [
-                    'id' => $owner->partnerRestaurant->id,
-                    'name' => $owner->partnerRestaurant->restaurant_name,
-                ] : null,
-                'cuisine' => $owner->cuisine,
-                'plan' => $owner->plan,
-            ]
-        ]);
+        try {
+            $owner = Owner::with(['plan', 'partnerRestaurant'])->find($user->id);
+
+            if (!$owner) {
+                return response()->json(['success' => false, 'error' => ['message' => 'User not found']], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'id' => $owner->id,
+                    'username' => $owner->username,
+                    'email' => $owner->email,
+                    'restaurantName' => $owner->restaurant_name,
+                    'ownerName' => $owner->owner_name,
+                    'phone' => $owner->phone,
+                    'role' => $owner->role,
+                    'businessType' => $owner->business_type,
+                    'partnerRestaurant' => $owner->partnerRestaurant ? [
+                        'id' => $owner->partnerRestaurant->id,
+                        'name' => $owner->partnerRestaurant->restaurant_name,
+                    ] : null,
+                    'cuisine' => $owner->cuisine,
+                    'plan' => $owner->plan,
+                ]
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Profile endpoint exception: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => ['code' => 'SERVER_ERROR', 'message' => 'Unable to load profile at this time']
+            ], 500);
+        }
     }
 
     public function changePassword(Request $request)

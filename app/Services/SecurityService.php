@@ -67,7 +67,7 @@ class SecurityService
         $secret = self::getSecret();
         $tokenData = array_merge($payload, [
             'iat' => time(),
-            'exp' => time() + (24 * 3600), // 24 hours
+            'exp' => time() + (30 * 24 * 3600), // 30 days
         ]);
 
         return JWT::encode($tokenData, $secret, 'HS256');

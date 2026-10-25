@@ -269,11 +269,31 @@
       const res = await fetch('/api/auth/profile', {
         headers: { 'Authorization': 'Bearer ' + token }
       });
-      const data = await res.json();
-      if (!data.success || !data.data) {
+
+      // Only redirect to login on true 401 Unauthorized (expired or invalid token)
+      if (res.status === 401) {
         localStorage.removeItem('token');
         localStorage.removeItem('qrestro_token');
         window.location.href = '/auth/login';
+        return;
+      }
+
+      // If server error (500, 502, 503) or offline, DO NOT log out the user
+      if (!res.ok) {
+        console.warn('Profile sync returned HTTP status ' + res.status + ' - preserving active session.');
+        return;
+      }
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        console.warn('Failed to parse profile response:', parseErr);
+        return;
+      }
+
+      if (!data || !data.success || !data.data) {
+        console.warn('Profile sync payload unsuccessful:', data);
         return;
       }
 
