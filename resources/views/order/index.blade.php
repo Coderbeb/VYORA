@@ -1699,21 +1699,21 @@
         statusMsgEn = 'Cooking in kitchen';
         statusMsgHi = 'किचन में आपका खाना पक रहा है';
         statusIcon = VYORA_ICONS.stepFlame;
-        statusColor = 'text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/20';
+        statusColor = 'text-amber-700 dark:text-amber-300 bg-amber-500/10 border-amber-500/25';
       } else if (order.status === 'ready') {
         statusTitleEn = 'Ready';
         statusTitleHi = 'तैयार है';
-        statusMsgEn = 'Plated & ready to serve!';
+        statusMsgEn = 'Plated & ready to serve';
         statusMsgHi = 'खाना तैयार है, टेबल पर आ रहा है';
         statusIcon = VYORA_ICONS.stepPlate;
-        statusColor = 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
+        statusColor = 'text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-500/25';
       } else if (order.status === 'completed') {
         statusTitleEn = 'Served';
         statusTitleHi = 'सर्व हो गया';
-        statusMsgEn = 'Served at your table';
+        statusMsgEn = 'Delivered to your table';
         statusMsgHi = 'आपकी टेबल पर सर्व कर दिया गया है';
         statusIcon = VYORA_ICONS.stepCheck;
-        statusColor = 'text-slate-600 dark:text-slate-400 bg-slate-500/10 border-slate-500/20';
+        statusColor = 'text-emerald-800 dark:text-emerald-300 bg-emerald-500/15 border-emerald-500/30';
       }
 
       card.innerHTML = `
@@ -1728,11 +1728,11 @@
           <span class="font-mono font-bold text-xs text-[var(--accent)] shrink-0">₹${parseFloat(order.totalAmount).toFixed(2)}</span>
         </div>
 
-        <!-- Animated Progress Stepper (Bilingual) -->
-        <div class="py-2">
+        <!-- Animated Progress Stepper -->
+        <div class="pt-3 pb-1">
           <div class="flex items-center justify-between relative mb-2.5 px-2">
-            <!-- Background progress track -->
-            <div class="absolute top-1/2 left-4 right-4 h-1 bg-[var(--border)] -translate-y-1/2 z-0">
+            <!-- Background progress track centered exactly at circle middle (top-4 = 16px) -->
+            <div class="absolute top-4 left-6 right-6 h-1 bg-slate-200 dark:bg-zinc-700 -translate-y-1/2 z-0">
               <div class="h-full bg-[var(--accent)] transition-all duration-500" style="width: ${Math.min(100, Math.max(0, currentStepIdx / 3 * 100))}%"></div>
             </div>
 
@@ -1773,15 +1773,11 @@
             </div>
           </div>
 
-          <!-- Bilingual Status Badge Capsule -->
-          <div class="text-center pt-1.5 flex justify-center">
-            <div class="inline-flex flex-col items-center px-4 py-1.5 rounded-2xl border text-xs font-bold ${statusColor} shadow-xs">
-              <div class="flex items-center gap-1.5">
-                ${statusIcon}
-                <span>${statusTitleEn}</span>
-                <span class="opacity-70 text-[11px] font-semibold">· ${statusTitleHi}</span>
-              </div>
-              <span class="text-[10px] font-normal opacity-90 mt-0.5">${statusMsgEn} · ${statusMsgHi}</span>
+          <!-- Streamlined Status Pill -->
+          <div class="text-center pt-2 flex justify-center">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold ${statusColor} shadow-2xs">
+              <span class="shrink-0 flex items-center">${statusIcon}</span>
+              <span class="leading-none">${statusMsgEn} · ${statusMsgHi}</span>
             </div>
           </div>
         </div>
