@@ -19,86 +19,107 @@ class AuthController extends Controller
         $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
+            'venue' => 'nullable|string',
         ]);
 
-        $username = trim($request->input('username'));
+        $rawUsername = trim($request->input('username'));
         $password = (string) $request->input('password');
+        $venueInput = trim($request->input('venue', ''));
 
-        // 1. Check Venue Owner / Super Admin
-        $owner = Owner::where('username', $username)->first();
-        if ($owner && SecurityService::comparePassword($password, $owner->password_hash)) {
-            $token = SecurityService::generateJwtToken([
-                'id' => $owner->id,
-                'username' => $owner->username,
-                'email' => $owner->email,
-                'role' => $owner->role,
-                'businessType' => $owner->business_type,
-                'isStaff' => false,
-            ]);
+        // Check for compound username format e.g. 'spicehub/rahul' or 'rahul@spicehub'
+        $venueSlug = $venueInput;
+        $username = $rawUsername;
 
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'token' => $token,
-                    'owner' => [
-                        'id' => $owner->id,
-                        'username' => $owner->username,
-                        'email' => $owner->email,
-                        'restaurantName' => $owner->restaurant_name,
-                        'ownerName' => $owner->owner_name,
-                        'role' => $owner->role,
-                        'businessType' => $owner->business_type,
-                        'isStaff' => false,
-                    ]
-                ]
-            ]);
+        if (empty($venueSlug)) {
+            if (str_contains($rawUsername, '/')) {
+                [$venueSlug, $username] = explode('/', $rawUsername, 2);
+            } elseif (str_contains($rawUsername, '@') && !filter_var($rawUsername, FILTER_VALIDATE_EMAIL)) {
+                [$username, $venueSlug] = explode('@', $rawUsername, 2);
+            }
         }
 
-        // 2. Check Staff Member (supports username matching + password or 4-digit PIN)
-        $staff = StaffMember::where('username', strtolower($username))
-            ->orWhere('username', $username)
-            ->where('is_active', true)
-            ->first();
+        $venueSlug = trim($venueSlug);
+        $username = trim($username);
 
-        if ($staff) {
+        // 1. If Venue is explicitly specified (via Staff tab, venue param, or compound username)
+        if (!empty($venueSlug)) {
+            $venue = Owner::where('username', strtolower($venueSlug))
+                ->orWhere('username', $venueSlug)
+                ->orWhere('id', $venueSlug)
+                ->first();
+
+            if ($venue) {
+                $staff = StaffMember::where('owner_id', $venue->id)
+                    ->where(function ($q) use ($username) {
+                        $q->where('username', strtolower($username))
+                          ->orWhere('username', $username)
+                          ->orWhere('pin', $username);
+                    })
+                    ->where('is_active', true)
+                    ->first();
+
+                if ($staff) {
+                    $passwordMatches = SecurityService::comparePassword($password, $staff->password_hash)
+                        || (!empty($staff->pin) && $password === (string) $staff->pin);
+
+                    if ($passwordMatches) {
+                        return $this->generateStaffAuthResponse($venue, $staff);
+                    }
+                }
+            }
+
+            return response()->json([
+                'success' => false,
+                'error' => ['code' => 'INVALID_CREDENTIALS', 'message' => 'Invalid venue, staff username or PIN/password']
+            ], 401);
+        }
+
+        // 2. No venue specified: Check Venue Owner / Super Admin
+        $owner = Owner::where('username', $username)->first();
+        if ($owner && SecurityService::comparePassword($password, $owner->password_hash)) {
+            return $this->generateOwnerAuthResponse($owner);
+        }
+
+        // 3. No venue specified: Search Staff across venues
+        $staffQuery = StaffMember::where(function ($q) use ($username) {
+            $q->where('username', strtolower($username))
+              ->orWhere('username', $username);
+        })->where('is_active', true)->get();
+
+        if ($staffQuery->count() === 1) {
+            $staff = $staffQuery->first();
             $passwordMatches = SecurityService::comparePassword($password, $staff->password_hash)
                 || (!empty($staff->pin) && $password === (string) $staff->pin);
 
             if ($passwordMatches) {
                 $venue = Owner::find($staff->owner_id);
                 if ($venue) {
-                    $token = SecurityService::generateJwtToken([
-                        'id' => $venue->id,
-                        'venueId' => $venue->id,
-                        'staffId' => $staff->id,
-                        'staffName' => $staff->name,
-                        'username' => $staff->username,
-                        'email' => $staff->email ?? $venue->email,
-                        'role' => $staff->role,
-                        'businessType' => $venue->business_type,
-                        'isStaff' => true,
-                    ]);
-
-                    return response()->json([
-                        'success' => true,
-                        'data' => [
-                            'token' => $token,
-                            'owner' => [
-                                'id' => $venue->id,
-                                'venueId' => $venue->id,
-                                'staffId' => $staff->id,
-                                'username' => $staff->username,
-                                'email' => $staff->email ?? $venue->email,
-                                'restaurantName' => $venue->restaurant_name,
-                                'ownerName' => $staff->name,
-                                'staffName' => $staff->name,
-                                'role' => $staff->role,
-                                'businessType' => $venue->business_type,
-                                'isStaff' => true,
-                            ]
-                        ]
-                    ]);
+                    return $this->generateStaffAuthResponse($venue, $staff);
                 }
+            }
+        } elseif ($staffQuery->count() > 1) {
+            // Multiple venues have a staff member with this username - check matching passwords
+            $matched = [];
+            foreach ($staffQuery as $st) {
+                if (SecurityService::comparePassword($password, $st->password_hash) || (!empty($st->pin) && $password === (string) $st->pin)) {
+                    $matched[] = $st;
+                }
+            }
+
+            if (count($matched) === 1) {
+                $staff = $matched[0];
+                $venue = Owner::find($staff->owner_id);
+                if ($venue) {
+                    return $this->generateStaffAuthResponse($venue, $staff);
+                }
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'error' => [
+                        'code' => 'AMBIGUOUS_VENUE',
+                        'message' => 'Multiple venues found for this username. Please switch to the Staff Station tab and enter your Venue ID.'
+                    ]
+                ], 422);
             }
         }
 
@@ -106,6 +127,70 @@ class AuthController extends Controller
             'success' => false,
             'error' => ['code' => 'INVALID_CREDENTIALS', 'message' => 'Invalid username or password']
         ], 401);
+    }
+
+    private function generateOwnerAuthResponse(Owner $owner)
+    {
+        $token = SecurityService::generateJwtToken([
+            'id' => $owner->id,
+            'username' => $owner->username,
+            'email' => $owner->email,
+            'role' => $owner->role,
+            'businessType' => $owner->business_type,
+            'isStaff' => false,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'token' => $token,
+                'owner' => [
+                    'id' => $owner->id,
+                    'username' => $owner->username,
+                    'email' => $owner->email,
+                    'restaurantName' => $owner->restaurant_name,
+                    'ownerName' => $owner->owner_name,
+                    'role' => $owner->role,
+                    'businessType' => $owner->business_type,
+                    'isStaff' => false,
+                ]
+            ]
+        ]);
+    }
+
+    private function generateStaffAuthResponse(Owner $venue, StaffMember $staff)
+    {
+        $token = SecurityService::generateJwtToken([
+            'id' => $venue->id,
+            'venueId' => $venue->id,
+            'staffId' => $staff->id,
+            'staffName' => $staff->name,
+            'username' => $staff->username,
+            'email' => $staff->email ?? $venue->email,
+            'role' => $staff->role,
+            'businessType' => $venue->business_type,
+            'isStaff' => true,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'token' => $token,
+                'owner' => [
+                    'id' => $venue->id,
+                    'venueId' => $venue->id,
+                    'staffId' => $staff->id,
+                    'username' => $staff->username,
+                    'email' => $staff->email ?? $venue->email,
+                    'restaurantName' => $venue->restaurant_name,
+                    'ownerName' => $staff->name,
+                    'staffName' => $staff->name,
+                    'role' => $staff->role,
+                    'businessType' => $venue->business_type,
+                    'isStaff' => true,
+                ]
+            ]
+        ]);
     }
 
     public function register(Request $request)
