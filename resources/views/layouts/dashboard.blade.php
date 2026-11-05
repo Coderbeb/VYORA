@@ -131,9 +131,12 @@
         <div class="w-8 h-8 rounded-full bg-[var(--accent-2)]/20 text-[var(--accent-2)] flex items-center justify-center font-bold shrink-0">
           <span id="sidebar-avatar-initial">Q</span>
         </div>
-        <div class="overflow-hidden sidebar-label">
+        <div class="overflow-hidden sidebar-label min-w-0">
           <p id="sidebar-restaurant-name" class="font-semibold text-white truncate">My Venue</p>
-          <p id="sidebar-username" class="text-[10px] text-white/50 truncate">@owner</p>
+          <div class="flex items-center gap-1.5 truncate mt-0.5">
+            <p id="sidebar-username" class="text-[10px] text-white/50 truncate">@owner</p>
+            <span id="sidebar-role-badge" class="hidden px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-white/10 text-white/90 shrink-0"></span>
+          </div>
         </div>
       </div>
     </div>
@@ -176,8 +179,9 @@
             <div class="px-4 py-2 border-b border-[var(--border)]">
               <p class="text-xs font-bold text-[var(--text-primary)]" id="dropdown-owner-name">Owner</p>
               <p class="text-[10px] text-[var(--text-muted)] truncate" id="dropdown-email">owner@example.com</p>
+              <span id="dropdown-role-label" class="inline-block mt-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-[var(--accent)]/10 text-[var(--accent)] hidden"></span>
             </div>
-            <a href="/dashboard/settings" class="flex items-center gap-2 px-4 py-2 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]">
+            <a href="/dashboard/settings" id="dropdown-settings-link" class="flex items-center gap-2 px-4 py-2 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]">
               <i data-lucide="settings" class="w-3.5 h-3.5"></i>
               <span>Venue Settings</span>
             </a>
@@ -233,6 +237,89 @@
   let isSidebarCollapsed = false;
   let activeOwnerId = null;
 
+  function applyStaffRbac(u) {
+    if (!u || !u.isStaff) return;
+
+    const role = (u.role || '').toUpperCase();
+    const roleBadge = document.getElementById('sidebar-role-badge');
+    if (roleBadge) {
+      roleBadge.textContent = role.replace('_', ' ');
+      roleBadge.classList.remove('hidden');
+    }
+
+    const dropdownRole = document.getElementById('dropdown-role-label');
+    if (dropdownRole) {
+      dropdownRole.textContent = role.replace('_', ' ');
+      dropdownRole.classList.remove('hidden');
+    }
+
+    const bBadge = document.getElementById('business-type-badge');
+    if (bBadge) {
+      bBadge.textContent = role.replace('_', ' ') + ' STATION';
+    }
+
+    // Hide Settings in dropdown for non-managers
+    if (role !== 'MANAGER') {
+      const settingsDropdownItem = document.getElementById('dropdown-settings-link');
+      if (settingsDropdownItem) settingsDropdownItem.style.display = 'none';
+    }
+
+    // Role-based allowed path prefixes
+    const permissions = {
+      'CHEF': ['/dashboard/orders', '/dashboard/kds'],
+      'WAITER': ['/dashboard/orders', '/dashboard/billing', '/dashboard/tables', '/dashboard/menu'],
+      'CASHIER': ['/dashboard/orders', '/dashboard/billing', '/dashboard/reports'],
+      'HOUSEKEEPING': ['/dashboard/hotel/services', '/dashboard/hotel/rooms'],
+      'FRONT_DESK': ['/dashboard/hotel/rooms', '/dashboard/hotel/guests', '/dashboard/hotel/services', '/dashboard/hotel/partner', '/dashboard/orders', '/dashboard/billing'],
+      'MANAGER': null
+    };
+
+    const allowed = permissions[role];
+    if (allowed) {
+      // Hide Overview nav item if not in allowed
+      const overviewLink = document.querySelector('a[href="/dashboard"]');
+      if (overviewLink && !allowed.includes('/dashboard')) {
+        const parent = overviewLink.closest('div');
+        if (parent) parent.style.display = 'none';
+      }
+
+      // Hide Team & Staff and Settings links for non-managers
+      const staffLink = document.querySelector('a[href="/dashboard/staff"]');
+      if (staffLink) {
+        const p = staffLink.closest('div');
+        if (p) p.style.display = 'none';
+      }
+
+      // Filter all sidebar nav links
+      document.querySelectorAll('.nav-link').forEach(link => {
+        const href = link.getAttribute('href');
+        if (!href) return;
+        const isAllowed = allowed.some(prefix => href === prefix || href.startsWith(prefix + '/'));
+        if (!isAllowed) {
+          link.style.display = 'none';
+        }
+      });
+
+      // Hide entire sections if all children links are hidden
+      ['nav-restaurant-section', 'nav-hotel-section'].forEach(secId => {
+        const sec = document.getElementById(secId);
+        if (sec) {
+          const visibleLinks = Array.from(sec.querySelectorAll('.nav-link')).filter(el => el.style.display !== 'none');
+          if (visibleLinks.length === 0) {
+            sec.style.display = 'none';
+          }
+        }
+      });
+
+      // If user landed on an unauthorized route, redirect immediately to their primary workspace
+      const currentPath = window.location.pathname;
+      const isCurrentAllowed = allowed.some(prefix => currentPath === prefix || currentPath.startsWith(prefix + '/'));
+      if (!isCurrentAllowed && currentPath.startsWith('/dashboard')) {
+        window.location.replace(allowed[0]);
+      }
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', async () => {
     // 1. Instant Cache Hydration (Zero Millisecond Flash)
     try {
@@ -256,6 +343,9 @@
       const badge = document.getElementById('business-type-badge');
       if (badge && cachedOwner.businessType) {
         badge.textContent = cachedOwner.businessType + ' PMS';
+      }
+      if (cachedOwner.isStaff) {
+        applyStaffRbac(cachedOwner);
       }
     } catch(e) {}
 
@@ -334,6 +424,11 @@
         // BOTH
         if (hotelSection) hotelSection.style.display = 'block';
         if (restSection) restSection.style.display = 'block';
+      }
+
+      // Apply Staff RBAC if logged in as staff
+      if (u.isStaff) {
+        applyStaffRbac(u);
       }
 
       // Init Pusher Broadcast Subscription for Restaurant / Hotel Room events

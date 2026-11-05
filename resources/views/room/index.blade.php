@@ -32,10 +32,7 @@
           <button type="button" id="room-lang-btn-en" onclick="setRoomLanguage('en')" class="px-2 py-0.5 rounded-full text-[11px] font-bold transition-all bg-[#034d37] text-white shadow-xs cursor-pointer">EN</button>
           <button type="button" id="room-lang-btn-hi" onclick="setRoomLanguage('hi')" class="px-2 py-0.5 rounded-full text-[11px] font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 cursor-pointer">हिन्दी</button>
         </div>
-        <button onclick="toggleTheme()" class="p-2 rounded-[var(--radius-sm)] border border-[var(--border)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)]">
-          <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
-          <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
-        </button>
+
       </div>
     </div>
   </header>

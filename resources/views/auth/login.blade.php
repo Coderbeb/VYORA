@@ -21,13 +21,16 @@
       <form onsubmit="handleLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5">Username</label>
-          <input type="text" id="login-username" required placeholder="e.g. spicehub or grandhorizon" class="w-full px-3.5 py-2.5 text-sm bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] focus:outline-none focus:border-[var(--accent)] text-[var(--text-primary)] transition">
+          <input type="text" id="login-username" required placeholder="e.g. spicehub or staff username" class="w-full px-3.5 py-2.5 text-sm bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] focus:outline-none focus:border-[var(--accent)] text-[var(--text-primary)] transition">
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5">Password</label>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-xs font-semibold text-[var(--text-secondary)]">Password or Staff PIN</label>
+            <span class="text-[10px] text-[var(--text-muted)]">Default staff PIN is 1234</span>
+          </div>
           <div class="relative">
-            <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-3.5 py-2.5 text-sm bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] focus:outline-none focus:border-[var(--accent)] text-[var(--text-primary)] transition">
+            <input type="password" id="login-password" required placeholder="Password or 4-digit PIN" class="w-full px-3.5 py-2.5 text-sm bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] focus:outline-none focus:border-[var(--accent)] text-[var(--text-primary)] transition">
             <button type="button" onclick="togglePassVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-primary)]">
               <i data-lucide="eye" id="pass-eye-icon" class="w-4 h-4"></i>
             </button>
@@ -90,9 +93,22 @@
         localStorage.setItem('owner', JSON.stringify(data.data.owner));
         document.cookie = `token=${data.data.token}; path=/; max-age=86400; SameSite=Lax`;
 
-        if (data.data.owner.role === 'SUPER_ADMIN') {
+        const role = (data.data.owner.role || '').toUpperCase();
+        const bType = data.data.owner.businessType;
+
+        if (role === 'SUPER_ADMIN') {
           window.location.href = '/superadmin';
-        } else if (data.data.owner.businessType === 'HOTEL') {
+        } else if (role === 'CHEF') {
+          window.location.href = '/dashboard/kds';
+        } else if (role === 'WAITER') {
+          window.location.href = '/dashboard/orders';
+        } else if (role === 'CASHIER') {
+          window.location.href = '/dashboard/billing';
+        } else if (role === 'HOUSEKEEPING') {
+          window.location.href = '/dashboard/hotel/services';
+        } else if (role === 'FRONT_DESK') {
+          window.location.href = '/dashboard/hotel/rooms';
+        } else if (bType === 'HOTEL') {
           window.location.href = '/dashboard/hotel/rooms';
         } else {
           window.location.href = '/dashboard';

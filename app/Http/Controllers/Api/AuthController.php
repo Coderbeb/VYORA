@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Owner;
 use App\Models\Table;
 use App\Models\Room;
+use App\Models\StaffMember;
 use App\Models\SubscriptionPlan;
 use App\Services\SecurityService;
 use App\Services\QRService;
@@ -20,39 +21,91 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $username = $request->input('username');
-        $password = $request->input('password');
+        $username = trim($request->input('username'));
+        $password = (string) $request->input('password');
 
+        // 1. Check Venue Owner / Super Admin
         $owner = Owner::where('username', $username)->first();
-        if (!$owner || !SecurityService::comparePassword($password, $owner->password_hash)) {
+        if ($owner && SecurityService::comparePassword($password, $owner->password_hash)) {
+            $token = SecurityService::generateJwtToken([
+                'id' => $owner->id,
+                'username' => $owner->username,
+                'email' => $owner->email,
+                'role' => $owner->role,
+                'businessType' => $owner->business_type,
+                'isStaff' => false,
+            ]);
+
             return response()->json([
-                'success' => false,
-                'error' => ['code' => 'INVALID_CREDENTIALS', 'message' => 'Invalid username or password']
-            ], 401);
+                'success' => true,
+                'data' => [
+                    'token' => $token,
+                    'owner' => [
+                        'id' => $owner->id,
+                        'username' => $owner->username,
+                        'email' => $owner->email,
+                        'restaurantName' => $owner->restaurant_name,
+                        'ownerName' => $owner->owner_name,
+                        'role' => $owner->role,
+                        'businessType' => $owner->business_type,
+                        'isStaff' => false,
+                    ]
+                ]
+            ]);
         }
 
-        $token = SecurityService::generateJwtToken([
-            'id' => $owner->id,
-            'username' => $owner->username,
-            'email' => $owner->email,
-            'role' => $owner->role,
-            'businessType' => $owner->business_type,
-        ]);
+        // 2. Check Staff Member (supports username matching + password or 4-digit PIN)
+        $staff = StaffMember::where('username', strtolower($username))
+            ->orWhere('username', $username)
+            ->where('is_active', true)
+            ->first();
+
+        if ($staff) {
+            $passwordMatches = SecurityService::comparePassword($password, $staff->password_hash)
+                || (!empty($staff->pin) && $password === (string) $staff->pin);
+
+            if ($passwordMatches) {
+                $venue = Owner::find($staff->owner_id);
+                if ($venue) {
+                    $token = SecurityService::generateJwtToken([
+                        'id' => $venue->id,
+                        'venueId' => $venue->id,
+                        'staffId' => $staff->id,
+                        'staffName' => $staff->name,
+                        'username' => $staff->username,
+                        'email' => $staff->email ?? $venue->email,
+                        'role' => $staff->role,
+                        'businessType' => $venue->business_type,
+                        'isStaff' => true,
+                    ]);
+
+                    return response()->json([
+                        'success' => true,
+                        'data' => [
+                            'token' => $token,
+                            'owner' => [
+                                'id' => $venue->id,
+                                'venueId' => $venue->id,
+                                'staffId' => $staff->id,
+                                'username' => $staff->username,
+                                'email' => $staff->email ?? $venue->email,
+                                'restaurantName' => $venue->restaurant_name,
+                                'ownerName' => $staff->name,
+                                'staffName' => $staff->name,
+                                'role' => $staff->role,
+                                'businessType' => $venue->business_type,
+                                'isStaff' => true,
+                            ]
+                        ]
+                    ]);
+                }
+            }
+        }
 
         return response()->json([
-            'success' => true,
-            'data' => [
-                'token' => $token,
-                'owner' => [
-                    'id' => $owner->id,
-                    'username' => $owner->username,
-                    'email' => $owner->email,
-                    'restaurantName' => $owner->restaurant_name,
-                    'role' => $owner->role,
-                    'businessType' => $owner->business_type,
-                ]
-            ]
-        ]);
+            'success' => false,
+            'error' => ['code' => 'INVALID_CREDENTIALS', 'message' => 'Invalid username or password']
+        ], 401);
     }
 
     public function register(Request $request)
@@ -166,17 +219,26 @@ class AuthController extends Controller
                 return response()->json(['success' => false, 'error' => ['message' => 'User not found']], 404);
             }
 
+            $isStaff = !empty($user->isStaff);
+            $staffMember = null;
+            if ($isStaff && !empty($user->staffId)) {
+                $staffMember = StaffMember::find($user->staffId);
+            }
+
             return response()->json([
                 'success' => true,
                 'data' => [
                     'id' => $owner->id,
-                    'username' => $owner->username,
-                    'email' => $owner->email,
+                    'staffId' => $staffMember ? $staffMember->id : null,
+                    'username' => $staffMember ? $staffMember->username : $owner->username,
+                    'email' => ($staffMember && $staffMember->email) ? $staffMember->email : $owner->email,
                     'restaurantName' => $owner->restaurant_name,
-                    'ownerName' => $owner->owner_name,
-                    'phone' => $owner->phone,
-                    'role' => $owner->role,
+                    'ownerName' => $staffMember ? $staffMember->name : $owner->owner_name,
+                    'staffName' => $staffMember ? $staffMember->name : null,
+                    'phone' => ($staffMember && $staffMember->phone) ? $staffMember->phone : $owner->phone,
+                    'role' => $staffMember ? $staffMember->role : $owner->role,
                     'businessType' => $owner->business_type,
+                    'isStaff' => $isStaff,
                     'partnerRestaurant' => $owner->partnerRestaurant ? [
                         'id' => $owner->partnerRestaurant->id,
                         'name' => $owner->partnerRestaurant->restaurant_name,
@@ -199,8 +261,37 @@ class AuthController extends Controller
         $user = $request->attributes->get('auth_user');
         $request->validate([
             'currentPassword' => 'required|string',
-            'newPassword' => 'required|string|min:6',
+            'newPassword' => 'required|string|min:4',
         ]);
+
+        if (!empty($user->isStaff) && !empty($user->staffId)) {
+            $staff = StaffMember::find($user->staffId);
+            if (!$staff) {
+                return response()->json(['success' => false, 'error' => ['message' => 'Staff member not found']], 404);
+            }
+
+            $match = SecurityService::comparePassword($request->input('currentPassword'), $staff->password_hash)
+                || (!empty($staff->pin) && $request->input('currentPassword') === (string) $staff->pin);
+
+            if (!$match) {
+                return response()->json([
+                    'success' => false,
+                    'error' => ['code' => 'INVALID_PASSWORD', 'message' => 'Incorrect current password or PIN']
+                ], 400);
+            }
+
+            $newPass = $request->input('newPassword');
+            $staff->password_hash = SecurityService::hashPassword($newPass);
+            if (strlen($newPass) <= 6 && ctype_digit($newPass)) {
+                $staff->pin = $newPass;
+            }
+            $staff->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password updated successfully'
+            ]);
+        }
 
         $owner = Owner::find($user->id);
         if (!$owner || !SecurityService::comparePassword($request->input('currentPassword'), $owner->password_hash)) {

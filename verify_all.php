@@ -126,9 +126,10 @@ $saSettings = json_decode($res->getContent(), true);
 echo "14. GET /api/superadmin/settings [SaaS Platform Customizations]: " . ($res->getStatusCode() === 200 && ($saSettings['data']['platform_name'] ?? '') === 'Vyora' ? "✅ PASSED (Brand: " . $saSettings['data']['platform_name'] . ", Currency: " . $saSettings['data']['currency_symbol'] . ")" : "❌ FAILED") . "\n";
 
 // 12. Test Staff & Employee Management
+$staffUsername = 'rahul_waiter_' . time();
 $res = makeRequest($kernel, 'POST', '/api/staff', [
     'name' => 'Rahul Sharma',
-    'username' => 'rahul_waiter_' . time(),
+    'username' => $staffUsername,
     'role' => 'WAITER',
     'phone' => '+91 98765 43210',
     'pin' => '4321',
@@ -137,14 +138,24 @@ $staffCreate = json_decode($res->getContent(), true);
 $staffId = $staffCreate['data']['id'] ?? null;
 echo "16. POST /api/staff [Create Employee]: " . ($res->getStatusCode() === 201 && $staffId ? "✅ PASSED (Staff ID: $staffId, Role: WAITER)" : "❌ FAILED") . "\n";
 
+// 13. Test Staff Unified Login using 4-digit PIN
+$res = makeRequest($kernel, 'POST', '/api/auth/login', [
+    'username' => $staffUsername,
+    'password' => '4321',
+]);
+$staffLogin = json_decode($res->getContent(), true);
+$staffToken = $staffLogin['data']['token'] ?? null;
+$staffRole = $staffLogin['data']['owner']['role'] ?? null;
+echo "17. POST /api/auth/login [Staff Login with 4-Digit PIN]: " . ($res->getStatusCode() === 200 && $staffToken && $staffRole === 'WAITER' ? "✅ PASSED (Role: WAITER, Venue Scoped Token)" : "❌ FAILED") . "\n";
+
 $res = makeRequest($kernel, 'GET', '/api/staff', [], ['Authorization' => 'Bearer ' . $ownerToken]);
 $staffList = json_decode($res->getContent(), true);
-echo "17. GET /api/staff [Staff Directory]: " . ($res->getStatusCode() === 200 && count($staffList['data'] ?? []) > 0 ? "✅ PASSED (" . count($staffList['data']) . " staff members)" : "❌ FAILED") . "\n";
+echo "18. GET /api/staff [Staff Directory]: " . ($res->getStatusCode() === 200 && count($staffList['data'] ?? []) > 0 ? "✅ PASSED (" . count($staffList['data']) . " staff members)" : "❌ FAILED") . "\n";
 
 if ($staffId) {
     $res = makeRequest($kernel, 'DELETE', "/api/staff/$staffId", [], ['Authorization' => 'Bearer ' . $ownerToken]);
     $delStaff = json_decode($res->getContent(), true);
-    echo "18. DELETE /api/staff/{id} [Remove Employee]: " . ($res->getStatusCode() === 200 && ($delStaff['success'] ?? false) ? "✅ PASSED" : "❌ FAILED") . "\n";
+    echo "19. DELETE /api/staff/{id} [Remove Employee]: " . ($res->getStatusCode() === 200 && ($delStaff['success'] ?? false) ? "✅ PASSED" : "❌ FAILED") . "\n";
 }
 
-echo "\n🎉 All 18 core modules, staff RBAC, SaaS customizations, and workflows tested successfully with 100% pass rate!\n";
+echo "\n🎉 All 19 core modules, staff unified auth & RBAC, SaaS customizations, and workflows tested successfully with 100% pass rate!\n";

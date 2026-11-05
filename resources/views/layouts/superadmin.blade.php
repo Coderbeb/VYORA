@@ -72,11 +72,7 @@
       </div>
 
       <div class="flex items-center gap-2 sm:gap-3">
-        <!-- Theme Toggle -->
-        <button onclick="toggleTheme()" class="p-2 rounded-[var(--radius-sm)] border border-[var(--border)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] transition" title="Toggle Theme">
-          <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
-          <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
-        </button>
+
 
         <!-- Admin Badge -->
         <div class="px-2.5 py-1 bg-[var(--accent-glow)] text-[var(--accent)] font-bold text-[10px] sm:text-xs rounded-full border border-[var(--accent)]/20 uppercase tracking-wider flex items-center gap-1.5">
@@ -138,16 +134,7 @@
     ov.classList.toggle('hidden');
   }
 
-  function toggleTheme() {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    if (isDark) {
-      document.documentElement.removeAttribute('data-theme');
-      localStorage.setItem('theme', 'light');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      localStorage.setItem('theme', 'dark');
-    }
-  }
+
 
   function handleLogout() {
     localStorage.removeItem('token');

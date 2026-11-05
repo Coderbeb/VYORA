@@ -13,6 +13,7 @@ use App\Models\Booking;
 use App\Models\HotelServiceRequest;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
+use App\Models\StaffMember;
 use App\Services\SecurityService;
 use App\Services\QRService;
 use Carbon\Carbon;
@@ -255,6 +256,55 @@ class DatabaseSeeder extends Seeder
                 'status' => 'pending',
                 'notes' => 'Guest requested 2 extra bath towels.',
             ]);
+        }
+
+        // 5. Demo Staff Members for SpiceHub & Grand Horizon
+        $spiceHub = Owner::where('username', 'spicehub')->first();
+        if ($spiceHub) {
+            $restaurantStaff = [
+                ['name' => 'Chef Suresh Sharma', 'username' => 'chef_suresh', 'role' => 'CHEF', 'pin' => '1234'],
+                ['name' => 'Waiter Rahul Verma', 'username' => 'waiter_rahul', 'role' => 'WAITER', 'pin' => '1234'],
+                ['name' => 'Cashier Priya Patel', 'username' => 'cashier_priya', 'role' => 'CASHIER', 'pin' => '1234'],
+                ['name' => 'Manager Anita Desai', 'username' => 'manager_anita', 'role' => 'MANAGER', 'pin' => '1234'],
+            ];
+
+            foreach ($restaurantStaff as $st) {
+                StaffMember::firstOrCreate(
+                    ['owner_id' => $spiceHub->id, 'username' => $st['username']],
+                    [
+                        'name' => $st['name'],
+                        'email' => $st['username'] . '@spicehub.com',
+                        'phone' => '+91 98765 00001',
+                        'password_hash' => SecurityService::hashPassword('demo123'),
+                        'pin' => $st['pin'],
+                        'role' => $st['role'],
+                        'is_active' => true,
+                    ]
+                );
+            }
+        }
+
+        $hotelOwner = Owner::where('username', 'grandhorizon')->first();
+        if ($hotelOwner) {
+            $hotelStaff = [
+                ['name' => 'Front Desk Amit Roy', 'username' => 'frontdesk_amit', 'role' => 'FRONT_DESK', 'pin' => '1234'],
+                ['name' => 'Housekeeping Pooja Singh', 'username' => 'cleaner_pooja', 'role' => 'HOUSEKEEPING', 'pin' => '1234'],
+            ];
+
+            foreach ($hotelStaff as $st) {
+                StaffMember::firstOrCreate(
+                    ['owner_id' => $hotelOwner->id, 'username' => $st['username']],
+                    [
+                        'name' => $st['name'],
+                        'email' => $st['username'] . '@grandhorizon.com',
+                        'phone' => '+1 (555) 987-0001',
+                        'password_hash' => SecurityService::hashPassword('demo123'),
+                        'pin' => $st['pin'],
+                        'role' => $st['role'],
+                        'is_active' => true,
+                    ]
+                );
+            }
         }
     }
 }

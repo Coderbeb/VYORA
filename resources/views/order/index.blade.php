@@ -90,11 +90,7 @@
           <button type="button" id="lang-btn-hi" onclick="setLanguage('hi')" class="px-2.5 py-1 rounded-full text-[11px] font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 cursor-pointer">हिन्दी</button>
         </div>
 
-        <!-- Theme Switcher -->
-        <button onclick="toggleTheme()" class="p-2 rounded-full border border-slate-300 dark:border-zinc-700 bg-[var(--bg-base)] hover:bg-[var(--bg-hover)] text-slate-700 dark:text-slate-200 transition active:scale-90" title="Toggle Theme">
-          <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
-          <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-slate-700"></i>
-        </button>
+
       </div>
     </div>
   </header>
