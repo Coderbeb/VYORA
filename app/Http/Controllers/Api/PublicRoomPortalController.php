@@ -138,7 +138,8 @@ class PublicRoomPortalController extends Controller
 
     public function placeOrder(Request $request)
     {
-        $request->validate([
+        try {
+            $request->validate([
             'hotelId' => 'required|uuid',
             'roomNumber' => 'required|string',
             'restaurantId' => 'nullable|uuid',
@@ -286,17 +287,28 @@ class PublicRoomPortalController extends Controller
             'notes' => $request->notes,
         ]);
 
+        $hasVariantCol = \Illuminate\Support\Facades\Schema::hasColumn('order_items', 'selected_variant');
+        $hasAddonsCol = \Illuminate\Support\Facades\Schema::hasColumn('order_items', 'selected_addons');
+        $hasNotesCol = \Illuminate\Support\Facades\Schema::hasColumn('order_items', 'notes');
+
         foreach ($orderItemsData as $oid) {
-            OrderItem::create([
+            $itemPayload = [
                 'order_id' => $order->id,
                 'menu_item_id' => $oid['item']->id,
                 'menu_item_name' => $oid['item']->name,
                 'quantity' => $oid['quantity'],
                 'price' => $oid['price'],
-                'selected_variant' => $oid['selected_variant'],
-                'selected_addons' => $oid['selected_addons'],
-                'notes' => $oid['notes'],
-            ]);
+            ];
+            if ($hasVariantCol) {
+                $itemPayload['selected_variant'] = $oid['selected_variant'];
+            }
+            if ($hasAddonsCol) {
+                $itemPayload['selected_addons'] = $oid['selected_addons'];
+            }
+            if ($hasNotesCol) {
+                $itemPayload['notes'] = $oid['notes'];
+            }
+            OrderItem::create($itemPayload);
         }
 
         $formatted = [
@@ -336,6 +348,18 @@ class PublicRoomPortalController extends Controller
             'data' => $formatted,
             'message' => 'Room service order submitted to kitchen!'
         ], 201);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('In-room order placement failed: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'ORDER_CREATION_FAILED',
+                    'message' => 'Failed to place order: ' . $e->getMessage()
+                ]
+            ], 500);
+        }
     }
 
     public function requestService(Request $request)

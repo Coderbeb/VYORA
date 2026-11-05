@@ -26,10 +26,11 @@ class PublicMenuController extends Controller
             ], 400);
         }
 
-        $owner = Owner::where('id', $ownerId)->first(['id', 'restaurant_name']);
+        $owner = Owner::where('id', $ownerId)->orWhere('username', $ownerId)->first(['id', 'restaurant_name']);
         if (!$owner) {
             return response()->json(['success' => false, 'error' => ['code' => 'NOT_FOUND', 'message' => 'Restaurant not found']], 404);
         }
+        $ownerId = $owner->id;
 
         $table = Table::where('owner_id', $ownerId)
             ->where('table_number', $tableNumber)

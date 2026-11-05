@@ -27,6 +27,11 @@
           <i data-lucide="clock" class="w-3.5 h-3.5"></i>
           <span>Track Status</span>
         </button>
+        <!-- Bilingual Switcher Pill [ EN | हिन्दी ] -->
+        <div class="flex items-center rounded-full p-0.5 border border-slate-300 dark:border-zinc-700 bg-[var(--bg-base)] text-xs font-bold shadow-2xs">
+          <button type="button" id="room-lang-btn-en" onclick="setRoomLanguage('en')" class="px-2 py-0.5 rounded-full text-[11px] font-bold transition-all bg-[#034d37] text-white shadow-xs cursor-pointer">EN</button>
+          <button type="button" id="room-lang-btn-hi" onclick="setRoomLanguage('hi')" class="px-2 py-0.5 rounded-full text-[11px] font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 cursor-pointer">हिन्दी</button>
+        </div>
         <button onclick="toggleTheme()" class="p-2 rounded-[var(--radius-sm)] border border-[var(--border)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)]">
           <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
           <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
@@ -421,6 +426,25 @@
   const ROOM_NUMBER = "{{ $roomNumber }}";
   const SESSION_KEY = `roomSessionToken_${HOTEL_ID}_${ROOM_NUMBER}`;
 
+  let roomCurrentLang = localStorage.getItem('vyora_lang') || 'en';
+
+  function setRoomLanguage(lang) {
+    roomCurrentLang = lang;
+    localStorage.setItem('vyora_lang', lang);
+
+    const btnEn = document.getElementById('room-lang-btn-en');
+    const btnHi = document.getElementById('room-lang-btn-hi');
+    if (btnEn && btnHi) {
+      if (lang === 'hi') {
+        btnHi.className = 'px-2 py-0.5 rounded-full text-[11px] font-bold transition-all bg-[#034d37] text-white shadow-xs cursor-pointer';
+        btnEn.className = 'px-2 py-0.5 rounded-full text-[11px] font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 cursor-pointer';
+      } else {
+        btnEn.className = 'px-2 py-0.5 rounded-full text-[11px] font-bold transition-all bg-[#034d37] text-white shadow-xs cursor-pointer';
+        btnHi.className = 'px-2 py-0.5 rounded-full text-[11px] font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 cursor-pointer';
+      }
+    }
+  }
+
   // Bespoke Luxury Vector Icons Suite
   const VYORA_ICONS = {
     vegEmblem: `<div class="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded text-[11px] font-bold text-emerald-800 dark:text-emerald-300 shrink-0">
@@ -534,6 +558,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    setRoomLanguage(roomCurrentLang);
     loadPortalInfo();
     initPusher();
 
@@ -1057,7 +1082,7 @@
           showRoomSessionSettledScreen('Cannot place order: Your room stay has concluded. Please scan the QR code in your room if you are starting a new stay.');
           return;
         }
-        alert(data.error?.message || 'Failed to place order.');
+        alert(data.error?.message || data.message || 'Failed to place order. Please try again.');
       }
     } catch (err) {
       console.error(err);

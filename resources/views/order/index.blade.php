@@ -69,9 +69,9 @@
           </div>
           <div class="flex items-center gap-1.5 text-xs">
             <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[var(--accent-glow)] text-[var(--accent)] font-bold uppercase tracking-wider">
-              <i data-lucide="utensils" class="w-3 h-3"></i> Table #{{ $tableNumber }}
+              <i data-lucide="utensils" class="w-3 h-3"></i> <span id="header-table-badge">Table #{{ $tableNumber }}</span>
             </span>
-            <span class="text-slate-500 dark:text-slate-400 font-medium hidden sm:inline">• Dining Floor</span>
+            <span id="header-dining-floor" class="text-slate-500 dark:text-slate-400 font-medium hidden sm:inline">• Dining Floor</span>
           </div>
         </div>
       </div>
@@ -83,6 +83,12 @@
           <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
           <span id="tracking-status-text">Track · ट्रैक (<span id="tracking-active-count">0</span>)</span>
         </button>
+
+        <!-- Bilingual Switcher Pill [ EN | हिन्दी ] -->
+        <div class="flex items-center rounded-full p-0.5 border border-slate-300 dark:border-zinc-700 bg-[var(--bg-base)] text-xs font-bold shadow-2xs">
+          <button type="button" id="lang-btn-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-full text-[11px] font-bold transition-all bg-[#034d37] text-white shadow-xs cursor-pointer">EN</button>
+          <button type="button" id="lang-btn-hi" onclick="setLanguage('hi')" class="px-2.5 py-1 rounded-full text-[11px] font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 cursor-pointer">हिन्दी</button>
+        </div>
 
         <!-- Theme Switcher -->
         <button onclick="toggleTheme()" class="p-2 rounded-full border border-slate-300 dark:border-zinc-700 bg-[var(--bg-base)] hover:bg-[var(--bg-hover)] text-slate-700 dark:text-slate-200 transition active:scale-90" title="Toggle Theme">
@@ -100,10 +106,10 @@
       <div class="flex items-center justify-between text-xs">
         <span class="text-slate-700 dark:text-slate-200 font-bold flex items-center gap-1.5">
           <svg class="w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          <span>Staff & Table Assistance</span>
+          <span id="text-staff-assistance">Staff & Table Assistance</span>
         </span>
         <span class="text-xs text-emerald-800 dark:text-emerald-300 font-bold bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Floor Attendant Active
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span id="text-floor-attendant">Floor Attendant Active</span>
         </span>
       </div>
       <div class="grid grid-cols-2 gap-2">
@@ -135,21 +141,21 @@
     <div class="flex items-center gap-1.5 p-1 rounded-[var(--radius-lg)] bg-[var(--bg-surface)] border border-[var(--border)] shadow-xs text-xs font-bold">
       <button onclick="setDietFilter('all')" id="diet-tab-all" class="flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition bg-[var(--accent)] text-white shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
         <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <span>All Items</span>
+        <span id="text-diet-all">All Items</span>
       </button>
       <button onclick="setDietFilter('veg')" id="diet-tab-veg" class="flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-emerald-800 hover:bg-emerald-50 flex items-center justify-center gap-1.5 cursor-pointer">
         <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="none">
           <rect x="1" y="1" width="14" height="14" rx="3.5" stroke="#059669" stroke-width="1.8" fill="#ECFDF5"/>
           <circle cx="8" cy="8" r="3.5" fill="#059669"/>
         </svg>
-        <span>Pure Veg</span>
+        <span id="text-diet-veg">Pure Veg</span>
       </button>
       <button onclick="setDietFilter('nonveg')" id="diet-tab-nonveg" class="flex-1 py-1.5 rounded-[var(--radius-md)] text-center transition text-orange-800 hover:bg-orange-50 flex items-center justify-center gap-1.5 cursor-pointer">
         <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="none">
           <rect x="1" y="1" width="14" height="14" rx="3.5" stroke="#DC2626" stroke-width="1.8" fill="#FEF2F2"/>
           <polygon points="8,4.2 12,11.5 4,11.5" fill="#DC2626"/>
         </svg>
-        <span>Non-Veg</span>
+        <span id="text-diet-nonveg">Non-Veg</span>
       </button>
     </div>
 
@@ -157,17 +163,17 @@
     <div class="flex items-center justify-between gap-2 px-1">
       <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 flex items-center gap-1">
         <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
-        <span>Sort:</span>
+        <span id="text-sort-label">Sort:</span>
       </span>
       <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
         <button onclick="setSortFilter('default')" id="sort-btn-default" class="px-3 py-1 rounded-full text-[11px] font-black bg-[#034d37] text-white shadow-xs transition shrink-0 cursor-pointer">
-          Recommended
+          <span id="text-sort-default">Recommended</span>
         </button>
         <button onclick="setSortFilter('price_asc')" id="sort-btn-price_asc" class="px-3 py-1 rounded-full text-[11px] font-bold border border-slate-300 bg-white text-slate-700 hover:border-slate-400 transition shrink-0 flex items-center gap-1 cursor-pointer">
-          <span>₹ Low → High</span>
+          <span id="text-sort-asc">₹ Low → High</span>
         </button>
         <button onclick="setSortFilter('price_desc')" id="sort-btn-price_desc" class="px-3 py-1 rounded-full text-[11px] font-bold border border-slate-300 bg-white text-slate-700 hover:border-slate-400 transition shrink-0 flex items-center gap-1 cursor-pointer">
-          <span>₹ High → Low</span>
+          <span id="text-sort-desc">₹ High → Low</span>
         </button>
       </div>
     </div>
@@ -210,7 +216,7 @@
       </div>
 
       <button onclick="openCartModal()" class="px-5 py-2.5 sm:py-3 rounded-[var(--radius-md)] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold text-xs shadow-md transition-transform flex items-center gap-2 active:scale-95 cursor-pointer">
-        <span>View Order</span>
+        <span id="cart-view-order-btn-text">View Order</span>
         <i data-lucide="arrow-right" class="w-4 h-4"></i>
       </button>
     </div>
@@ -229,8 +235,8 @@
               <i data-lucide="shopping-bag" class="w-4 h-4"></i>
             </div>
             <div>
-              <h3 class="font-sans font-black text-base sm:text-lg text-slate-900">Your Table Order</h3>
-              <p class="text-[10px] text-slate-500 font-semibold">Table #{{ $tableNumber }} • Review items</p>
+              <h3 id="cart-modal-title" class="font-sans font-black text-base sm:text-lg text-slate-900">Your Table Order</h3>
+              <p id="cart-modal-subtitle" class="text-[10px] text-slate-500 font-semibold">Table #{{ $tableNumber }} • Review items</p>
             </div>
           </div>
           <button onclick="closeCartModal()" class="p-1.5 rounded-full text-slate-500 hover:text-slate-900 bg-slate-100 cursor-pointer">
@@ -245,23 +251,23 @@
 
         <!-- Quick Dietary Cooking Instructions Notes -->
         <div class="mb-4 space-y-1.5">
-          <label class="block text-xs font-bold text-slate-800">Cooking Instructions / Dietary Notes</label>
+          <label id="cart-cooking-instructions-label" class="block text-xs font-bold text-slate-800">Cooking Instructions / Dietary Notes</label>
           <div class="flex items-center gap-1.5 flex-wrap text-[10px] mb-1">
             <button type="button" onclick="appendNote('Less spicy')" class="px-2.5 py-1 rounded-full border border-slate-300 bg-slate-50 text-slate-700 hover:border-[#034d37] hover:text-slate-900 transition flex items-center gap-1 active:scale-95 shadow-xs cursor-pointer">
               <svg class="w-3 h-3 text-red-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3 4 5 4 9a6 6 0 0 1-12 0c0-4 3-6 4-9"/><path d="M10 17a2 2 0 0 0 4 0"/></svg>
-              <span>Less spicy</span>
+              <span id="tag-less-spicy">Less spicy</span>
             </button>
             <button type="button" onclick="appendNote('No onions/garlic')" class="px-2.5 py-1 rounded-full border border-slate-300 bg-slate-50 text-slate-700 hover:border-[#034d37] hover:text-slate-900 transition flex items-center gap-1 active:scale-95 shadow-xs cursor-pointer">
               <svg class="w-3 h-3 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 4 13C4 9.13 7.13 6 11 6c1.66 0 3.2.58 4.42 1.55L20 3"/><path d="M21 21L3 3"/></svg>
-              <span>No onion/garlic</span>
+              <span id="tag-no-onion-garlic">No onion/garlic</span>
             </button>
             <button type="button" onclick="appendNote('Extra crispy')" class="px-2.5 py-1 rounded-full border border-slate-300 bg-slate-50 text-slate-700 hover:border-[#034d37] hover:text-slate-900 transition flex items-center gap-1 active:scale-95 shadow-xs cursor-pointer">
               <svg class="w-3 h-3 text-amber-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span>Extra crispy</span>
+              <span id="tag-extra-crispy">Extra crispy</span>
             </button>
             <button type="button" onclick="appendNote('Sauce on side')" class="px-2.5 py-1 rounded-full border border-slate-300 bg-slate-50 text-slate-700 hover:border-[#034d37] hover:text-slate-900 transition flex items-center gap-1 active:scale-95 shadow-xs cursor-pointer">
               <svg class="w-3 h-3 text-indigo-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14v3a7 7 0 0 1-14 0V8z"/><path d="M8 8V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v3"/><line x1="4" y1="19" x2="20" y2="19"/></svg>
-              <span>Sauce on side</span>
+              <span id="tag-sauce-side">Sauce on side</span>
             </button>
           </div>
           <textarea id="order-notes" rows="2" placeholder="e.g. Less spicy, dressing on the side..." class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-[#034d37] focus:bg-white text-slate-900 font-medium"></textarea>
@@ -269,7 +275,7 @@
 
         <!-- Price Summary -->
         <div class="pt-3 border-t-2 border-slate-200 flex justify-between items-center text-sm font-bold text-slate-900">
-          <span>Order Subtotal</span>
+          <span id="cart-order-subtotal-label">Order Subtotal</span>
           <span id="modal-grand-total" class="font-mono text-base text-[#034d37] font-black">₹0.00</span>
         </div>
       </div>
@@ -277,7 +283,7 @@
       <!-- Place Order Submit Button -->
       <div class="pt-4 border-t border-slate-200">
         <button onclick="placeOrder()" id="place-order-btn" class="w-full py-3.5 rounded-xl bg-[#034d37] hover:bg-[#023d2b] text-white font-black text-sm shadow-md transition-transform flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
-          <span>Submit Order to Kitchen</span>
+          <span id="place-order-btn-text">Submit Order to Kitchen</span>
           <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
       </div>
@@ -318,18 +324,17 @@
 
         <!-- Full Description -->
         <div>
-          <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 mb-1">About This Dish</h4>
+          <h4 id="detail-about-label" class="text-xs font-black uppercase tracking-wider text-slate-500 mb-1">About This Dish</h4>
           <p id="detail-desc" class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium"></p>
         </div>
 
         <!-- Portion Variants Section -->
         <div id="detail-variants-section" class="hidden space-y-2 pt-3 border-t border-slate-200">
           <div class="flex items-center justify-between">
-            <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
-              <span>Portion Size</span>
-              <span class="text-[11px] font-normal text-slate-500">· पोर्शन चुनें</span>
+            <h4 id="detail-portion-title" class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+              Portion Size
             </h4>
-            <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">Required</span>
+            <span id="detail-portion-badge" class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">Required</span>
           </div>
           <div id="detail-variants-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <!-- Injected by JS -->
@@ -339,11 +344,10 @@
         <!-- Add-Ons Section -->
         <div id="detail-addons-section" class="hidden space-y-2 pt-3 border-t border-slate-200">
           <div class="flex items-center justify-between">
-            <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
-              <span>Add-Ons & Extras</span>
-              <span class="text-[11px] font-normal text-slate-500">· अतिरिक्त आइटम</span>
+            <h4 id="detail-addons-title" class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+              Add-Ons & Extras
             </h4>
-            <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">Optional</span>
+            <span id="detail-addons-badge" class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">Optional</span>
           </div>
           <div id="detail-addons-list" class="space-y-1.5">
             <!-- Injected by JS -->
@@ -353,8 +357,8 @@
         <!-- Special Cooking Instructions -->
         <div id="detail-notes-section" class="space-y-1.5 pt-3 border-t border-slate-200">
           <label class="block text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center justify-between">
-            <span>Special Instructions · विशेष निर्देश</span>
-            <span class="text-[10px] font-normal text-slate-400">Optional</span>
+            <span id="detail-notes-label">Special Instructions</span>
+            <span id="detail-notes-badge" class="text-[10px] font-normal text-slate-400">Optional</span>
           </label>
           <input type="text" id="detail-item-notes" placeholder="e.g. Less spicy, no onion & garlic, make it crisp" class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#034d37] focus:ring-1 focus:ring-[#034d37]/20 transition">
         </div>
@@ -375,7 +379,7 @@
 
         <!-- Add to Order Button -->
         <button onclick="addDetailToCart()" id="detail-add-btn" class="flex-1 py-3.5 px-4 rounded-xl bg-[#034d37] hover:bg-[#023d2b] text-white font-black text-sm shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
-          <span>Add to Order</span>
+          <span id="detail-add-btn-text">Add to Order</span>
           <span id="detail-btn-price" class="font-mono opacity-90 font-bold">• ₹0.00</span>
         </button>
       </div>
@@ -393,11 +397,10 @@
             <i data-lucide="flame" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-sans font-black text-base sm:text-lg text-slate-900 flex items-center gap-1.5">
-              <span>Live Kitchen Status</span>
-              <span class="text-xs font-semibold text-slate-500">· लाइव किचन स्टेटस</span>
+            <h3 id="tracking-sheet-title" class="font-sans font-black text-base sm:text-lg text-slate-900">
+              Live Kitchen Status
             </h3>
-            <p class="text-[10px] text-slate-500 font-semibold">Table #{{ $tableNumber }} Progress · टेबल #{{ $tableNumber }} के लिए लाइव स्टेटस</p>
+            <p id="tracking-sheet-subtitle" class="text-[10px] text-slate-500 font-semibold">Table #{{ $tableNumber }} Progress</p>
           </div>
         </div>
         <button onclick="toggleTrackingSheet()" class="p-1.5 rounded-full text-slate-500 hover:text-slate-900 bg-slate-100 cursor-pointer">
@@ -438,6 +441,212 @@
   const OWNER_ID = "{{ $ownerId }}";
   const TABLE_NUMBER = parseInt("{{ $tableNumber }}", 10);
   const SESSION_KEY = `sessionToken_${OWNER_ID}_${TABLE_NUMBER}`;
+
+  // Complete Natural Bilingual Dictionary Suite (English & Authentic Spoken Hindi)
+  const TRANSLATIONS = {
+    en: {
+      tablePrefix: "Table #",
+      diningFloor: "• Dining Floor",
+      staffAssistance: "Staff & Table Assistance",
+      floorAttendantActive: "Floor Attendant Active",
+      callWaiter: "Call Waiter",
+      requestWater: "Request Water",
+      waiterDispatched: "Waiter has been notified!",
+      waterDispatched: "Water request dispatched!",
+      searchPlaceholder: "Search dishes, drinks, ingredients...",
+      allItems: "All Items",
+      pureVeg: "Pure Veg",
+      nonVeg: "Non-Veg",
+      sortLabel: "Sort:",
+      recommended: "Recommended",
+      priceLowHigh: "₹ Low → High",
+      priceHighLow: "₹ High → Low",
+      allCategories: "All Categories",
+      add: "Add",
+      customize: "Customize",
+      tapForInfo: "Tap for info",
+      customizable: "Customizable",
+      inOrder: "in order",
+      itemsInOrder: "items in order",
+      itemInOrder: "item in order",
+      viewOrder: "View Order",
+      yourOrder: "Your Table Order",
+      reviewItems: "Review items",
+      cookingInstructions: "Cooking Instructions / Dietary Notes",
+      lessSpicy: "Less spicy",
+      noOnionGarlic: "No onion/garlic",
+      extraCrispy: "Extra crispy",
+      sauceOnSide: "Sauce on side",
+      orderNotesPlaceholder: "e.g. Less spicy, dressing on the side...",
+      orderSubtotal: "Order Subtotal",
+      submitOrder: "Submit Order to Kitchen",
+      transmitting: "Transmitting to Kitchen...",
+      orderSuccessToast: "Order transmitted to kitchen!",
+      aboutDish: "About This Dish",
+      portionSize: "Portion Size",
+      requiredBadge: "Required",
+      addonsExtras: "Add-Ons & Extras",
+      optionalBadge: "Optional",
+      specialInstructions: "Special Instructions",
+      notesPlaceholder: "e.g. Less spicy, no onion & garlic, make it crisp",
+      addToOrder: "Add to Order",
+      liveKitchenStatus: "Live Kitchen Status",
+      trackPill: "Track",
+      step1: "Received",
+      step2: "Cooking",
+      step3: "Ready",
+      step4: "Served",
+      statusPending: "Order Received",
+      statusPreparing: "Cooking in Progress",
+      statusReady: "Plated & Ready to Serve",
+      statusCompleted: "Served to Table",
+      statusCancelled: "Cancelled",
+      orderFailedAlert: "Failed to place order. Please try again."
+    },
+    hi: {
+      tablePrefix: "टेबल #",
+      diningFloor: "• डाइनिंग एरिया",
+      staffAssistance: "कर्मचारी एवं टेबल सहायता",
+      floorAttendantActive: "अटेंडेंट उपलब्ध",
+      callWaiter: "वेटर बुलाएं",
+      requestWater: "पानी मंगवाएं",
+      waiterDispatched: "वेटर को सूचित कर दिया गया है!",
+      waterDispatched: "पानी पहुंचाने का अनुरोध भेजा गया!",
+      searchPlaceholder: "व्यंजन, पेय या सामग्री खोजें...",
+      allItems: "सभी व्यंजन",
+      pureVeg: "शुद्ध शाकाहारी",
+      nonVeg: "मांसाहारी",
+      sortLabel: "क्रम:",
+      recommended: "लोकप्रिय",
+      priceLowHigh: "₹ कम से ज्यादा",
+      priceHighLow: "₹ ज्यादा से कम",
+      allCategories: "सभी श्रेणियां",
+      add: "जोड़ें",
+      customize: "कस्टमाइज़",
+      tapForInfo: "विवरण देखें",
+      customizable: "कस्टमाइज़ेबल",
+      inOrder: "ऑर्डर में",
+      itemsInOrder: "आइटम ऑर्डर में",
+      itemInOrder: "आइटम ऑर्डर में",
+      viewOrder: "ऑर्डर देखें",
+      yourOrder: "आपकी ऑर्डर सूची",
+      reviewItems: "चुने हुए व्यंजन",
+      cookingInstructions: "पकाने के निर्देश / विशेष पसंद",
+      lessSpicy: "कम तीखा",
+      noOnionGarlic: "बिना प्याज / लहसुन",
+      extraCrispy: "ज्यादा क्रिस्पी",
+      sauceOnSide: "चटनी / सॉस अलग से",
+      orderNotesPlaceholder: "जैसे कम तीखा, सलाद अलग से, बिना प्याज...",
+      orderSubtotal: "कुल राशि",
+      submitOrder: "रसोई में ऑर्डर भेजें",
+      transmitting: "रसोई में भेजा जा रहा है...",
+      orderSuccessToast: "ऑर्डर रसोई में पहुंच गया है!",
+      aboutDish: "व्यंजन का विवरण",
+      portionSize: "पोर्शन / साइज़ चुनें",
+      requiredBadge: "अनिवार्य",
+      addonsExtras: "अतिरिक्त आइटम और टॉपिंग",
+      optionalBadge: "ऐच्छिक",
+      specialInstructions: "विशेष निर्देश",
+      notesPlaceholder: "जैसे कम तीखा, बिना प्याज-लहसुन, ज्यादा क्रिस्पी...",
+      addToOrder: "ऑर्डर में जोड़ें",
+      liveKitchenStatus: "लाइव किचन स्टेटस",
+      trackPill: "ट्रैक करें",
+      step1: "ऑर्डर मिला",
+      step2: "पक रहा है",
+      step3: "तैयार है",
+      step4: "सर्व हो गया",
+      statusPending: "ऑर्डर स्वीकार हुआ",
+      statusPreparing: "रसोई में पक रहा है",
+      statusReady: "तैयार है • टेबल पर आ रहा है",
+      statusCompleted: "सर्व हो गया",
+      statusCancelled: "रद्द हुआ",
+      orderFailedAlert: "ऑर्डर दर्ज नहीं हो सका। कृपया पुनः प्रयास करें।"
+    }
+  };
+
+  let currentLang = localStorage.getItem('vyora_lang') || 'en';
+
+  function t(key) {
+    return (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key]) || (TRANSLATIONS['en'] && TRANSLATIONS['en'][key]) || key;
+  }
+
+  function setLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('vyora_lang', lang);
+
+    const btnEn = document.getElementById('lang-btn-en');
+    const btnHi = document.getElementById('lang-btn-hi');
+    if (btnEn && btnHi) {
+      if (lang === 'hi') {
+        btnHi.className = 'px-2.5 py-1 rounded-full text-[11px] font-bold transition-all bg-[#034d37] text-white shadow-xs cursor-pointer';
+        btnEn.className = 'px-2.5 py-1 rounded-full text-[11px] font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 cursor-pointer';
+      } else {
+        btnEn.className = 'px-2.5 py-1 rounded-full text-[11px] font-bold transition-all bg-[#034d37] text-white shadow-xs cursor-pointer';
+        btnHi.className = 'px-2.5 py-1 rounded-full text-[11px] font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 cursor-pointer';
+      }
+    }
+
+    const applyText = (id, text) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    };
+
+    applyText('header-table-badge', `${t('tablePrefix')}${TABLE_NUMBER}`);
+    applyText('header-dining-floor', t('diningFloor'));
+    applyText('text-staff-assistance', t('staffAssistance'));
+    applyText('text-floor-attendant', t('floorAttendantActive'));
+    applyText('text-waiter', t('callWaiter'));
+    applyText('text-water', t('requestWater'));
+
+    const searchInput = document.getElementById('cust-search');
+    if (searchInput) searchInput.placeholder = t('searchPlaceholder');
+
+    applyText('text-diet-all', t('allItems'));
+    applyText('text-diet-veg', t('pureVeg'));
+    applyText('text-diet-nonveg', t('nonVeg'));
+
+    applyText('text-sort-label', t('sortLabel'));
+    applyText('text-sort-default', t('recommended'));
+    applyText('text-sort-asc', t('priceLowHigh'));
+    applyText('text-sort-desc', t('priceHighLow'));
+
+    applyText('cust-tab-all', t('allCategories'));
+
+    applyText('cart-view-order-btn-text', t('viewOrder'));
+    applyText('cart-modal-title', t('yourOrder'));
+    applyText('cart-modal-subtitle', `${t('tablePrefix')}${TABLE_NUMBER} • ${t('reviewItems')}`);
+    applyText('cart-cooking-instructions-label', t('cookingInstructions'));
+    applyText('tag-less-spicy', t('lessSpicy'));
+    applyText('tag-no-onion-garlic', t('noOnionGarlic'));
+    applyText('tag-extra-crispy', t('extraCrispy'));
+    applyText('tag-sauce-side', t('sauceOnSide'));
+
+    const orderNotes = document.getElementById('order-notes');
+    if (orderNotes) orderNotes.placeholder = t('orderNotesPlaceholder');
+
+    applyText('cart-order-subtotal-label', t('orderSubtotal'));
+    applyText('place-order-btn-text', t('submitOrder'));
+
+    applyText('detail-about-label', t('aboutDish'));
+    applyText('detail-portion-title', t('portionSize'));
+    applyText('detail-portion-badge', t('requiredBadge'));
+    applyText('detail-addons-title', t('addonsExtras'));
+    applyText('detail-addons-badge', t('optionalBadge'));
+    applyText('detail-notes-label', t('specialInstructions'));
+    applyText('detail-notes-badge', t('optionalBadge'));
+    const detailNotes = document.getElementById('detail-item-notes');
+    if (detailNotes) detailNotes.placeholder = t('notesPlaceholder');
+    applyText('detail-add-btn-text', t('addToOrder'));
+
+    applyText('tracking-sheet-title', t('liveKitchenStatus'));
+    applyText('tracking-sheet-subtitle', `${t('tablePrefix')}${TABLE_NUMBER} Progress`);
+
+    renderDishes();
+    updateCartBar();
+    if (document.getElementById('cart-modal') && !document.getElementById('cart-modal').classList.contains('hidden')) {
+      renderCartModalItems();
+    }
+  }
 
   // Bespoke Luxury Vector Icons Suite
   const VYORA_ICONS = {
@@ -504,6 +713,7 @@
   let livePollInterval = null;
 
   document.addEventListener('DOMContentLoaded', () => {
+    setLanguage(currentLang);
     loadMenu();
     loadLiveOrders();
     initPusherListener();
@@ -645,7 +855,7 @@
     const container = document.getElementById('cust-category-tabs');
     container.innerHTML = `
       <button onclick="selectCustomerCategory('all')" id="cust-tab-all" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition shrink-0 active:scale-95 ${activeCatFilter === 'all' ? 'bg-[var(--accent)] text-white shadow-xs' : 'border border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]'}">
-        All Categories
+        ${t('allCategories')}
       </button>
     `;
 
@@ -829,7 +1039,7 @@
         actionControl = `
           <button onclick="event.stopPropagation(); ${hasModifiers ? `openDishDetailModal('${dish.id}')` : `addToCart('${dish.id}', event)`}" class="w-full py-2 rounded-xl bg-[#034d37] hover:bg-[#023d2b] text-white font-black text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
             ${VYORA_ICONS.plus}
-            <span>${hasModifiers ? 'Customize' : 'Add'}</span>
+            <span>${hasModifiers ? t('customize') : t('add')}</span>
           </button>
         `;
       } else {
@@ -839,10 +1049,10 @@
               <button onclick="event.stopPropagation(); removeFromCartDish('${dish.id}')" class="w-7 h-7 rounded-lg bg-white text-slate-800 font-black hover:bg-red-50 hover:text-red-600 transition flex items-center justify-center shadow-xs active:scale-75 cursor-pointer">
                 ${VYORA_ICONS.minus}
               </button>
-              <span class="font-mono font-black text-xs text-slate-900 px-1">${qty} in order</span>
+              <span class="font-mono font-black text-xs text-slate-900 px-1">${qty} ${t('inOrder')}</span>
               <button onclick="event.stopPropagation(); openDishDetailModal('${dish.id}')" class="px-2 py-1.5 rounded-lg bg-[#034d37] text-white font-bold text-[11px] hover:bg-[#023d2b] transition flex items-center gap-1 shadow-xs active:scale-95 cursor-pointer">
                 ${VYORA_ICONS.plus}
-                <span>Add</span>
+                <span>${t('add')}</span>
               </button>
             </div>
           `;
@@ -868,7 +1078,7 @@
           <p class="text-[11px] sm:text-xs text-slate-600 font-medium line-clamp-2 mt-0.5 leading-relaxed min-h-[30px]">${escapeHtml(dish.description || 'Prepared fresh with fine ingredients.')}</p>
           <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-slate-100">
             <span class="font-mono font-black text-base text-slate-900">₹${parseFloat(dish.price).toFixed(2)}</span>
-            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${hasModifiers ? 'Customizable' : 'Tap for info'}</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${hasModifiers ? t('customizable') : t('tapForInfo')}</span>
           </div>
         </div>
         <div class="pt-1 relative">
@@ -1235,7 +1445,7 @@
     if (count > 0) {
       bar.classList.remove('hidden');
       document.getElementById('cart-item-count-badge').textContent = count;
-      document.getElementById('cart-item-count').textContent = `${count} ${count === 1 ? 'item' : 'items'} in order`;
+      document.getElementById('cart-item-count').textContent = `${count} ${count === 1 ? t('itemInOrder') : t('itemsInOrder')}`;
       document.getElementById('cart-total-price').textContent = `₹${total.toFixed(2)}`;
     } else {
       bar.classList.add('hidden');
@@ -1319,7 +1529,7 @@
 
     if (cart.size === 0) return;
     btn.disabled = true;
-    btn.innerHTML = `<span class="inline-flex items-center gap-2">${VYORA_ICONS.spinner} Transmitting to Kitchen...</span>`;
+    btn.innerHTML = `<span class="inline-flex items-center gap-2">${VYORA_ICONS.spinner} ${t('transmitting')}</span>`;
 
     const items = [];
     cart.forEach(c => {
@@ -1347,7 +1557,7 @@
       const data = await res.json();
       if (data.success) {
         if (window.playNotificationSound) window.playNotificationSound();
-        window.showToast('Order transmitted to kitchen!', 'order');
+        window.showToast(t('orderSuccessToast'), 'order');
         cart.clear();
         closeCartModal();
         renderDishes();
@@ -1358,14 +1568,15 @@
           showSessionSettledScreen('Cannot place order: This dining session has ended because the bill was settled. Please scan the QR code at your table to start a new session.', true);
           return;
         }
-        alert(data.error?.message || 'Failed to place order.');
+        const errorMsg = data.error?.message || data.message || t('orderFailedAlert');
+        alert(errorMsg);
       }
     } catch (err) {
       console.error('Order placement error:', err);
       alert('Network error. Please try again.');
     } finally {
       btn.disabled = false;
-      btn.innerHTML = '<span>Submit Order to Kitchen</span><i data-lucide="arrow-right" class="w-4 h-4"></i>';
+      btn.innerHTML = `<span>${t('submitOrder')}</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
       if (window.lucide) lucide.createIcons();
     }
   }
@@ -1391,7 +1602,7 @@
       const data = await res.json();
       if (data.success) {
         if (window.playNotificationSound) window.playNotificationSound();
-        window.showToast(type === 'water' ? 'Water request dispatched!' : 'Waiter has been notified!', type);
+        window.showToast(type === 'water' ? t('waterDispatched') : t('waiterDispatched'), type);
         
         // Cooldown timer countdown
         let cooldown = 30;

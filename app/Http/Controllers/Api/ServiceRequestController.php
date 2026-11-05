@@ -35,7 +35,13 @@ class ServiceRequestController extends Controller
             ], 400);
         }
 
-        $table = Table::where('owner_id', $ownerId)
+        $owner = \App\Models\Owner::where('id', $ownerId)->orWhere('username', $ownerId)->first();
+        if (!$owner) {
+            return response()->json(['success' => false, 'error' => ['code' => 'NOT_FOUND', 'message' => 'Restaurant not found']], 404);
+        }
+        $resolvedOwnerId = $owner->id;
+
+        $table = Table::where('owner_id', $resolvedOwnerId)
             ->where('table_number', $tableNumber)
             ->where('is_active', true)
             ->first();
