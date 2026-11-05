@@ -22,6 +22,7 @@ class MenuItem extends Model
         'preparation_time',
         'is_veg',
         'is_available',
+        'modifiers',
     ];
 
     protected $casts = [
@@ -29,6 +30,7 @@ class MenuItem extends Model
         'preparation_time' => 'integer',
         'is_veg' => 'boolean',
         'is_available' => 'boolean',
+        'modifiers' => 'array',
     ];
 
     public function owner()

@@ -104,6 +104,18 @@ class DatabaseSeeder extends Seeder
                 'preparation_time' => 15,
                 'is_veg' => true,
                 'is_available' => true,
+                'modifiers' => [
+                    'variants' => [
+                        ['name' => 'Regular Portion', 'price' => 0],
+                        ['name' => 'Full / Large Portion', 'price' => 70],
+                    ],
+                    'addons' => [
+                        ['name' => 'Extra Cream & Butter', 'price' => 30],
+                        ['name' => 'Garlic Naan Combo', 'price' => 60],
+                        ['name' => 'Extra Spicy Dip', 'price' => 25],
+                    ],
+                    'allow_notes' => true,
+                ],
             ]);
 
             MenuItem::create([
@@ -115,6 +127,17 @@ class DatabaseSeeder extends Seeder
                 'preparation_time' => 20,
                 'is_veg' => false,
                 'is_available' => true,
+                'modifiers' => [
+                    'variants' => [
+                        ['name' => 'Regular Portion', 'price' => 0],
+                        ['name' => 'Full / Large Portion', 'price' => 80],
+                    ],
+                    'addons' => [
+                        ['name' => 'Extra Cream & Butter', 'price' => 30],
+                        ['name' => 'Garlic Naan Combo', 'price' => 60],
+                    ],
+                    'allow_notes' => true,
+                ],
             ]);
 
             MenuItem::create([

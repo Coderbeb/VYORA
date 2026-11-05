@@ -61,6 +61,9 @@ class PublicOrderController extends Controller
                         'menuItemName' => $item->menu_item_name,
                         'quantity' => $item->quantity,
                         'price' => (float) $item->price,
+                        'selectedVariant' => $item->selected_variant,
+                        'selectedAddons' => $item->selected_addons,
+                        'notes' => $item->notes,
                     ];
                 }),
             ];
@@ -123,15 +126,71 @@ class PublicOrderController extends Controller
             if (!$menuItem) continue;
 
             $qty = max(1, (int) ($itemData['quantity'] ?? 1));
-            $price = (float) $menuItem->price;
-            $totalAmount += $price * $qty;
+            $basePrice = (float) $menuItem->price;
+
+            // Handle portion variants
+            $selectedVariant = null;
+            $variantExtra = 0.0;
+            if (!empty($itemData['selectedVariant'])) {
+                if (is_array($itemData['selectedVariant'])) {
+                    $selectedVariant = $itemData['selectedVariant']['name'] ?? null;
+                    $variantExtra = (float) ($itemData['selectedVariant']['price'] ?? 0);
+                } else {
+                    $selectedVariant = (string) $itemData['selectedVariant'];
+                    if ($menuItem->modifiers && !empty($menuItem->modifiers['variants'])) {
+                        foreach ($menuItem->modifiers['variants'] as $v) {
+                            if (($v['name'] ?? '') === $selectedVariant) {
+                                $variantExtra = (float) ($v['price'] ?? 0);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Handle add-ons
+            $selectedAddons = [];
+            $addonsExtra = 0.0;
+            if (!empty($itemData['selectedAddons']) && is_array($itemData['selectedAddons'])) {
+                foreach ($itemData['selectedAddons'] as $addon) {
+                    if (is_array($addon)) {
+                        $name = $addon['name'] ?? null;
+                        $addonPrice = (float) ($addon['price'] ?? 0);
+                    } else {
+                        $name = (string) $addon;
+                        $addonPrice = 0.0;
+                        if ($menuItem->modifiers && !empty($menuItem->modifiers['addons'])) {
+                            foreach ($menuItem->modifiers['addons'] as $ad) {
+                                if (($ad['name'] ?? '') === $name) {
+                                    $addonPrice = (float) ($ad['price'] ?? 0);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if ($name) {
+                        $selectedAddons[] = [
+                            'name' => $name,
+                            'price' => $addonPrice,
+                        ];
+                        $addonsExtra += $addonPrice;
+                    }
+                }
+            }
+
+            $itemNotes = trim((string) ($itemData['notes'] ?? '')) ?: null;
+            $unitPrice = $basePrice + $variantExtra + $addonsExtra;
+            $totalAmount += $unitPrice * $qty;
             $maxPrepTime = max($maxPrepTime, $menuItem->preparation_time);
 
             $orderItemsData[] = [
                 'menu_item_id' => $menuItem->id,
                 'menu_item_name' => $menuItem->name,
                 'quantity' => $qty,
-                'price' => $price,
+                'price' => $unitPrice,
+                'selected_variant' => $selectedVariant,
+                'selected_addons' => count($selectedAddons) > 0 ? $selectedAddons : null,
+                'notes' => $itemNotes,
             ];
         }
 
@@ -170,6 +229,9 @@ class PublicOrderController extends Controller
                     'menuItemName' => $i->menu_item_name,
                     'quantity' => $i->quantity,
                     'price' => (float) $i->price,
+                    'selectedVariant' => $i->selected_variant,
+                    'selectedAddons' => $i->selected_addons,
+                    'notes' => $i->notes,
                 ];
             }),
         ];

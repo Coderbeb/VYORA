@@ -236,13 +236,24 @@
     } else {
       table.session.items.forEach(item => {
         const row = document.createElement('div');
-        row.className = 'flex justify-between items-center py-2';
+        row.className = 'flex justify-between items-start py-2';
+        const variantText = item.selectedVariant ? `<span class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 text-[10px] font-bold text-slate-700 dark:text-slate-300 mr-1">${item.selectedVariant}</span>` : '';
+        const addonsText = (item.selectedAddons && item.selectedAddons.length > 0)
+          ? item.selectedAddons.map(a => `<span class="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[9px] font-bold mr-1">+ ${a.name || a}</span>`).join('')
+          : '';
+        const notesText = item.notes ? `<div class="text-[10px] text-amber-700 font-semibold italic mt-0.5">Note: ${item.notes}</div>` : '';
+
         row.innerHTML = `
           <div>
-            <p class="font-bold text-[var(--text-primary)]"><span class="text-[var(--accent)] font-extrabold mr-1">${item.quantity}x</span> ${item.menuItemName}</p>
-            <p class="text-[10px] text-[var(--text-muted)]">₹${parseFloat(item.price).toFixed(2)} each • <span class="text-emerald-700 font-bold">Served</span></p>
+            <p class="font-bold text-[var(--text-primary)]">
+              <span class="text-[var(--accent)] font-extrabold mr-1">${item.quantity}x</span> ${item.menuItemName}
+              ${variantText}
+            </p>
+            ${addonsText ? `<div class="mt-0.5 flex flex-wrap gap-1">${addonsText}</div>` : ''}
+            ${notesText}
+            <p class="text-[10px] text-[var(--text-muted)] mt-0.5">₹${parseFloat(item.price).toFixed(2)} each • <span class="text-emerald-700 font-bold">Served</span></p>
           </div>
-          <span class="font-mono font-bold text-[var(--text-primary)]">₹${(item.price * item.quantity).toFixed(2)}</span>
+          <span class="font-mono font-bold text-[var(--text-primary)] shrink-0 pt-0.5">₹${(item.price * item.quantity).toFixed(2)}</span>
         `;
         itemsContainer.appendChild(row);
       });
@@ -301,12 +312,24 @@
   function printReceipt() {
     if (!activeSelectedTable || !activeSelectedTable.session) return;
     const t = activeSelectedTable;
-    const itemsHtml = t.session.items.map(i => `
-      <tr>
-        <td style="padding: 4px 0; vertical-align: top;">${i.quantity}x ${i.menuItemName}</td>
-        <td style="text-align: right; padding: 4px 0; font-family: monospace; vertical-align: top;">₹${(i.price * i.quantity).toFixed(2)}</td>
-      </tr>
-    `).join('');
+    const itemsHtml = t.session.items.map(i => {
+      const variantStr = i.selectedVariant ? ` (${i.selectedVariant})` : '';
+      const addonsStr = (i.selectedAddons && i.selectedAddons.length > 0)
+        ? `<div style="font-size: 10px; color: #555;">+ ${i.selectedAddons.map(a => a.name || a).join(', ')}</div>`
+        : '';
+      const notesStr = i.notes ? `<div style="font-size: 10px; font-style: italic; color: #666;">Note: ${i.notes}</div>` : '';
+
+      return `
+        <tr>
+          <td style="padding: 4px 0; vertical-align: top;">
+            <div class="bold">${i.quantity}x ${i.menuItemName}${variantStr}</div>
+            ${addonsStr}
+            ${notesStr}
+          </td>
+          <td style="text-align: right; padding: 4px 0; font-family: monospace; vertical-align: top;">₹${(i.price * i.quantity).toFixed(2)}</td>
+        </tr>
+      `;
+    }).join('');
 
     const printContent = `<!DOCTYPE html>
       <html>

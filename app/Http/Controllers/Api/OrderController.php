@@ -66,6 +66,9 @@ class OrderController extends Controller
                         'menuItemName' => $item->menu_item_name,
                         'quantity' => $item->quantity,
                         'price' => (float) $item->price,
+                        'selectedVariant' => $item->selected_variant,
+                        'selectedAddons' => $item->selected_addons,
+                        'notes' => $item->notes,
                         'isVeg' => $item->menuItem ? (bool) $item->menuItem->is_veg : true,
                         'menuItem' => $item->menuItem ? [
                             'name' => $item->menuItem->name,
@@ -125,6 +128,9 @@ class OrderController extends Controller
                         'menuItemName' => $item->menu_item_name,
                         'quantity' => $item->quantity,
                         'price' => (float) $item->price,
+                        'selectedVariant' => $item->selected_variant,
+                        'selectedAddons' => $item->selected_addons,
+                        'notes' => $item->notes,
                         'isVeg' => $item->menuItem ? (bool) $item->menuItem->is_veg : true,
                     ];
                 }),

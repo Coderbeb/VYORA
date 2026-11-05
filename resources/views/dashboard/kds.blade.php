@@ -159,11 +159,26 @@
 
       // Filter out water bottles from ticket line items
       const kitchenItems = (order.items || []).filter(isKitchenDish);
-      const itemsList = kitchenItems.map(i => `
-        <li class="flex items-center justify-between text-xs py-1.5 border-b border-[var(--border)] last:border-0">
-          <span class="font-bold text-[var(--text-primary)] text-sm"><strong class="text-amber-600 font-extrabold mr-1.5">${i.quantity}x</strong> ${i.menuItemName}</span>
-        </li>
-      `).join('');
+      const itemsList = kitchenItems.map(i => {
+        const variantTag = i.selectedVariant ? `<span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-800 dark:text-amber-300 text-[10px] font-bold border border-amber-500/30 ml-1.5">${i.selectedVariant}</span>` : '';
+        const addonsTags = (i.selectedAddons && i.selectedAddons.length > 0)
+          ? i.selectedAddons.map(a => `<span class="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[9px] font-bold border border-emerald-500/20 mr-1">+ ${a.name || a}</span>`).join('')
+          : '';
+        const notesTag = i.notes ? `<div class="text-[10px] text-amber-800 dark:text-amber-300 font-semibold italic mt-0.5 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span> ${i.notes}</div>` : '';
+
+        return `
+          <li class="flex flex-col py-1.5 border-b border-[var(--border)] last:border-0">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-[var(--text-primary)] text-sm">
+                <strong class="text-amber-600 font-extrabold mr-1.5">${i.quantity}x</strong> ${i.menuItemName}
+                ${variantTag}
+              </span>
+            </div>
+            ${addonsTags ? `<div class="mt-1 flex flex-wrap gap-1">${addonsTags}</div>` : ''}
+            ${notesTag}
+          </li>
+        `;
+      }).join('');
 
       const notes = order.notes ? `
         <div class="p-2.5 rounded-[var(--radius-sm)] bg-amber-500/10 border border-amber-500/20 text-xs text-amber-900 font-semibold">

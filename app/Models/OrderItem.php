@@ -18,11 +18,15 @@ class OrderItem extends Model
         'menu_item_name',
         'quantity',
         'price',
+        'selected_variant',
+        'selected_addons',
+        'notes',
     ];
 
     protected $casts = [
         'quantity' => 'integer',
         'price' => 'decimal:2',
+        'selected_addons' => 'array',
     ];
 
     public function order()

@@ -67,6 +67,7 @@ class MenuController extends Controller
                 'preparationTime' => (int) ($item->preparation_time ?? 15),
                 'isVeg' => (bool) ($item->is_veg ?? true),
                 'isAvailable' => (bool) $item->is_available,
+                'modifiers' => $item->modifiers,
                 'createdAt' => $this->formatDate($item->created_at),
                 'updatedAt' => $this->formatDate($item->updated_at),
             ];
@@ -129,6 +130,7 @@ class MenuController extends Controller
                 'is_veg' => $isVeg,
                 'is_available' => $isAvailable,
                 'category_id' => $catId,
+                'modifiers' => $request->input('modifiers'),
                 'image_url' => trim((string) $request->input('imageUrl', '')) ?: null,
             ]);
 
@@ -152,6 +154,7 @@ class MenuController extends Controller
                     'preparationTime' => (int) $item->preparation_time,
                     'isVeg' => (bool) ($item->is_veg ?? true),
                     'isAvailable' => (bool) $item->is_available,
+                    'modifiers' => $item->modifiers,
                     'createdAt' => $this->formatDate($item->created_at),
                     'updatedAt' => $this->formatDate($item->updated_at),
                 ],
@@ -230,6 +233,10 @@ class MenuController extends Controller
                 $item->image_url = $img !== '' ? $img : null;
             }
 
+            if ($request->has('modifiers')) {
+                $item->modifiers = $request->input('modifiers');
+            }
+
             $item->save();
             $item->load('category');
 
@@ -251,6 +258,7 @@ class MenuController extends Controller
                     'preparationTime' => (int) $item->preparation_time,
                     'isVeg' => (bool) ($item->is_veg ?? true),
                     'isAvailable' => (bool) $item->is_available,
+                    'modifiers' => $item->modifiers,
                     'createdAt' => $this->formatDate($item->created_at),
                     'updatedAt' => $this->formatDate($item->updated_at),
                 ],

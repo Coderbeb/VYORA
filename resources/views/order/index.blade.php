@@ -81,7 +81,7 @@
         <!-- Live Order Tracking Pill (appears when orders active) -->
         <button id="tracking-toggle-btn" onclick="toggleTrackingSheet()" class="hidden px-3 py-1.5 rounded-full bg-orange-500/15 text-orange-700 dark:text-orange-300 border border-orange-500/30 font-bold text-xs flex items-center gap-1.5 shadow-xs transition active:scale-95 animate-pulse">
           <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
-          <span id="tracking-status-text">Track (<span id="tracking-active-count">0</span>)</span>
+          <span id="tracking-status-text">Track · ट्रैक (<span id="tracking-active-count">0</span>)</span>
         </button>
 
         <!-- Theme Switcher -->
@@ -321,6 +321,43 @@
           <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 mb-1">About This Dish</h4>
           <p id="detail-desc" class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium"></p>
         </div>
+
+        <!-- Portion Variants Section -->
+        <div id="detail-variants-section" class="hidden space-y-2 pt-3 border-t border-slate-200">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+              <span>Portion Size</span>
+              <span class="text-[11px] font-normal text-slate-500">· पोर्शन चुनें</span>
+            </h4>
+            <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">Required</span>
+          </div>
+          <div id="detail-variants-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+        <!-- Add-Ons Section -->
+        <div id="detail-addons-section" class="hidden space-y-2 pt-3 border-t border-slate-200">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+              <span>Add-Ons & Extras</span>
+              <span class="text-[11px] font-normal text-slate-500">· अतिरिक्त आइटम</span>
+            </h4>
+            <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">Optional</span>
+          </div>
+          <div id="detail-addons-list" class="space-y-1.5">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+        <!-- Special Cooking Instructions -->
+        <div id="detail-notes-section" class="space-y-1.5 pt-3 border-t border-slate-200">
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center justify-between">
+            <span>Special Instructions · विशेष निर्देश</span>
+            <span class="text-[10px] font-normal text-slate-400">Optional</span>
+          </label>
+          <input type="text" id="detail-item-notes" placeholder="e.g. Less spicy, no onion & garlic, make it crisp" class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#034d37] focus:ring-1 focus:ring-[#034d37]/20 transition">
+        </div>
       </div>
 
       <!-- Bottom Order CTA -->
@@ -356,8 +393,11 @@
             <i data-lucide="flame" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-sans font-black text-base sm:text-lg text-slate-900">Live Kitchen Status</h3>
-            <p class="text-[10px] text-slate-500 font-semibold">Real-time order progress for Table #{{ $tableNumber }}</p>
+            <h3 class="font-sans font-black text-base sm:text-lg text-slate-900 flex items-center gap-1.5">
+              <span>Live Kitchen Status</span>
+              <span class="text-xs font-semibold text-slate-500">· लाइव किचन स्टेटस</span>
+            </h3>
+            <p class="text-[10px] text-slate-500 font-semibold">Table #{{ $tableNumber }} Progress · टेबल #{{ $tableNumber }} के लिए लाइव स्टेटस</p>
           </div>
         </div>
         <button onclick="toggleTrackingSheet()" class="p-1.5 rounded-full text-slate-500 hover:text-slate-900 bg-slate-100 cursor-pointer">
@@ -452,12 +492,14 @@
 
   let allMenuItems = [];
   let allCategories = [];
-  let cart = new Map(); // id -> { item, quantity }
+  let cart = new Map(); // cartKey -> { key, item, quantity, unitPrice, selectedVariant, selectedAddons, notes }
   let activeCatFilter = 'all';
   let activeDietFilter = 'all'; // 'all', 'veg', 'nonveg'
   let activeSortFilter = 'default'; // 'default', 'price_asc', 'price_desc'
   let activeDetailDish = null;
   let detailQty = 1;
+  let selectedDetailVariant = null;
+  let selectedDetailAddons = new Map(); // name -> { name, price }
   let activeLiveOrders = [];
   let livePollInterval = null;
 
@@ -725,7 +767,9 @@
     container.innerHTML = '';
     filtered.forEach(dish => {
       const isNonVeg = isNonVegDish(dish);
-      const qty = cart.get(dish.id)?.quantity || 0;
+      const qty = getDishTotalQty(dish.id);
+      const mods = getDishModifiers(dish);
+      const hasModifiers = mods && ((mods.variants && mods.variants.length > 0) || (mods.addons && mods.addons.length > 0));
 
       // Modern Apple-HIG product card (Clean, luxury alabaster card)
       const card = document.createElement('div');
@@ -748,12 +792,19 @@
         </span>
       `;
 
+      const customizableTag = hasModifiers ? `
+        <span class="inline-flex items-center gap-1 bg-amber-500/15 border border-amber-500/30 text-[9px] font-bold text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded shadow-2xs">
+          Customizable
+        </span>
+      ` : '';
+
       // Modern Squircle Image with Floating Tags
       const imgHtml = dish.imageUrl ? `
         <div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 mb-1">
           <img src="${dish.imageUrl}" alt="${escapeHtml(dish.name)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-          <div class="absolute top-2 left-2">
+          <div class="absolute top-2 left-2 flex flex-col gap-1">
             ${emblemBadge}
+            ${customizableTag}
           </div>
           <div class="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-bold flex items-center gap-1 shadow-xs">
             ${VYORA_ICONS.clock} ${dish.preparationTime || 15}m
@@ -762,8 +813,9 @@
       ` : `
         <div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden mb-1 flex items-center justify-center ${isNonVeg ? 'bg-orange-50 text-orange-400' : 'bg-emerald-50 text-emerald-500'} border border-slate-200">
           <svg class="w-8 h-8 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4V2"/><path d="M4 18h16"/><path d="M4 18a8 8 0 0 1 16 0"/><circle cx="12" cy="4" r="2"/></svg>
-          <div class="absolute top-2 left-2">
+          <div class="absolute top-2 left-2 flex flex-col gap-1">
             ${emblemBadge}
+            ${customizableTag}
           </div>
           <div class="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-bold flex items-center gap-1 shadow-xs">
             ${VYORA_ICONS.clock} ${dish.preparationTime || 15}m
@@ -775,23 +827,38 @@
       let actionControl = '';
       if (qty === 0) {
         actionControl = `
-          <button onclick="event.stopPropagation(); addToCart('${dish.id}', event)" class="w-full py-2 rounded-xl bg-[#034d37] hover:bg-[#023d2b] text-white font-black text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
+          <button onclick="event.stopPropagation(); ${hasModifiers ? `openDishDetailModal('${dish.id}')` : `addToCart('${dish.id}', event)`}" class="w-full py-2 rounded-xl bg-[#034d37] hover:bg-[#023d2b] text-white font-black text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
             ${VYORA_ICONS.plus}
-            <span>Add</span>
+            <span>${hasModifiers ? 'Customize' : 'Add'}</span>
           </button>
         `;
       } else {
-        actionControl = `
-          <div class="flex items-center justify-between bg-slate-100 border border-slate-300 rounded-xl p-0.5 shadow-xs" onclick="event.stopPropagation()">
-            <button onclick="event.stopPropagation(); removeFromCart('${dish.id}')" class="w-7 h-7 rounded-lg bg-white text-slate-800 font-black hover:bg-red-50 hover:text-red-600 transition flex items-center justify-center shadow-xs active:scale-75 cursor-pointer">
-              ${VYORA_ICONS.minus}
-            </button>
-            <span class="font-mono font-black text-xs text-slate-900 px-2">${qty}</span>
-            <button onclick="event.stopPropagation(); addToCart('${dish.id}', event)" class="w-7 h-7 rounded-lg bg-[#034d37] text-white font-black hover:bg-[#023d2b] transition flex items-center justify-center shadow-xs active:scale-75 cursor-pointer">
-              ${VYORA_ICONS.plus}
-            </button>
-          </div>
-        `;
+        if (hasModifiers) {
+          actionControl = `
+            <div class="flex items-center justify-between bg-slate-100 border border-slate-300 rounded-xl p-0.5 shadow-xs" onclick="event.stopPropagation()">
+              <button onclick="event.stopPropagation(); removeFromCartDish('${dish.id}')" class="w-7 h-7 rounded-lg bg-white text-slate-800 font-black hover:bg-red-50 hover:text-red-600 transition flex items-center justify-center shadow-xs active:scale-75 cursor-pointer">
+                ${VYORA_ICONS.minus}
+              </button>
+              <span class="font-mono font-black text-xs text-slate-900 px-1">${qty} in order</span>
+              <button onclick="event.stopPropagation(); openDishDetailModal('${dish.id}')" class="px-2 py-1.5 rounded-lg bg-[#034d37] text-white font-bold text-[11px] hover:bg-[#023d2b] transition flex items-center gap-1 shadow-xs active:scale-95 cursor-pointer">
+                ${VYORA_ICONS.plus}
+                <span>Add</span>
+              </button>
+            </div>
+          `;
+        } else {
+          actionControl = `
+            <div class="flex items-center justify-between bg-slate-100 border border-slate-300 rounded-xl p-0.5 shadow-xs" onclick="event.stopPropagation()">
+              <button onclick="event.stopPropagation(); removeFromCartDish('${dish.id}')" class="w-7 h-7 rounded-lg bg-white text-slate-800 font-black hover:bg-red-50 hover:text-red-600 transition flex items-center justify-center shadow-xs active:scale-75 cursor-pointer">
+                ${VYORA_ICONS.minus}
+              </button>
+              <span class="font-mono font-black text-xs text-slate-900 px-2">${qty}</span>
+              <button onclick="event.stopPropagation(); addToCart('${dish.id}', event)" class="w-7 h-7 rounded-lg bg-[#034d37] text-white font-black hover:bg-[#023d2b] transition flex items-center justify-center shadow-xs active:scale-75 cursor-pointer">
+                ${VYORA_ICONS.plus}
+              </button>
+            </div>
+          `;
+        }
       }
 
       card.innerHTML = `
@@ -801,7 +868,7 @@
           <p class="text-[11px] sm:text-xs text-slate-600 font-medium line-clamp-2 mt-0.5 leading-relaxed min-h-[30px]">${escapeHtml(dish.description || 'Prepared fresh with fine ingredients.')}</p>
           <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-slate-100">
             <span class="font-mono font-black text-base text-slate-900">₹${parseFloat(dish.price).toFixed(2)}</span>
-            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tap for info</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${hasModifiers ? 'Customizable' : 'Tap for info'}</span>
           </div>
         </div>
         <div class="pt-1 relative">
@@ -816,14 +883,57 @@
     updateCartBar();
   }
 
+  function getDishTotalQty(dishId) {
+    let sum = 0;
+    cart.forEach(c => {
+      if (c.item.id === dishId) sum += c.quantity;
+    });
+    return sum;
+  }
+
+  function getDishModifiers(dish) {
+    if (!dish || !dish.modifiers) return null;
+    let m = dish.modifiers;
+    if (typeof m === 'string') {
+      try { m = JSON.parse(m); } catch (e) { m = null; }
+    }
+    return m;
+  }
+
   // --- ONE PRODUCT DETAILS PAGE (MODAL) ---
   function openDishDetailModal(dishId) {
     const dish = allMenuItems.find(i => i.id === dishId);
     if (!dish) return;
 
     activeDetailDish = dish;
-    const inCartQty = cart.get(dish.id)?.quantity || 0;
-    detailQty = inCartQty > 0 ? inCartQty : 1;
+    detailQty = 1;
+    selectedDetailAddons.clear();
+
+    const mods = getDishModifiers(dish);
+
+    // Variants
+    const variantsSection = document.getElementById('detail-variants-section');
+    if (mods && mods.variants && mods.variants.length > 0) {
+      selectedDetailVariant = mods.variants[0];
+      variantsSection.classList.remove('hidden');
+      renderVariantsUI(mods.variants);
+    } else {
+      selectedDetailVariant = null;
+      variantsSection.classList.add('hidden');
+    }
+
+    // Add-Ons
+    const addonsSection = document.getElementById('detail-addons-section');
+    if (mods && mods.addons && mods.addons.length > 0) {
+      addonsSection.classList.remove('hidden');
+      renderAddonsUI(mods.addons);
+    } else {
+      addonsSection.classList.add('hidden');
+    }
+
+    // Special Instructions
+    const notesInput = document.getElementById('detail-item-notes');
+    if (notesInput) notesInput.value = '';
 
     const isNonVeg = isNonVegDish(dish);
     const imgEl = document.getElementById('detail-image');
@@ -841,11 +951,72 @@
     document.getElementById('detail-category-badge').textContent = dish.category?.name || 'Chef Special';
     document.getElementById('detail-prep-time').innerHTML = `${VYORA_ICONS.clock} Prep: ${dish.preparationTime || 15} mins`;
     document.getElementById('detail-title').textContent = dish.name;
-    document.getElementById('detail-price').textContent = `₹${parseFloat(dish.price).toFixed(2)}`;
     document.getElementById('detail-desc').textContent = dish.description || 'Prepared fresh with fine ingredients and authentic spices by our master culinary team.';
 
     updateDetailPriceUI();
     document.getElementById('dish-detail-modal').classList.remove('hidden');
+  }
+
+  function renderVariantsUI(variants) {
+    const list = document.getElementById('detail-variants-list');
+    list.innerHTML = variants.map((v, i) => {
+      const isSelected = selectedDetailVariant && selectedDetailVariant.name === v.name;
+      const extra = parseFloat(v.price || 0);
+      const priceText = extra > 0 ? `+₹${extra.toFixed(2)}` : 'Standard';
+      return `
+        <button type="button" onclick="selectDetailVariant(${i})" class="flex items-center justify-between p-2.5 rounded-xl border-2 ${isSelected ? 'border-[#034d37] bg-emerald-500/10 text-[#034d37]' : 'border-slate-200 bg-slate-50 text-slate-700'} font-bold text-xs transition active:scale-95 cursor-pointer text-left">
+          <span class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded-full border-2 ${isSelected ? 'border-[#034d37] bg-[#034d37]' : 'border-slate-300'} flex items-center justify-center">
+              ${isSelected ? '<span class="w-1.5 h-1.5 rounded-full bg-white"></span>' : ''}
+            </span>
+            <span>${escapeHtml(v.name)}</span>
+          </span>
+          <span class="font-mono text-[11px] font-black ${isSelected ? 'text-[#034d37]' : 'text-slate-500'}">${priceText}</span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function selectDetailVariant(index) {
+    const mods = getDishModifiers(activeDetailDish);
+    if (mods && mods.variants && mods.variants[index]) {
+      selectedDetailVariant = mods.variants[index];
+      renderVariantsUI(mods.variants);
+      updateDetailPriceUI();
+    }
+  }
+
+  function renderAddonsUI(addons) {
+    const list = document.getElementById('detail-addons-list');
+    list.innerHTML = addons.map((a, i) => {
+      const isSelected = selectedDetailAddons.has(a.name);
+      const price = parseFloat(a.price || 0);
+      return `
+        <button type="button" onclick="toggleDetailAddon(${i})" class="w-full flex items-center justify-between p-2.5 rounded-xl border ${isSelected ? 'border-[#034d37] bg-emerald-500/10 text-[#034d37]' : 'border-slate-200 bg-white text-slate-700'} font-bold text-xs transition active:scale-98 cursor-pointer">
+          <span class="flex items-center gap-2">
+            <span class="w-4 h-4 rounded-md border ${isSelected ? 'border-[#034d37] bg-[#034d37] text-white' : 'border-slate-300'} flex items-center justify-center font-mono text-[10px]">
+              ${isSelected ? '✓' : ''}
+            </span>
+            <span>${escapeHtml(a.name)}</span>
+          </span>
+          <span class="font-mono text-xs font-black ${isSelected ? 'text-[#034d37]' : 'text-slate-600'}">+₹${price.toFixed(2)}</span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function toggleDetailAddon(index) {
+    const mods = getDishModifiers(activeDetailDish);
+    if (mods && mods.addons && mods.addons[index]) {
+      const addon = mods.addons[index];
+      if (selectedDetailAddons.has(addon.name)) {
+        selectedDetailAddons.delete(addon.name);
+      } else {
+        selectedDetailAddons.set(addon.name, addon);
+      }
+      renderAddonsUI(mods.addons);
+      updateDetailPriceUI();
+    }
   }
 
   function closeDishDetailModal() {
@@ -868,14 +1039,46 @@
   function updateDetailPriceUI() {
     if (!activeDetailDish) return;
     document.getElementById('detail-qty').textContent = detailQty;
-    const subtotal = parseFloat(activeDetailDish.price) * detailQty;
-    document.getElementById('detail-btn-price').textContent = `• ₹${subtotal.toFixed(2)}`;
+    const base = parseFloat(activeDetailDish.price);
+    const variantExtra = parseFloat(selectedDetailVariant?.price || 0);
+    let addonsExtra = 0;
+    selectedDetailAddons.forEach(a => addonsExtra += parseFloat(a.price || 0));
+    const unitPrice = base + variantExtra + addonsExtra;
+    const total = unitPrice * detailQty;
+    document.getElementById('detail-price').textContent = `₹${unitPrice.toFixed(2)}`;
+    document.getElementById('detail-btn-price').textContent = `• ₹${total.toFixed(2)}`;
   }
 
   function addDetailToCart() {
     if (!activeDetailDish) return;
-    cart.set(activeDetailDish.id, { item: activeDetailDish, quantity: detailQty });
+    const notes = document.getElementById('detail-item-notes')?.value.trim() || null;
+    const variantName = selectedDetailVariant ? selectedDetailVariant.name : 'std';
+    const addonsKey = Array.from(selectedDetailAddons.keys()).sort().join('_');
+    const notesKey = notes || '';
+    const cartKey = `${activeDetailDish.id}__${variantName}__${addonsKey}__${notesKey}`;
+
+    const base = parseFloat(activeDetailDish.price);
+    const variantExtra = parseFloat(selectedDetailVariant?.price || 0);
+    let addonsExtra = 0;
+    selectedDetailAddons.forEach(a => addonsExtra += parseFloat(a.price || 0));
+    const unitPrice = base + variantExtra + addonsExtra;
+
+    if (cart.has(cartKey)) {
+      cart.get(cartKey).quantity += detailQty;
+    } else {
+      cart.set(cartKey, {
+        key: cartKey,
+        item: activeDetailDish,
+        quantity: detailQty,
+        unitPrice: unitPrice,
+        selectedVariant: selectedDetailVariant ? { name: selectedDetailVariant.name, price: variantExtra } : null,
+        selectedAddons: Array.from(selectedDetailAddons.values()),
+        notes: notes,
+      });
+    }
+
     renderDishes();
+    updateCartBar();
     closeDishDetailModal();
     window.showToast?.(`Added ${detailQty}x ${activeDetailDish.name} to order!`);
   }
@@ -946,11 +1149,28 @@
     const dish = allMenuItems.find(i => i.id === dishId);
     if (!dish) return;
 
-    const existing = cart.get(dishId);
+    const mods = getDishModifiers(dish);
+    const hasModifiers = mods && ((mods.variants && mods.variants.length > 0) || (mods.addons && mods.addons.length > 0));
+
+    if (hasModifiers) {
+      openDishDetailModal(dishId);
+      return;
+    }
+
+    const cartKey = `${dish.id}__std____`;
+    const existing = cart.get(cartKey);
     if (existing) {
       existing.quantity++;
     } else {
-      cart.set(dishId, { item: dish, quantity: 1 });
+      cart.set(cartKey, {
+        key: cartKey,
+        item: dish,
+        quantity: 1,
+        unitPrice: parseFloat(dish.price),
+        selectedVariant: null,
+        selectedAddons: [],
+        notes: null
+      });
     }
 
     // Micro-animation: spawn floating +1 element if event trigger is present
@@ -964,24 +1184,42 @@
     }
 
     renderDishes();
+    updateCartBar();
     if (document.getElementById('cart-modal').classList.contains('hidden') === false) {
       renderCartModalItems();
     }
   }
 
-  function removeFromCart(dishId) {
-    const existing = cart.get(dishId);
-    if (!existing) return;
-    if (existing.quantity > 1) {
-      existing.quantity--;
-    } else {
-      cart.delete(dishId);
+  function removeFromCartDish(dishId) {
+    for (const [key, c] of cart.entries()) {
+      if (c.item.id === dishId) {
+        decrementCartKey(key);
+        break;
+      }
     }
+  }
+
+  function incrementCartKey(cartKey) {
+    const item = cart.get(cartKey);
+    if (!item) return;
+    item.quantity++;
+    updateCartBar();
+    renderDishes();
+    renderCartModalItems();
+  }
+
+  function decrementCartKey(cartKey) {
+    const item = cart.get(cartKey);
+    if (!item) return;
+    if (item.quantity > 1) {
+      item.quantity--;
+    } else {
+      cart.delete(cartKey);
+    }
+    updateCartBar();
     renderDishes();
     if (cart.size === 0) closeCartModal();
-    else if (document.getElementById('cart-modal').classList.contains('hidden') === false) {
-      renderCartModalItems();
-    }
+    else renderCartModalItems();
   }
 
   function updateCartBar() {
@@ -991,7 +1229,7 @@
 
     cart.forEach(c => {
       count += c.quantity;
-      total += c.quantity * c.item.price;
+      total += c.quantity * c.unitPrice;
     });
 
     if (count > 0) {
@@ -1028,27 +1266,43 @@
     container.innerHTML = '';
     let total = 0;
 
-    cart.forEach(({ item, quantity }) => {
-      total += quantity * item.price;
+    cart.forEach(({ key, item, quantity, unitPrice, selectedVariant, selectedAddons, notes }) => {
+      const lineTotal = unitPrice * quantity;
+      total += lineTotal;
       const isNonVeg = isNonVegDish(item);
 
+      const variantHtml = selectedVariant
+        ? `<span class="inline-block px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 text-[10px] font-bold text-slate-700 dark:text-slate-300 mr-1 border border-slate-200 dark:border-zinc-700">${escapeHtml(selectedVariant.name)}</span>`
+        : '';
+      const addonsHtml = (selectedAddons && selectedAddons.length > 0)
+        ? selectedAddons.map(a => `<span class="inline-block px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-[9px] font-bold mr-1 border border-emerald-200 dark:border-emerald-800">+ ${escapeHtml(a.name)} (₹${parseFloat(a.price).toFixed(0)})</span>`).join('')
+        : '';
+      const notesHtml = notes
+        ? `<div class="text-[10px] text-amber-800 dark:text-amber-300 font-semibold italic mt-0.5 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span> ${escapeHtml(notes)}</div>`
+        : '';
+
       const row = document.createElement('div');
-      row.className = 'flex justify-between items-center py-2.5 border-b border-[var(--border)] last:border-0';
+      row.className = 'flex justify-between items-start py-2.5 border-b border-[var(--border)] last:border-0 gap-3';
       row.innerHTML = `
         <div class="pr-2 min-w-0 flex-1">
-          <div class="flex items-center gap-1.5">
+          <div class="flex items-center gap-1.5 flex-wrap">
             ${isNonVeg ? VYORA_ICONS.nonVegDot : VYORA_ICONS.vegDot}
-            <p class="font-bold text-[var(--text-primary)] text-xs truncate">${item.name}</p>
+            <p class="font-bold text-[var(--text-primary)] text-xs truncate">${escapeHtml(item.name)}</p>
           </div>
-          <span class="text-[10px] text-[var(--text-muted)] font-mono pl-4">₹${parseFloat(item.price).toFixed(2)} each</span>
+          <div class="mt-1 flex flex-wrap items-center gap-1">
+            ${variantHtml}
+            ${addonsHtml}
+          </div>
+          ${notesHtml}
+          <span class="text-[10px] text-[var(--text-muted)] font-mono block mt-1">₹${unitPrice.toFixed(2)} each</span>
         </div>
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-2 shrink-0 pt-0.5">
           <div class="flex items-center bg-[var(--bg-base)] border border-[var(--border)] rounded-[var(--radius-sm)] p-0.5">
-            <button onclick="removeFromCart('${item.id}')" class="w-6 h-6 rounded text-xs font-bold hover:bg-red-500 hover:text-white transition active:scale-75 flex items-center justify-center">${VYORA_ICONS.minus}</button>
+            <button onclick="decrementCartKey('${key}')" class="w-6 h-6 rounded text-xs font-bold hover:bg-red-500 hover:text-white transition active:scale-75 flex items-center justify-center cursor-pointer">${VYORA_ICONS.minus}</button>
             <span class="w-5 text-center font-mono font-bold text-xs text-[var(--accent)]">${quantity}</span>
-            <button onclick="addToCart('${item.id}')" class="w-6 h-6 rounded text-xs font-bold bg-[var(--accent)] text-white hover:opacity-90 transition active:scale-75 flex items-center justify-center">${VYORA_ICONS.plus}</button>
+            <button onclick="incrementCartKey('${key}')" class="w-6 h-6 rounded text-xs font-bold bg-[var(--accent)] text-white hover:opacity-90 transition active:scale-75 flex items-center justify-center cursor-pointer">${VYORA_ICONS.plus}</button>
           </div>
-          <span class="font-mono font-bold text-xs text-[var(--text-primary)] w-14 text-right">₹${(item.price * quantity).toFixed(2)}</span>
+          <span class="font-mono font-bold text-xs text-[var(--text-primary)] w-14 text-right">₹${lineTotal.toFixed(2)}</span>
         </div>
       `;
       container.appendChild(row);
@@ -1068,8 +1322,14 @@
     btn.innerHTML = `<span class="inline-flex items-center gap-2">${VYORA_ICONS.spinner} Transmitting to Kitchen...</span>`;
 
     const items = [];
-    cart.forEach(({ item, quantity }) => {
-      items.push({ menuItemId: item.id, quantity });
+    cart.forEach(c => {
+      items.push({
+        menuItemId: c.item.id,
+        quantity: c.quantity,
+        selectedVariant: c.selectedVariant,
+        selectedAddons: c.selectedAddons,
+        notes: c.notes,
+      });
     });
 
     try {
@@ -1202,8 +1462,9 @@
     if (activeLiveOrders.length === 0) {
       container.innerHTML = `
         <div class="p-8 text-center text-xs text-[var(--text-muted)] space-y-1">
-          <p class="font-bold text-sm text-[var(--text-primary)]">No active orders right now</p>
+          <p class="font-bold text-sm text-[var(--text-primary)]">No active orders right now · कोई सक्रिय ऑर्डर नहीं है</p>
           <p>Dishes placed in this session will appear here with live kitchen updates.</p>
+          <p class="text-[11px] text-slate-500">इस सत्र में दिए गए ऑर्डर की लाइव स्थिति यहाँ दिखेगी।</p>
         </div>
       `;
       return;
@@ -1218,19 +1479,32 @@
       const currentStepIdx = steps.indexOf(order.status);
       const itemsList = (order.items || []).map(i => `<span class="inline-block font-semibold">${i.quantity}x ${i.menuItemName}</span>`).join(', ');
 
-      let statusMsg = 'Kitchen received your ticket';
+      let statusTitleEn = 'Received';
+      let statusTitleHi = 'ऑर्डर मिला';
+      let statusMsgEn = 'Kitchen received your ticket';
+      let statusMsgHi = 'किचन को आपका ऑर्डर मिल गया है';
       let statusIcon = VYORA_ICONS.stepTicket;
       let statusColor = 'text-orange-600 dark:text-orange-400 bg-orange-500/10 border-orange-500/20';
+
       if (order.status === 'preparing') {
-        statusMsg = 'Chef is preparing your meal';
+        statusTitleEn = 'Cooking';
+        statusTitleHi = 'पक रहा है';
+        statusMsgEn = 'Cooking in kitchen';
+        statusMsgHi = 'किचन में आपका खाना पक रहा है';
         statusIcon = VYORA_ICONS.stepFlame;
         statusColor = 'text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/20';
       } else if (order.status === 'ready') {
-        statusMsg = 'Plated & Ready to serve!';
+        statusTitleEn = 'Ready';
+        statusTitleHi = 'तैयार है';
+        statusMsgEn = 'Plated & ready to serve!';
+        statusMsgHi = 'खाना तैयार है, टेबल पर आ रहा है';
         statusIcon = VYORA_ICONS.stepPlate;
         statusColor = 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
       } else if (order.status === 'completed') {
-        statusMsg = 'Served at your table';
+        statusTitleEn = 'Served';
+        statusTitleHi = 'सर्व हो गया';
+        statusMsgEn = 'Served at your table';
+        statusMsgHi = 'आपकी टेबल पर सर्व कर दिया गया है';
         statusIcon = VYORA_ICONS.stepCheck;
         statusColor = 'text-slate-600 dark:text-slate-400 bg-slate-500/10 border-slate-500/20';
       }
@@ -1240,14 +1514,14 @@
           <div>
             <div class="flex items-center gap-1.5">
               <span class="w-5 h-5 rounded-full bg-[var(--accent)] text-white text-[10px] font-bold flex items-center justify-center font-mono">#${idx + 1}</span>
-              <span class="font-bold text-xs text-[var(--text-primary)]">Order Ticket</span>
+              <span class="font-bold text-xs text-[var(--text-primary)]">Order Ticket · ऑर्डर #${idx + 1}</span>
             </div>
             <p class="text-[11px] text-[var(--text-secondary)] mt-1">${itemsList}</p>
           </div>
           <span class="font-mono font-bold text-xs text-[var(--accent)] shrink-0">₹${parseFloat(order.totalAmount).toFixed(2)}</span>
         </div>
 
-        <!-- Animated Progress Stepper -->
+        <!-- Animated Progress Stepper (Bilingual) -->
         <div class="py-2">
           <div class="flex items-center justify-between relative mb-2.5 px-2">
             <!-- Background progress track -->
@@ -1256,43 +1530,52 @@
             </div>
 
             <!-- Step 1: Pending -->
-            <div class="relative z-10 flex flex-col items-center">
+            <div class="relative z-10 flex flex-col items-center text-center">
               <div class="w-8 h-8 rounded-full ${currentStepIdx >= 0 ? 'bg-[var(--accent)] text-white ring-2 ring-[var(--accent-glow)]' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'} ${currentStepIdx === 0 ? 'animate-pulse-ring' : ''} flex items-center justify-center font-bold text-xs transition-all shadow-xs">
                 ${currentStepIdx > 0 ? VYORA_ICONS.stepCheck : VYORA_ICONS.stepTicket}
               </div>
-              <span class="text-[11px] mt-1.5 font-bold text-slate-700 dark:text-slate-200">Received</span>
+              <span class="text-[11px] mt-1.5 font-bold text-slate-800 dark:text-slate-200 leading-tight">Received</span>
+              <span class="text-[9px] font-medium text-slate-500 dark:text-slate-400">ऑर्डर मिला</span>
             </div>
 
             <!-- Step 2: Preparing -->
-            <div class="relative z-10 flex flex-col items-center">
+            <div class="relative z-10 flex flex-col items-center text-center">
               <div class="w-8 h-8 rounded-full ${currentStepIdx >= 1 ? 'bg-[var(--accent)] text-white ring-2 ring-[var(--accent-glow)]' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'} ${currentStepIdx === 1 ? 'animate-pulse-ring' : ''} flex items-center justify-center font-bold text-xs transition-all shadow-xs">
                 ${currentStepIdx > 1 ? VYORA_ICONS.stepCheck : VYORA_ICONS.stepFlame}
               </div>
-              <span class="text-[11px] mt-1.5 font-bold text-slate-700 dark:text-slate-200">Cooking</span>
+              <span class="text-[11px] mt-1.5 font-bold text-slate-800 dark:text-slate-200 leading-tight">Cooking</span>
+              <span class="text-[9px] font-medium text-slate-500 dark:text-slate-400">पक रहा है</span>
             </div>
 
             <!-- Step 3: Ready -->
-            <div class="relative z-10 flex flex-col items-center">
+            <div class="relative z-10 flex flex-col items-center text-center">
               <div class="w-8 h-8 rounded-full ${currentStepIdx >= 2 ? 'bg-[var(--accent)] text-white ring-2 ring-[var(--accent-glow)]' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'} ${currentStepIdx === 2 ? 'animate-pulse-ring' : ''} flex items-center justify-center font-bold text-xs transition-all shadow-xs">
                 ${currentStepIdx > 2 ? VYORA_ICONS.stepCheck : VYORA_ICONS.stepPlate}
               </div>
-              <span class="text-[11px] mt-1.5 font-bold text-slate-700 dark:text-slate-200">Plated</span>
+              <span class="text-[11px] mt-1.5 font-bold text-slate-800 dark:text-slate-200 leading-tight">Ready</span>
+              <span class="text-[9px] font-medium text-slate-500 dark:text-slate-400">तैयार है</span>
             </div>
 
             <!-- Step 4: Completed -->
-            <div class="relative z-10 flex flex-col items-center">
+            <div class="relative z-10 flex flex-col items-center text-center">
               <div class="w-8 h-8 rounded-full ${currentStepIdx >= 3 ? 'bg-emerald-600 text-white ring-2 ring-emerald-500/30' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'} flex items-center justify-center font-bold text-xs transition-all shadow-xs">
                 ${VYORA_ICONS.stepCheck}
               </div>
-              <span class="text-[11px] mt-1.5 font-bold text-slate-700 dark:text-slate-200">Served</span>
+              <span class="text-[11px] mt-1.5 font-bold text-slate-800 dark:text-slate-200 leading-tight">Served</span>
+              <span class="text-[9px] font-medium text-slate-500 dark:text-slate-400">सर्व हो गया</span>
             </div>
           </div>
 
+          <!-- Bilingual Status Badge Capsule -->
           <div class="text-center pt-1.5 flex justify-center">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold ${statusColor} shadow-xs">
-              ${statusIcon}
-              <span>${statusMsg}</span>
-            </span>
+            <div class="inline-flex flex-col items-center px-4 py-1.5 rounded-2xl border text-xs font-bold ${statusColor} shadow-xs">
+              <div class="flex items-center gap-1.5">
+                ${statusIcon}
+                <span>${statusTitleEn}</span>
+                <span class="opacity-70 text-[11px] font-semibold">· ${statusTitleHi}</span>
+              </div>
+              <span class="text-[10px] font-normal opacity-90 mt-0.5">${statusMsgEn} · ${statusMsgHi}</span>
+            </div>
           </div>
         </div>
       `;

@@ -98,6 +98,7 @@ class PublicMenuController extends Controller
                 'preparationTime' => $item->preparation_time,
                 'isVeg' => (bool) ($item->is_veg ?? true),
                 'isAvailable' => (bool) $item->is_available,
+                'modifiers' => $item->modifiers,
                 'categoryId' => $item->category_id,
                 'category' => $item->category ? [
                     'id' => $item->category->id,

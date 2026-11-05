@@ -52,15 +52,18 @@ class BillingController extends Controller
             foreach ($servedOrders as $order) {
                 $totalAmount += (float) $order->total_amount;
                 foreach ($order->items as $item) {
-                    $key = $item->menu_item_name;
+                    $key = $item->menu_item_name . '|' . ($item->selected_variant ?? '') . '|' . json_encode($item->selected_addons ?? []);
                     $price = (float) $item->price;
                     if (isset($itemMap[$key])) {
                         $itemMap[$key]['quantity'] += $item->quantity;
                     } else {
                         $itemMap[$key] = [
-                            'menuItemName' => $key,
+                            'menuItemName' => $item->menu_item_name,
                             'quantity' => $item->quantity,
                             'price' => $price,
+                            'selectedVariant' => $item->selected_variant,
+                            'selectedAddons' => $item->selected_addons,
+                            'notes' => $item->notes,
                         ];
                     }
                 }
@@ -74,6 +77,9 @@ class BillingController extends Controller
                         'menuItemName' => $item->menu_item_name,
                         'quantity' => $item->quantity,
                         'price' => (float) $item->price,
+                        'selectedVariant' => $item->selected_variant,
+                        'selectedAddons' => $item->selected_addons,
+                        'notes' => $item->notes,
                         'status' => $order->status,
                     ];
                 }

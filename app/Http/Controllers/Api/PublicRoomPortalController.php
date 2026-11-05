@@ -197,15 +197,75 @@ class PublicRoomPortalController extends Controller
             if (!$dbItem) {
                 return response()->json(['success' => false, 'error' => ['code' => 'ITEM_UNAVAILABLE', 'message' => 'One or more items are unavailable']], 400);
             }
-            $lineTotal = (float) $dbItem->price * $i['quantity'];
+            $qty = max(1, (int) ($i['quantity'] ?? 1));
+            $basePrice = (float) $dbItem->price;
+
+            // Handle variants
+            $selectedVariant = null;
+            $variantExtra = 0.0;
+            if (!empty($i['selectedVariant'])) {
+                if (is_array($i['selectedVariant'])) {
+                    $selectedVariant = $i['selectedVariant']['name'] ?? null;
+                    $variantExtra = (float) ($i['selectedVariant']['price'] ?? 0);
+                } else {
+                    $selectedVariant = (string) $i['selectedVariant'];
+                    if ($dbItem->modifiers && !empty($dbItem->modifiers['variants'])) {
+                        foreach ($dbItem->modifiers['variants'] as $v) {
+                            if (($v['name'] ?? '') === $selectedVariant) {
+                                $variantExtra = (float) ($v['price'] ?? 0);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Handle add-ons
+            $selectedAddons = [];
+            $addonsExtra = 0.0;
+            if (!empty($i['selectedAddons']) && is_array($i['selectedAddons'])) {
+                foreach ($i['selectedAddons'] as $addon) {
+                    if (is_array($addon)) {
+                        $name = $addon['name'] ?? null;
+                        $addonPrice = (float) ($addon['price'] ?? 0);
+                    } else {
+                        $name = (string) $addon;
+                        $addonPrice = 0.0;
+                        if ($dbItem->modifiers && !empty($dbItem->modifiers['addons'])) {
+                            foreach ($dbItem->modifiers['addons'] as $ad) {
+                                if (($ad['name'] ?? '') === $name) {
+                                    $addonPrice = (float) ($ad['price'] ?? 0);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if ($name) {
+                        $selectedAddons[] = [
+                            'name' => $name,
+                            'price' => $addonPrice,
+                        ];
+                        $addonsExtra += $addonPrice;
+                    }
+                }
+            }
+
+            $itemNotes = trim((string) ($i['notes'] ?? '')) ?: null;
+            $unitPrice = $basePrice + $variantExtra + $addonsExtra;
+            $lineTotal = $unitPrice * $qty;
             $totalAmount += $lineTotal;
+
             if ($dbItem->preparation_time > $maxPrep) {
                 $maxPrep = $dbItem->preparation_time;
             }
+
             $orderItemsData[] = [
                 'item' => $dbItem,
-                'quantity' => $i['quantity'],
-                'price' => (float) $dbItem->price,
+                'quantity' => $qty,
+                'price' => $unitPrice,
+                'selected_variant' => $selectedVariant,
+                'selected_addons' => count($selectedAddons) > 0 ? $selectedAddons : null,
+                'notes' => $itemNotes,
             ];
         }
 
@@ -233,6 +293,9 @@ class PublicRoomPortalController extends Controller
                 'menu_item_name' => $oid['item']->name,
                 'quantity' => $oid['quantity'],
                 'price' => $oid['price'],
+                'selected_variant' => $oid['selected_variant'],
+                'selected_addons' => $oid['selected_addons'],
+                'notes' => $oid['notes'],
             ]);
         }
 
@@ -254,6 +317,9 @@ class PublicRoomPortalController extends Controller
                 'menuItemName' => $o['item']->name,
                 'quantity' => $o['quantity'],
                 'price' => $o['price'],
+                'selectedVariant' => $o['selected_variant'],
+                'selectedAddons' => $o['selected_addons'],
+                'notes' => $o['notes'],
             ]),
         ];
 

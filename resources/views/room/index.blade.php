@@ -1152,17 +1152,30 @@
       const card = document.createElement('div');
       card.className = 'p-4 rounded-[var(--radius-lg)] bg-[var(--bg-base)] border border-[var(--border)] space-y-2';
 
-      let statusMsg = 'Kitchen received ticket';
-      let statusColor = 'text-orange-600 bg-orange-500/10 border-orange-500/20';
+      let statusTitleEn = 'Order Received';
+      let statusTitleHi = 'ऑर्डर मिला';
+      let statusMsgEn = 'Kitchen received ticket';
+      let statusMsgHi = 'किचन को आपका ऑर्डर मिल गया है';
+      let statusColor = 'text-orange-600 dark:text-orange-400 bg-orange-500/10 border-orange-500/20';
+
       if (order.status === 'preparing') {
-        statusMsg = 'Chef is preparing in kitchen';
-        statusColor = 'text-amber-600 bg-amber-500/10 border-amber-500/20';
+        statusTitleEn = 'Cooking';
+        statusTitleHi = 'पक रहा है';
+        statusMsgEn = 'Chef is cooking in kitchen';
+        statusMsgHi = 'किचन में आपका खाना पक रहा है';
+        statusColor = 'text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/20';
       } else if (order.status === 'ready') {
-        statusMsg = 'On the way to Room #' + ROOM_NUMBER;
-        statusColor = 'text-emerald-600 bg-emerald-500/10 border-emerald-500/20';
+        statusTitleEn = 'On the Way';
+        statusTitleHi = 'निकल चुका है';
+        statusMsgEn = 'On the way to Room #' + ROOM_NUMBER;
+        statusMsgHi = 'कमरा #' + ROOM_NUMBER + ' के लिए निकल चुका है';
+        statusColor = 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
       } else if (order.status === 'completed') {
-        statusMsg = 'Delivered to room';
-        statusColor = 'text-slate-600 bg-slate-500/10 border-slate-500/20';
+        statusTitleEn = 'Delivered';
+        statusTitleHi = 'पहुंच गया';
+        statusMsgEn = 'Delivered to room';
+        statusMsgHi = 'आपके कमरे में डिलीवर हो गया है';
+        statusColor = 'text-slate-600 dark:text-slate-400 bg-slate-500/10 border-slate-500/20';
       }
 
       card.innerHTML = `
@@ -1171,14 +1184,15 @@
             <span class="w-6 h-6 rounded-md bg-[var(--accent-glow)] text-[var(--accent)] flex items-center justify-center">
               <i data-lucide="utensils" class="w-3.5 h-3.5"></i>
             </span>
-            <span class="font-bold text-xs text-[var(--text-primary)]">Room Service Meal</span>
+            <span class="font-bold text-xs text-[var(--text-primary)]">Room Service Meal · रूम सर्विस मील</span>
           </div>
           <span class="font-mono font-bold text-xs text-[var(--accent)]">₹${parseFloat(order.total_amount).toFixed(2)}</span>
         </div>
         <div class="pt-1">
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-bold ${statusColor}">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[11px] font-bold ${statusColor}">
             <span class="w-1.5 h-1.5 rounded-full bg-current animate-pulse"></span>
-            <span>${statusMsg}</span>
+            <span>${statusTitleEn} · ${statusTitleHi}</span>
+            <span class="text-[10px] font-normal opacity-75 hidden sm:inline">• ${statusMsgHi}</span>
           </span>
         </div>
       `;
@@ -1190,9 +1204,9 @@
       const card = document.createElement('div');
       card.className = 'p-4 rounded-[var(--radius-lg)] bg-[var(--bg-base)] border border-[var(--border)] flex items-center justify-between';
 
-      let statusBadge = '<span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20 font-bold text-[10px]">Pending Dispatch</span>';
-      if (srv.status === 'in_progress') statusBadge = '<span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 border border-blue-500/20 font-bold text-[10px] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping"></span> Staff En Route</span>';
-      else if (srv.status === 'completed') statusBadge = '<span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 font-bold text-[10px]">Resolved</span>';
+      let statusBadge = '<span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20 font-bold text-[10px]">Pending · अनुरोध मिला</span>';
+      if (srv.status === 'in_progress') statusBadge = '<span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 border border-blue-500/20 font-bold text-[10px] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping"></span> Staff En Route · स्टाफ रास्ते में है</span>';
+      else if (srv.status === 'completed') statusBadge = '<span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 font-bold text-[10px]">Resolved · पूरा हो गया</span>';
 
       card.innerHTML = `
         <div>
