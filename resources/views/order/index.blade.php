@@ -741,14 +741,14 @@
         const channel = pusher.subscribe('restaurant.' + OWNER_ID);
 
         channel.bind('order:updated', function(data) {
-          if (data && data.tableNumber === TABLE_NUMBER) {
+          if (data && parseInt(data.tableNumber, 10) === TABLE_NUMBER) {
             loadLiveOrders();
             if (window.playNotificationSound) window.playNotificationSound();
           }
         });
 
         channel.bind('table:reset', function(data) {
-          if (data && data.tableNumber === TABLE_NUMBER) {
+          if (data && parseInt(data.tableNumber, 10) === TABLE_NUMBER) {
             showSessionSettledScreen('Your table bill has been settled. Thank you for dining with us! Please scan the table QR code to start a new session.', true);
           }
         });
@@ -1645,7 +1645,29 @@
         
         if (activeLiveOrders.length > 0) {
           trackingBtn.classList.remove('hidden');
-          if (countSpan) countSpan.textContent = activeLiveOrders.length;
+          const hasReady = activeLiveOrders.some(o => ['ready', 'prepared', 'plate_up'].includes((o.status || '').toLowerCase().trim()));
+          const hasPreparing = activeLiveOrders.some(o => ['preparing', 'cooking', 'in_kitchen'].includes((o.status || '').toLowerCase().trim()));
+
+          if (hasReady) {
+            trackingBtn.className = 'px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/40 font-bold text-xs flex items-center gap-1.5 shadow-sm transition active:scale-95 animate-bounce';
+            trackingBtn.innerHTML = `
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+              <span id="tracking-status-text">Food Ready · भोजन तैयार है! (${activeLiveOrders.length})</span>
+            `;
+          } else if (hasPreparing) {
+            trackingBtn.className = 'px-3 py-1.5 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 font-bold text-xs flex items-center gap-1.5 shadow-xs transition active:scale-95 animate-pulse';
+            trackingBtn.innerHTML = `
+              <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+              <span id="tracking-status-text">Cooking · पक रहा है (${activeLiveOrders.length})</span>
+            `;
+          } else {
+            trackingBtn.className = 'px-3 py-1.5 rounded-full bg-orange-500/15 text-orange-700 dark:text-orange-300 border border-orange-500/30 font-bold text-xs flex items-center gap-1.5 shadow-xs transition active:scale-95 animate-pulse';
+            trackingBtn.innerHTML = `
+              <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
+              <span id="tracking-status-text">Track · ट्रैक (${activeLiveOrders.length})</span>
+            `;
+          }
+
           renderTrackingOrders();
         } else {
           trackingBtn.classList.add('hidden');
@@ -1664,6 +1686,7 @@
 
   function renderTrackingOrders() {
     const container = document.getElementById('tracking-orders-list');
+    if (!container) return;
     container.innerHTML = '';
 
     if (activeLiveOrders.length === 0) {
@@ -1683,7 +1706,15 @@
       const card = document.createElement('div');
       card.className = 'p-4 rounded-[var(--radius-xl)] bg-[var(--bg-base)] border border-[var(--border)] shadow-xs space-y-3';
 
-      const currentStepIdx = steps.indexOf(order.status);
+      const normStatus = (order.status || '').toLowerCase().trim();
+      let currentStepIdx = steps.indexOf(normStatus);
+      if (currentStepIdx === -1) {
+        if (normStatus === 'cooking' || normStatus === 'in_kitchen') currentStepIdx = 1;
+        else if (normStatus === 'prepared' || normStatus === 'plate_up') currentStepIdx = 2;
+        else if (normStatus === 'served' || normStatus === 'settled' || normStatus === 'paid') currentStepIdx = 3;
+        else currentStepIdx = 0;
+      }
+
       const itemsList = (order.items || []).map(i => `<span class="inline-block font-semibold">${i.quantity}x ${i.menuItemName}</span>`).join(', ');
 
       let statusTitleEn = 'Received';
@@ -1691,29 +1722,29 @@
       let statusMsgEn = 'Kitchen received your ticket';
       let statusMsgHi = 'किचन को आपका ऑर्डर मिल गया है';
       let statusIcon = VYORA_ICONS.stepTicket;
-      let statusColor = 'text-orange-600 dark:text-orange-400 bg-orange-500/10 border-orange-500/20';
+      let statusColor = 'text-orange-700 dark:text-orange-300 bg-orange-500/10 border-orange-500/25';
 
-      if (order.status === 'preparing') {
+      if (currentStepIdx === 1) {
         statusTitleEn = 'Cooking';
         statusTitleHi = 'पक रहा है';
         statusMsgEn = 'Cooking in kitchen';
         statusMsgHi = 'किचन में आपका खाना पक रहा है';
         statusIcon = VYORA_ICONS.stepFlame;
-        statusColor = 'text-amber-700 dark:text-amber-300 bg-amber-500/10 border-amber-500/25';
-      } else if (order.status === 'ready') {
+        statusColor = 'text-amber-800 dark:text-amber-300 bg-amber-500/15 border-amber-500/30';
+      } else if (currentStepIdx === 2) {
         statusTitleEn = 'Ready';
         statusTitleHi = 'तैयार है';
         statusMsgEn = 'Order is ready! Please collect from the counter';
         statusMsgHi = 'भोजन तैयार है, कृपया काउंटर से प्राप्त करें';
         statusIcon = VYORA_ICONS.stepPlate;
-        statusColor = 'text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-500/25';
-      } else if (order.status === 'completed') {
+        statusColor = 'text-emerald-800 dark:text-emerald-300 bg-emerald-500/15 border-emerald-500/35 ring-1 ring-emerald-500/30';
+      } else if (currentStepIdx === 3) {
         statusTitleEn = 'Served';
         statusTitleHi = 'सर्व हो गया';
         statusMsgEn = 'Delivered to your table';
         statusMsgHi = 'आपकी टेबल पर सर्व कर दिया गया है';
         statusIcon = VYORA_ICONS.stepCheck;
-        statusColor = 'text-emerald-800 dark:text-emerald-300 bg-emerald-500/15 border-emerald-500/30';
+        statusColor = 'text-slate-700 dark:text-slate-300 bg-slate-500/10 border-slate-500/25';
       }
 
       card.innerHTML = `
@@ -1756,11 +1787,11 @@
 
             <!-- Step 3: Ready -->
             <div class="relative z-10 flex flex-col items-center text-center">
-              <div class="w-8 h-8 rounded-full ${currentStepIdx >= 2 ? 'bg-[var(--accent)] text-white ring-2 ring-[var(--accent-glow)]' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'} ${currentStepIdx === 2 ? 'animate-pulse-ring' : ''} flex items-center justify-center font-bold text-xs transition-all shadow-xs">
+              <div class="w-8 h-8 rounded-full ${currentStepIdx >= 2 ? 'bg-emerald-600 text-white ring-2 ring-emerald-500/40 shadow-sm' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'} ${currentStepIdx === 2 ? 'animate-bounce' : ''} flex items-center justify-center font-bold text-xs transition-all shadow-xs">
                 ${currentStepIdx > 2 ? VYORA_ICONS.stepCheck : VYORA_ICONS.stepPlate}
               </div>
-              <span class="text-[11px] mt-1.5 font-bold text-slate-800 dark:text-slate-200 leading-tight">Ready</span>
-              <span class="text-[9px] font-medium text-slate-500 dark:text-slate-400">तैयार है</span>
+              <span class="text-[11px] mt-1.5 font-bold ${currentStepIdx >= 2 ? 'text-emerald-700 dark:text-emerald-300 font-extrabold' : 'text-slate-800 dark:text-slate-200'} leading-tight">Ready</span>
+              <span class="text-[9px] font-medium ${currentStepIdx >= 2 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400'}">तैयार है</span>
             </div>
 
             <!-- Step 4: Completed -->
@@ -1773,11 +1804,11 @@
             </div>
           </div>
 
-          <!-- Streamlined Status Pill -->
-          <div class="text-center pt-2 flex justify-center">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold ${statusColor} shadow-2xs">
+          <!-- Prominent Live Status Message Capsule -->
+          <div class="pt-2 flex justify-center">
+            <div class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl sm:rounded-full border text-xs font-semibold ${statusColor} text-center leading-snug shadow-xs">
               <span class="shrink-0 flex items-center">${statusIcon}</span>
-              <span class="leading-none">${statusMsgEn} · ${statusMsgHi}</span>
+              <span class="break-words">${statusMsgEn} · ${statusMsgHi}</span>
             </div>
           </div>
         </div>
