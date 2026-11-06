@@ -494,7 +494,7 @@
       step4: "Served",
       statusPending: "Order Received",
       statusPreparing: "Cooking in Progress",
-      statusReady: "Plated & Ready to Serve",
+      statusReady: "Order Ready • Please collect from counter",
       statusCompleted: "Served to Table",
       statusCancelled: "Cancelled",
       orderFailedAlert: "Failed to place order. Please try again."
@@ -553,7 +553,7 @@
       step4: "सर्व हो गया",
       statusPending: "ऑर्डर स्वीकार हुआ",
       statusPreparing: "रसोई में पक रहा है",
-      statusReady: "तैयार है • टेबल पर आ रहा है",
+      statusReady: "भोजन तैयार है • कृपया काउंटर से प्राप्त करें",
       statusCompleted: "सर्व हो गया",
       statusCancelled: "रद्द हुआ",
       orderFailedAlert: "ऑर्डर दर्ज नहीं हो सका। कृपया पुनः प्रयास करें।"
@@ -1703,8 +1703,8 @@
       } else if (order.status === 'ready') {
         statusTitleEn = 'Ready';
         statusTitleHi = 'तैयार है';
-        statusMsgEn = 'Plated & ready to serve';
-        statusMsgHi = 'खाना तैयार है, टेबल पर आ रहा है';
+        statusMsgEn = 'Order is ready! Please collect from the counter';
+        statusMsgHi = 'भोजन तैयार है, कृपया काउंटर से प्राप्त करें';
         statusIcon = VYORA_ICONS.stepPlate;
         statusColor = 'text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-500/25';
       } else if (order.status === 'completed') {
